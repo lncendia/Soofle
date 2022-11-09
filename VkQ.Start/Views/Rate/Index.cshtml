@@ -1,0 +1,79 @@
+@using System.Globalization
+@model WebApplication.ViewModels.Rate.CreateRateViewModel
+
+@{
+    ViewBag.Title = "Список тарифов";
+}
+
+<div class="accordion accordion-flush pb-3" id="accordionFlushExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingOne">
+            <button class="accordion-button shadow-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                Добавление тарифа
+            </button>
+        </h2>
+        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h3>Добавление тарифа</h3>
+                        <form asp-action="Index" method="post" class="form-horizontal">
+                            <div asp-validation-summary="ModelOnly"></div>
+                            <div class="form-group">
+                                <div class="row g-3">
+                                    <div class="col-sm-6">
+                                        <label asp-for="Amount"></label>
+                                        <input asp-for="Amount" class="form-control"/>
+                                        <span asp-validation-for="Amount" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label asp-for="Duration"></label>
+                                        <input asp-for="Duration" class="form-control"/>
+                                        <span asp-validation-for="Duration" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-12">
+                                        <label asp-for="CountPosts"></label>
+                                        <input asp-for="CountPosts" class="form-control"/>
+                                        <span asp-validation-for="CountPosts" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-12">
+                                        <input class="btn shadow-none btn-outline-dark" type="submit" value="Добавить">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+        <thead class="align-middle">
+        <tr>
+            <th scope="col">№</th>
+            <th>Стоимость</th>
+            <th>Длительность</th>
+            <th>Посты</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody class="align-middle">
+        @for (int i = 0; i < Model.Rates.Count; i++)
+        {
+            var rate = Model.Rates[i];
+            <tr>
+                <th scope="row">@(i + 1)</th>
+                <td>@rate.Amount.ToString("C", new CultureInfo("Ru"))</td>
+                <td>@rate.Duration дней</td>
+                <td>@rate.CountPosts</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" asp-action="DeleteRate" asp-route-id="@rate.Id">Удалить тариф</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

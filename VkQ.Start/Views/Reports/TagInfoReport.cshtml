@@ -1,0 +1,212 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Globalization
+@using System.Reflection
+@using WebApplication.Data.Enums.Reports
+@using WebApplication.Data.Services
+@model WebApplication.ViewModels.Reports.ThieveOrTagInfoReportViewModel
+@inject TimeService _timeService
+@{
+    var timeZone = await _timeService.GetTimeZoneInfo(User);
+    ViewData["title"] = $"Отчет №{Model.Report.Id}";
+}
+<div class="table-responsive">
+    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+        <tbody class="align-middle">
+        <tr>
+            <th scope="row">Дата создания</th>
+            <td>@TimeZoneInfo.ConvertTimeFromUtc(Model.Report.CreationDate, timeZone).ToString("f", new CultureInfo("Ru"))</td>
+        </tr>
+        <tr>
+            <th scope="row">Тег</th>
+            <td>#@Model.Report.Tag</td>
+        </tr>
+        <tr>
+            <th scope="row">Публикации</th>
+            <td>@((Model.Report.PublicationsType.GetType().GetMember(Model.Report.PublicationsType.ToString())[0].GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute)?.Name)</td>
+        </tr>
+        <tr>
+            <th scope="row">Проверок</th>
+            <td>@Model.Report.CountChecks</td>
+        </tr>
+        @if (!string.IsNullOrEmpty(Model.Report.Message))
+        {
+            <tr>
+                <th scope="row">Сообщение</th>
+                <td>@Model.Report.Message</td>
+            </tr>
+        }
+        <tr>
+            <th scope="row">Воры</th>
+            <td> @Model.Reports.Count(report => report.Participant == null)</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+@if (Model.Reports.Any())
+{
+    <div class="row my-3">
+        <div class="col-6">
+            <partial name="_GetUsernames"/>
+        </div>
+        @if (Model.Report.IsCompleted)
+        {
+            <div class="col-6 text-end">
+                <a class="btn btn-primary" asp-action="StartTagInfoReportCheck" asp-route-id="@Model.Report.Id">Проверить посты</a>
+            </div>
+        }
+    </div>
+}
+
+
+@if (Model.Reports.Sum(report => report.UserPosts.Count) > 1000)
+{
+    <p>В данном отчёте фигурирует более 1000 публикаций. Последующие проверки будут некорректны из-за невозможности получить так много постов. Рекомендуется создать новый отчёт.</p>
+}
+
+@if (!Model.Reports.Any())
+{
+    <p>Записи не найдены.</p>
+}
+else
+{
+    <p>Всего @Model.Reports.Count запись.</p>
+}
+
+
+<div class="table-responsive">
+    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+        <thead class="align-middle">
+        <tr>
+            <th scope="col" rowspan="2">
+                <input type="checkbox" class="form-check-input" name="selection_all" value="1">
+            </th>
+            <th scope="col" rowspan="2">№</th>
+            <th scope="col">Аккаунт</th>
+            <th scope="col" rowspan="2">Публикации</th>
+            <th scope="col">Заметка</th>
+            <th scope="col">Чат активности</th>
+            <th scope="col">Нарушения</th>
+        </tr>
+        <tr>
+            <form asp-action="TagInfoReport" method="get" class="form-horizontal" id="filter">
+                <th scope="col">
+                    <input asp-for="Username" class="form-control auto-submit"/>
+                </th>
+                <th scope="col">
+                    <input asp-for="Note" class="form-control auto-submit"/>
+                </th>
+                <th scope="col">
+                    <select class="form-select auto-submit" asp-for="LikeChat" asp-items="new List<SelectListItem>(Model.Report.Instagrams.Select(instagram => new SelectListItem(instagram.LikeChat, instagram.LikeChat)))">
+                        <option selected="selected" value="">Все</option>
+                        <option value="-">Воры</option>
+                    </select>
+                </th>
+                <th scope="col">
+                    <select class="form-select auto-submit" asp-for="Status" asp-items="Html.GetEnumSelectList<TagInfoStatus>()"></select>
+                </th>
+            </form>
+        </tr>
+        </thead>
+        <tbody class="align-middle">
+        @for (int i = 0; i < Model.Reports.Count; i++)
+        {
+            <tr>
+                @if (Model.Reports[i].Participant != null)
+                {
+                    <th>
+                        <input type="checkbox" class="form-check-input" name="selection[]" value="@Model.Reports[i].Id" data-username="@Model.Reports[i].Username" data-chat="@Model.Reports[i].Participant.Instagram.LikeChat">
+                    </th>
+                    <th scope="row">@(i + 1)</th>
+                    <td class="main">
+                        <a asp-controller="Participants" asp-action="Participant" asp-route-id="@Model.Reports[i].Participant.Id"> @Model.Reports[i].Username</a>
+                    </td>
+                }
+                else
+                {
+                    <th>
+                        <input type="checkbox" class="form-check-input" name="selection[]" value="@Model.Reports[i].Id" data-username="@Model.Reports[i].Username" data-chat="">
+                    </th>
+                    <th scope="row">@(i + 1)</th>
+                    <td class="main">
+                        <a href="https://www.instagram.com/@Model.Reports[i].Username">@Model.Reports[i].Username</a>
+                    </td>
+                }
+                <td class="main" style="max-width: 200px; font-size: 12px">
+                    <div>
+                        <a class="text-decoration-none" data-bs-toggle="collapse" href="#userposts@(Model.Reports[i].Id)" role="button" aria-expanded="false">
+                            Публикаций: @Model.Reports[i].UserPosts.Count
+                        </a>
+                    </div>
+                    <div class="collapse" id="userposts@(Model.Reports[i].Id)">
+                        <div class="card card-body bg-transparent border-0">
+                            @foreach (var publication in Model.Reports[i].UserPosts)
+                            {
+                                <div class="border border-primary rounded rounded-3 px-1">
+                                    <a href="@publication.PublicationUrl" class="text-decoration-none">
+                                        <div>
+                                            <img src="@Url.Action("GetImage", "Reports", new {url = publication.ImageUrl}, Context.Request.Scheme)" width="25px" height="25px" alt=""/>
+                                            @if (publication.Value)
+                                            {
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2 text-success" viewBox="0 0 16 16">
+                                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                                </svg>
+                                            }
+                                            else
+                                            {
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x text-danger" viewBox="0 0 16 16">
+                                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                                </svg>
+                                            }
+                                        </div>
+                                        <div>
+                                            <div class="text-break">Опубликован: @TimeZoneInfo.ConvertTimeFromUtc(publication.CreationDate, timeZone).ToString("g", new CultureInfo("Ru"))</div>
+                                            @if (!publication.Value)
+                                            {
+                                                <div class="text-break">Удален: @TimeZoneInfo.ConvertTimeFromUtc(publication.DeleteDate, timeZone).ToString("g", new CultureInfo("Ru"))</div>
+                                            }
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </td>
+
+                @if (Model.Reports[i].Participant != null)
+                {
+                    <td class="main" style="max-width: 170px">
+                        <div class="text-break">@Model.Reports[i].Participant.Note</div>
+                    </td>
+                    <td class="child">
+                        <span class="badge bg-success">@Model.Reports[i].Participant.Instagram.LikeChat</span>
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                    <td class="child">
+                        <span class="badge bg-danger">Вор</span>
+                    </td>
+                }
+                <td class="child">
+                    @if (Model.Reports[i].UserPosts.Count > 1 || Model.Reports[i].UserPosts.Any(publication => !publication.Value))
+                    {
+                        <span class="badge bg-danger"> Да </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success"> Нет </span>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    <script src="~/js/autoSubmit.js"></script>
+    <script src="~/js/getUsernames.js"></script>
+}

@@ -1,0 +1,65 @@
+﻿@model WebApplication.ViewModels.Participants.EditParticipantViewModel
+@{
+    ViewData["Title"] = Model.Username;
+}
+<div class="row">
+    <div class="col-lg-6">
+        <h3>Редактирование участника <a class="text-decoration-none" href="https://www.instagram.com/@Model.Username">@Model.Username</a></h3>
+        <form asp-action="Participant" method="post" class="form-horizontal">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <input type="hidden" asp-for="Id">
+                        <input type="hidden" asp-for="Username">
+                        <label asp-for="Note"></label>
+                        <textarea asp-for="Note" class="form-control"></textarea>
+                        <span asp-validation-for="Note" class="text-danger"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="checkbox" class="form-check-input" id="vip" asp-for="Vip">
+                        <label asp-for="Vip" class="form-check-label" for="vip"></label>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-11">
+                                <label asp-for="ParentId"></label>
+                            </div>
+                            <div class="col-1 text-end">
+                                <a class="text-danger" href="#" onclick="$('.js-example-basic-single').val('0').trigger('change'); return false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <select class="js-example-basic-single form-select" asp-for="ParentId" asp-items="new List<SelectListItem>(Model.Participants.Select(participant => new SelectListItem(participant.Username, participant.Id.ToString())))">
+                            <option value="0" selected>Не выбрано</option>
+                        </select>
+                        <span asp-validation-for="ParentId" class="text-danger"></span>
+                        @if (Model.ParentId != 0)
+                        {
+                            <span>
+                                <a class="text-decoration-none" asp-action="Participant" asp-route-id="@Model.ParentId">Редактировать родительский аккаунт</a>
+                            </span>
+                        }
+                    </div>
+                    <div class="col-12">
+                        <input class="btn shadow-none btn-outline-dark" type="submit" value="Изменить">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" integrity="sha256-9yRP/2EFlblE92vzCA10469Ctd0jT48HnmmMw5rJZrA=" crossorigin="anonymous"></script>
+    <script>
+$(document).ready(function() {
+    $('.js-example-basic-single').select2();
+});
+      </script>
+}

@@ -1,0 +1,363 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Globalization
+@using System.Reflection
+@using WebApplication.Data.Enums.Participants
+@using WebApplication.Data.Enums.Reports
+@using WebApplication.Data.Services
+@model WebApplication.ViewModels.Reports.MediaReportViewModel
+@inject TimeService _timeService
+@{
+    ViewData["title"] = $"Отчет №{Model.Report.Id}";
+    var timeZone = await _timeService.GetTimeZoneInfo(User);
+}
+<div class="table-responsive">
+    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+        <tbody class="align-middle">
+        <tr>
+            <th scope="row">Дата создания</th>
+            <td>@TimeZoneInfo.ConvertTimeFromUtc(Model.Report.CreationDate, timeZone).ToString("f", new CultureInfo("Ru"))</td>
+        </tr>
+        <tr>
+            <th scope="row">Тег</th>
+            <td>#@Model.Report.Tag</td>
+        </tr>
+        <tr>
+            <th scope="row">API</th>
+            <td>@((Model.Report.Api.GetType().GetMember(Model.Report.Api.ToString())[0].GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute)?.Name)</td>
+        </tr>
+        <tr>
+            <th scope="row">Публикации</th>
+            <td>@((Model.Report.PublicationsType.GetType().GetMember(Model.Report.PublicationsType.ToString())[0].GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute)?.Name)</td>
+        </tr>
+        <tr>
+            <th scope="row">Повторных запусков</th>
+            <td>@Model.Report.CountChecks</td>
+        </tr>
+        @if (!string.IsNullOrEmpty(Model.Report.Message))
+        {
+            <tr>
+                <th scope="row">Сообщение</th>
+                <td>@Model.Report.Message</td>
+            </tr>
+        }
+        @if (Model.Report.StartDate.HasValue)
+        {
+            <tr>
+                <th scope="row">С</th>
+                <td>@TimeZoneInfo.ConvertTimeFromUtc(Model.Report.StartDate.Value, timeZone).ToString("g", new CultureInfo("Ru"))</td>
+            </tr>
+        }
+        @if (Model.Report.EndDate.HasValue)
+        {
+            <tr>
+                <th scope="row">До</th>
+                <td>@TimeZoneInfo.ConvertTimeFromUtc(Model.Report.EndDate.Value, timeZone).ToString("g", new CultureInfo("Ru"))</td>
+            </tr>
+        }
+        <tr>
+            <th scope="row">Прошли</th>
+            <td>
+                @Model.MediaReports.Count(commentReport => commentReport.Values.All(publication => publication.Value))
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Не прошли</th>
+            <td> @Model.MediaReports.Count(commentReport => commentReport.Values.Any(publication => !publication.Value))</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+@if (Model.MediaReports.Any())
+{
+    <div class="row my-3">
+        <div class="col-6">
+            <partial name="_GetUsernames"/>
+        </div>
+        @if (Model.Report.Count != 0 && Model.Report.PublicationsType != Publications.All && Model.Report.IsCompleted)
+        {
+            <div class="col-6 text-end">
+                <a class="btn btn-primary" asp-action="ContinueCommentReport" asp-route-id="@Model.Report.Id">Следующие @Model.Report.Count</a>
+            </div>
+        }
+    </div>
+}
+
+@if (!Model.MediaReports.Any())
+{
+    <p>Записи не найдены.</p>
+}
+else
+{
+    <p>Всего @Model.MediaReports.Count запись.</p>
+}
+
+<div class="table-responsive">
+<table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+<thead class="align-middle">
+<tr>
+    <th scope="col" rowspan="2">
+        <input type="checkbox" class="form-check-input" name="selection_all" value="1">
+    </th>
+    <th scope="col" rowspan="2">№</th>
+    <th scope="col">Участник</th>
+    <th scope="col" rowspan="2">Публикации</th>
+    <th scope="col">Дочерние аккаунты</th>
+    <th scope="col">Проверка</th>
+    <th scope="col">Заметка</th>
+    <th scope="col">Чат активности</th>
+    <th scope="col">VIP</th>
+</tr>
+<tr>
+    <form asp-action="CommentReport" method="get" class="form-horizontal" id="filter">
+        <th scope="col">
+            <input asp-for="Username" class="form-control auto-submit"/>
+        </th>
+        <th scope="col">
+            <select class="form-select auto-submit" asp-for="HasChild" asp-items="Html.GetEnumSelectList<ParticipantHasChild>()"></select>
+        </th>
+        <th scope="col">
+            <select class="form-select auto-submit" asp-for="Status" asp-items="Html.GetEnumSelectList<LikingCommentingStatus>()"></select>
+        </th>
+        <th scope="col">
+            <input asp-for="Note" class="form-control auto-submit"/>
+        </th>
+        <th scope="col">
+            <select class="form-select auto-submit" asp-for="LikeChat" asp-items="new List<SelectListItem>(Model.Report.Instagrams.Select(instagram => new SelectListItem(instagram.LikeChat, instagram.LikeChat)))">
+                <option selected="selected" value="@String.Empty">Все</option>
+            </select>
+        </th>
+        <th scope="col">
+            <select class="form-select auto-submit" asp-for="Vip">
+                <option selected="selected" value="false">Все</option>
+                <option value="true">VIP</option>
+            </select>
+        </th>
+    </form>
+</tr>
+</thead>
+<tbody class="align-middle">
+@for (int i = 0; i < Model.MediaReports.Count; i++)
+{
+    <tr>
+    <th>
+        <input type="checkbox" class="form-check-input" name="selection[]" value="@Model.MediaReports[i].Id" data-username="@Model.MediaReports[i].Participant.Username" data-chat="@Model.MediaReports[i].Participant.Instagram.LikeChat">
+    </th>
+    <th scope="row">@(i + 1)</th>
+    <td class="child">
+        <a asp-controller="Participants" asp-action="Participant" asp-route-id="@Model.MediaReports[i].Participant.Id">@Model.MediaReports[i].Participant.Username</a>
+        @if (Model.MediaReports[i].UserPosts.Any())
+        {
+            <div>
+                <a class="text-decoration-none" data-bs-toggle="collapse" href="#userposts@(Model.MediaReports[i].Id)" role="button" aria-expanded="false">
+                    Публикации с тегом (@Model.MediaReports[i].UserPosts.Count)
+                </a>
+            </div>
+            <div class="collapse" id="userposts@(Model.MediaReports[i].Id)">
+                <div class="card card-body bg-transparent border-0">
+                    <div class="article2">
+                        @foreach (var publication in Model.MediaReports[i].UserPosts)
+                        {
+                            <div class="border border-warning rounded rounded-3 px-1">
+                                <a href="@publication.PublicationUrl" class="text-decoration-none text-center">
+                                    <img src="@Url.Action("GetImage", "Reports", new {url = publication.ImageUrl}, Context.Request.Scheme)" alt="Фото" width="25px" height="25px"/>
+                                    <span class="text-break">@TimeZoneInfo.ConvertTimeFromUtc(publication.CreationDate, timeZone).ToString("g", new CultureInfo("Ru"))</span>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </td>
+    <td class="main" style="max-width: 200px; font-size: 12px">
+        <div>
+            <a class="text-decoration-none" data-bs-toggle="collapse" href="#values@(Model.MediaReports[i].Id)" role="button" aria-expanded="false">
+                <span>Пройдено: @Model.MediaReports[i].Values.Count(publication => publication.Value)<br>Не пройдено: @Model.MediaReports[i].Values.Count(publication => !publication.Value)</span>
+            </a>
+        </div>
+        <div class="collapse" id="values@(Model.MediaReports[i].Id)">
+            <div class="card card-body bg-transparent border-0">
+                @foreach (var publication in Model.MediaReports[i].Values)
+                {
+                    <div class="border border-primary rounded rounded-3 px-1">
+                        <a href="@publication.PublicationUrl" class="text-decoration-none">
+                            <div>
+                                <img src="@Url.Action("GetImage", "Reports", new {url = publication.ImageUrl}, Context.Request.Scheme)" alt="Фото" width="25px" height="25px"/>
+                                @if (publication.Value)
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2 text-success" viewBox="0 0 16 16">
+                                        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x text-danger" viewBox="0 0 16 16">
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                }
+                            </div>
+                            <div>
+                                <div class="text-break">Опубликован: @TimeZoneInfo.ConvertTimeFromUtc(publication.CreationDate, timeZone).ToString("g", new CultureInfo("Ru"))</div>
+                                @if (publication.Value)
+                                {
+                                    <div class="text-break text-black">@publication.Comment</div>
+                                }
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </td>
+    <td class="main" style="max-width: 200px; font-size: 12px">
+        @if (Model.MediaReports[i].ChildReports.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+                    <thead class="align-middle">
+                    <tr>
+                        <th scope="col">Участник</th>
+                        <th scope="col">Публикации</th>
+                        <th scope="col">Проверка</th>
+                        <th scope="col">Заметка</th>
+                        <th scope="col">VIP</th>
+                    </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                    @foreach (var childReport in Model.MediaReports[i].ChildReports)
+                    {
+                        <tr>
+                            <td class="child">
+                                <a asp-controller="Participants" asp-action="Participant" asp-route-id="@childReport.Participant.Id">@childReport.Participant.Username</a>
+                                @if (childReport.UserPosts.Any())
+                                {
+                                    <div>
+                                        <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapse@(childReport.Id)" role="button" aria-expanded="false">
+                                            Публикации с тегом (@childReport.UserPosts.Count)
+                                        </a>
+                                    </div>
+                                    <div class="collapse" id="collapse@(childReport.Id)">
+                                        <div class="card card-body bg-transparent border-0">
+                                            <div class="article2">
+                                                @foreach (var publication in childReport.UserPosts)
+                                                {
+                                                    <div class="border border-warning rounded rounded-3 px-1">
+                                                        <a href="@publication.PublicationUrl" class="text-decoration-none text-center">
+                                                            <img src="@Url.Action("GetImage", "Reports", new {url = publication.ImageUrl}, Context.Request.Scheme)" alt="Фото" width="25px" height="25px"/>
+                                                            <span class="text-break">@TimeZoneInfo.ConvertTimeFromUtc(publication.CreationDate, timeZone).ToString("g", new CultureInfo("Ru"))</span>
+                                                        </a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </td>
+                            <td class="main">
+                                <div>
+                                    <a class="text-decoration-none" data-bs-toggle="collapse" href="#values@(childReport.Id)" role="button" aria-expanded="false">
+                                        <span>Пройдено: @childReport.Values.Count(publication => publication.Value)<br>Не пройдено: @childReport.Values.Count(publication => !publication.Value)</span>
+                                    </a>
+                                </div>
+                                <div class="collapse" id="values@(childReport.Id)">
+                                    <div class="card card-body bg-transparent border-0" style="font-size: 12px">
+                                        @foreach (var publication in childReport.Values)
+                                        {
+                                            <div class="border border-primary rounded rounded-3 px-1">
+                                                <a href="@publication.PublicationUrl" class="text-decoration-none">
+                                                    <div>
+                                                        <img src="@Url.Action("GetImage", "Reports", new {url = publication.ImageUrl}, Context.Request.Scheme)" alt="Фото" width="25px" height="25px"/>
+                                                        @if (publication.Value)
+                                                        {
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2 text-success" viewBox="0 0 16 16">
+                                                                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                                            </svg>
+                                                        }
+                                                        else
+                                                        {
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x text-danger" viewBox="0 0 16 16">
+                                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                                            </svg>
+                                                        }
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-break">Опубликован: @TimeZoneInfo.ConvertTimeFromUtc(publication.CreationDate, timeZone).ToString("g", new CultureInfo("Ru"))</div>
+                                                        @if (publication.Value)
+                                                        {
+                                                            <div class="text-break text-black">@publication.Comment</div>
+                                                        }
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="child">
+                                @if (childReport.Values.Any(publication => !publication.Value))
+                                {
+                                    <span class="badge bg-danger">Нет</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Да</span>
+                                }
+                            </td>
+                            <td class="child">
+                                <div style="max-width: 140px" class="text-break">@childReport.Participant.Note</div>
+                            </td>
+                            <td class="child">
+                                @if (childReport.Participant.Vip)
+                                {
+                                    <span class="badge bg-success">Да</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Нет</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </td>
+    <td class="child">
+        @if (Model.MediaReports[i].Values.Any(publication => !publication.Value))
+        {
+            <span class="badge bg-danger">Нет</span>
+        }
+        else
+        {
+            <span class="badge bg-success">Да</span>
+        }
+    </td>
+    <td class="child" style="max-width: 170px">
+        <div class="text-break">@Model.MediaReports[i].Participant.Note</div>
+    </td>
+    <td class="child">
+        <span class="badge bg-success">@Model.MediaReports[i].Participant.Instagram.LikeChat</span>
+    </td>
+    <td class="child">
+        @if (Model.MediaReports[i].Participant.Vip)
+        {
+            <span class="badge bg-success">Да</span>
+        }
+        else
+        {
+            <span class="badge bg-danger">Нет</span>
+        }
+    </td>
+    </tr>
+}
+</tbody>
+</table>
+</div>
+
+@section scripts {
+    <script src="~/js/autoSubmit.js"></script>
+    <script src="~/js/getUsernames.js"></script>
+
+}

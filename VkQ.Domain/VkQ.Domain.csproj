@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Reposts\CommentReport\Entities" />
+      <Folder Include="Reposts\CommentReport\Exceptions" />
+      <Folder Include="Reposts\CommentReport\ValueObjects" />
+      <Folder Include="Reposts\RepostReport\Entities" />
+      <Folder Include="Reposts\RepostReport\Exceptions" />
+      <Folder Include="Reposts\RepostReport\ValueObjects" />
+      <Folder Include="Reposts\TagInfoReport\Entities" />
+      <Folder Include="Reposts\TagInfoReport\Exceptions" />
+      <Folder Include="Reposts\TagInfoReport\ValueObjects" />
+      <Folder Include="Reposts\ThieveReport\Entities" />
+      <Folder Include="Reposts\ThieveReport\Exceptions" />
+      <Folder Include="Reposts\ThieveReport\ValueObjects" />
+    </ItemGroup>
+
+</Project>

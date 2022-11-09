@@ -1,0 +1,98 @@
+@using WebApplication.Data.Enums.Participants
+@model WebApplication.ViewModels.Participants.ParticipantsFromNicksViewModel
+
+@{
+    ViewData["Title"] = "Фильтр участников";
+}
+<div class="row pb-2">
+    <div class="col-lg-6">
+        <h3>Фильтр участников</h3>
+        <form asp-action="ParticipantsFromNicks" method="post" class="form-horizontal">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <input type="hidden" asp-for="@Model.Id">
+                        <label asp-for="Links"></label>
+                        <textarea asp-for="Links" class="form-control" placeholder="Ссылки на профиль или ники с новой строки"></textarea>
+                        <span asp-validation-for="Links" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <select class="form-select auto-submit" asp-for="Type" asp-items="Html.GetEnumSelectList<ParticipantFromNicks>()"></select>
+                    </div>
+                    <div class="col-12">
+                        <input class="btn shadow-none btn-outline-dark" type="submit" value="Показать">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Participants != null)
+{
+if (!Model.Participants.Any())
+{
+    <p>Записи не найдены.</p>
+}
+else
+{
+    <p>Всего @Model.Participants.Count запись.</p>
+}
+    <partial name="_GetUsernames"/>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+            <thead class="align-middle">
+            <tr>
+                <th scope="col">
+                    <input type="checkbox" class="form-check-input" name="selection_all" value="1">
+                </th>
+                <th scope="col">№</th>
+                <th scope="col">Логин</th>
+                <th scope="col">Заметка</th>
+                <th scope="col">VIP</th>
+            </tr>
+            </thead>
+            <tbody class="align-middle">
+            @for (int i = 0; i < Model.Participants.Count; i++)
+            {
+                var participant = Model.Participants[i];
+                <tr>
+                    <th>
+                        <input type="checkbox" class="form-check-input" name="selection[]" value="@Model.Participants[i].Id" data-username="@Model.Participants[i].Username" data-chat="@(Model.Participants[i].Instagram?.LikeChat ?? String.Empty)">
+                    </th>
+                    <th scope="row">@(i + 1)</th>
+                    <td>
+                        <a asp-action="Participant" asp-route-id="@participant.Id">@participant.Username</a>
+                    </td>
+                    <td style="max-width: 170px">
+                        <div class="text-break">@(participant?.Note ?? String.Empty)</div>
+                    </td>
+                    <td>
+                        @if (participant?.Vip ?? false)
+                        {
+                            <span class="badge bg-success">Да</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Нет</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <a id="back-to-top" href="#" class="back-to-top hidden-xs" role="button" data-toggle="tooltip" data-placement="left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+            <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z"/>
+        </svg>
+    </a>
+}
+
+@section scripts {
+    <script src="~/js/scrollUp.js"></script>
+    <script src="~/js/getUsernames.js"></script>
+}

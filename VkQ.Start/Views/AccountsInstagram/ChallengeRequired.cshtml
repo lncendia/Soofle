@@ -1,0 +1,32 @@
+﻿@model WebApplication.ViewModels.AccountsInstagram.ChallengeRequiredViewModel
+
+@{
+    ViewData["Title"] = "Подтверждение входа";
+}
+
+<div class="row">
+    <div class="col-lg-6">
+        <h3>Подтверждение входа</h3>
+        @if (!string.IsNullOrEmpty(Model.Contact))
+        {
+            <p>Введите код, отправленный на @Model.Contact</p>
+        }
+        <form asp-action="ChallengeRequired" method="post" class="form-horizontal">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label asp-for="Code"></label>
+                        <input asp-for="Code" class="form-control"/>
+                        <span asp-validation-for="Code" class="text-danger"></span>
+                        <input asp-for="Id" type="hidden" class="form-control"/>
+                        <input asp-for="Contact" type="hidden" class="form-control"/>
+                    </div>
+                    <div class="col-12">
+                        <input class="btn shadow-none btn-outline-dark" type="submit" value="Отправить">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

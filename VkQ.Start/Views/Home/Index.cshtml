@@ -1,0 +1,19 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WebApplication.Models
+@inject SignInManager<User> _signInManager
+@{
+    ViewData["Title"] = "Главная страница";
+}
+
+<div class="text-center">
+    @{
+        if (!_signInManager.IsSignedIn(User))
+        {
+            <h1 class="display-4">Привет</h1>
+        }
+        else
+        {
+            <h1 class="display-4">Привет, @User.Identity?.Name</h1>
+        }
+    }
+</div>

@@ -1,0 +1,136 @@
+﻿@using System.Globalization
+@using WebApplication.Data.Services
+@model WebApplication.ViewModels.Payment.MyPaymentsViewModel
+@inject TimeService _timeService
+@{
+    var timeZone = await _timeService.GetTimeZoneInfo(User);
+    ViewData["title"] = "Оплата подписки";
+}
+
+<h3>Оплата подписки</h3>
+<div class="row pb-5">
+    <div class="col-sm-6">
+        @if (Model.User.EndOfSubscribe.HasValue && Model.User.EndOfSubscribe > DateTime.UtcNow && Model.User.Rate != null)
+        {
+            <p>Ваша подписка действует до @TimeZoneInfo.ConvertTimeFromUtc(Model.User.EndOfSubscribe.Value, timeZone).ToString("f", new CultureInfo("Ru"))</p>
+            <p>Вам доступно до @Model.User.Rate.CountPosts публикаций</p>
+        }
+        <div class="card">
+            <div class="card-header">
+                Оплата подписки
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Выберите тариф</h5>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Тарифы
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var rate in Model.Rates)
+                        {
+                            <li>
+                                <a class="dropdown-item" asp-action="CreatePayment" asp-route-id="@rate.Id">@rate.CountPosts.ToString("D") публикаций (@rate.Amount.ToString("C", new CultureInfo("Ru")))</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                Доступные способы оплаты: Visa, MasterCard, Мир, Qiwi
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3>История платежей</h3>
+
+@if (Model.Count != 0)
+{
+    int count = (Model.Page - 1) * 30;
+    int limit = count + 30;
+    <p>Показаны @(count + 1) - @(limit > Model.Count ? Model.Count : limit) из @Model.Count записей.</p>
+}
+else
+{
+    <p>Записи не найдены.</p>
+}
+
+<div class="table-responsive">
+    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+        <thead class="align-middle">
+        <tr>
+            <th scope="col">№</th>
+            <th scope="col">Дата создания</th>
+            <th scope="col">Сумма</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Ссылка</th>
+            <th scope="col">Дата оплаты</th>
+        </tr>
+        </thead>
+        <tbody class="align-middle">
+        @for (int i = 0; i < Model.Payments.Count; i++)
+        {
+            var payment = Model.Payments[i];
+            <tr>
+                <th scope="row">@(i + 1)</th>
+                <td class="main">@TimeZoneInfo.ConvertTimeFromUtc(payment.CreationDate, timeZone).ToString("f", new CultureInfo("Ru"))</td>
+                <td class="child">@payment.Rate?.Amount.ToString("C", new CultureInfo("Ru"))</td>
+                @if (payment.Success)
+                {
+                    <td>
+                        <span class="badge bg-success">Оплачено</span>
+                    </td>
+                    <td>-</td>
+                    <td>@TimeZoneInfo.ConvertTimeFromUtc(payment.PaymentDate, timeZone).ToString("f", new CultureInfo("Ru"))</td>
+                }
+                else
+                {
+                    <td>
+                        <a class="badge bg-danger action2" asp-action="CheckPayment" asp-route-id="@payment.Id">Проверить оплату</a>
+                    </td>
+                    <td>
+                        <a class="action" href="@payment.PayUrl">Перейти</a>
+                    </td>
+                    <td>-</td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<nav>
+    <ul class="pagination">
+        @if (Model.Page != 1)
+        {
+            if (Model.Page > 2)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="MyPayments" asp-route-page="1">1</a>
+                </li>
+            }
+            <li class="page-item">
+                <a class="page-link" asp-action="MyPayments" asp-route-page="@(Model.Page - 1)" aria-label="Предыдущая">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" asp-action="MyPayments" asp-route-page="@(Model.Page - 1)">@(Model.Page - 1)</a>
+            </li>
+        }
+        <li class="page-item active">
+            <a class="page-link disabled" asp-action="MyPayments" asp-route-page="@Model.Page">@Model.Page</a>
+        </li>
+        @if (Model.Page * 30 < Model.Count)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="MyPayments" asp-route-page="@(Model.Page + 1)">@(Model.Page + 1)</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" asp-action="MyPayments" asp-route-page="@(Model.Page + 1)" aria-label="Следующая">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

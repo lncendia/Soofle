@@ -1,0 +1,36 @@
+﻿@using WebApplication.Data.Enums.AccountsInstagram
+@model WebApplication.ViewModels.AccountsInstagram.SelectMethodChallengeRequiredViewModel
+@{
+    ViewData["Title"] = "Подтверждение входа";
+}
+<div class="row">
+    <div class="col-lg-6">
+        <h3>Выбор способа подтверждения входа</h3>
+        <form asp-action="SelectMethodChallengeRequired" method="post" class="form-horizontal">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label asp-for="Type"></label>
+                    <div class="form-check">
+                        <input asp-for="Type" class="form-check-input" type="radio" value="@ChallengeType.Mail" id="flexRadio1">
+                        <label class="form-check-label" for="flexRadio1">
+                            Отправить код на почту
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="Type" class="form-check-input" type="radio" value="@ChallengeType.Sms" id="flexRadio2">
+                        <label class="form-check-label" for="flexRadio2">
+                            Отправить код по SMS
+                        </label>
+                    </div>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <div class="text-center">
+                        <input class="btn shadow-none btn-outline-dark" type="submit" value="Отправить">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

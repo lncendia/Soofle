@@ -1,0 +1,39 @@
+﻿@using WebApplication.Data.Enums.Reports
+@model WebApplication.ViewModels.Reports.StartThievesOrTagInfoReportViewModel
+@{
+    ViewData["title"] = "Анализ тега";
+}
+<div class="row">
+    <div class="col-lg-6">
+        <h3>Анализ тега</h3>
+        <form asp-action="StartTagInfoReport" method="post" class="form-horizontal">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <input type="hidden" asp-for="Id">
+                        <label asp-for="Tag"></label>
+                        <input asp-for="Tag" class="form-control"/>
+                        <span asp-validation-for="Tag" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Publications"></label>
+                        <select class="form-select form-select-sm" asp-for="Publications" asp-items="Html.GetEnumSelectList<Publications>()"></select>
+                        <span asp-validation-for="Publications" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check form-switch">
+                            <input asp-for="CheckAfterStart" class="form-check-input" type="checkbox" checked>
+                            <label asp-for="CheckAfterStart"></label>
+                            <span asp-validation-for="CheckAfterStart" class="text-danger"></span>
+                        </div>
+                        <p class="hint-block">После создания отчёта будет автоматически запускаться проверка постов (12 раз с интервалом в 1 час).</p>
+                    </div>
+                    <div class="col-12">
+                        <input class="btn shadow-none btn-outline-dark" type="submit" value="Создать">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

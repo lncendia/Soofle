@@ -1,0 +1,46 @@
+﻿<button id="usernameButton" class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop">Получить ники</button>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
+    <div class="offcanvas-header">
+        <h5 id="offcanvasTopLabel">Генерация ников</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="row g-3">
+            <div class="col-12">
+                <form class="form-horizontal" id="usernameForm">
+                    <div class="form-group">
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="separation" value="space" id="flexRadioDefault1">
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                        Через пробел
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="separation" value="newLine" id="flexRadioDefault2" checked>
+                                    <label class="form-check-label" for="flexRadioDefault2">
+                                        С новой строки
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="addAt" id="addAt" checked>
+                                    <label class="form-check-label" for="addAt">Добавить "@@"</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="addChat" id="addChat" checked>
+                                    <label class="form-check-label" for="addChat">Добавить чат активности</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12">
+                <textarea rows="10" id="usernames" class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
