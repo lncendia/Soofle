@@ -1,4 +1,5 @@
 using VkQ.Domain.Ordering.Abstractions;
+using VkQ.Domain.Proxies.Entities;
 
 namespace VkQ.Domain.Ordering;
 

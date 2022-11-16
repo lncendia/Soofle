@@ -4,14 +4,14 @@ namespace VkQ.Domain.Users.Entities;
 
 public class Vk
 {
-    public Vk(string username, string password)
+    public Vk(int id, string username, string password)
     {
-        Id = Guid.NewGuid();
+        Id = id;
         Username = username;
         Password = password;
     }
 
-    public Guid Id { get; }
+    public int Id { get; }
     
     public string Username { get; }
     public string Password { get; }

@@ -2,34 +2,32 @@ using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using VkNet.Model;
 using VkNet.Utils.AntiCaptcha;
+using VkQ.Domain.Abstractions.DTOs;
 using VkQ.Infrastructure.Publications.AntiCaptcha;
 
 namespace VkQ.Infrastructure.Publications;
 
 public static class VkApi
 {
-    public static VkNet.VkApi BuildApi(string accessToken, ProxyDto? proxy,
-        VkQ.Infrastructure.AntiCaptcha.Interfaces.ICaptchaSolver captchaSolver)
+    public static async Task<VkNet.VkApi> BuildApiAsync(RequestInfo info, Domain.Abstractions.Services.ICaptchaSolver captchaSolver)
     {
         var services = new ServiceCollection();
-        services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(antiCaptcha));
-        services.AddAudioBypass();
-        if (proxy != null)
-            services.AddSingleton(_ => GetHttpClientWithProxy(proxy));
+        services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(captchaSolver));
+        services.AddSingleton(_ => GetHttpClientWithProxy(info));
 
         var api = new VkNet.VkApi(services);
-        api.Authorize(new ApiAuthParams {AccessToken = accessToken});
+        await api.AuthorizeAsync(new ApiAuthParams { AccessToken = info.Token });
         return api;
     }
 
-    private static HttpClient GetHttpClientWithProxy(Proxy proxy)
+    private static HttpClient GetHttpClientWithProxy(RequestInfo info)
     {
         var httpClientHandler = new HttpClientHandler
         {
-            Proxy = new WebProxy(proxy.Host, proxy.Port)
+            Proxy = new WebProxy(info.Host, info.Port)
             {
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(proxy.Login, proxy.Password)
+                Credentials = new NetworkCredential(info.Login, info.Password)
             }
         };
         return new HttpClient(httpClientHandler);

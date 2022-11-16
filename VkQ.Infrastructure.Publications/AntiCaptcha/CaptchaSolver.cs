@@ -5,9 +5,9 @@ namespace VkQ.Infrastructure.Publications.AntiCaptcha;
 public class CaptchaSolver : ICaptchaSolver
 {
     private long _id;
-    private readonly Infrastructure.AntiCaptcha.Interfaces.ICaptchaSolver _solver;
+    private readonly Domain.Abstractions.Services.ICaptchaSolver _solver;
 
-    public CaptchaSolver(Infrastructure.AntiCaptcha.Interfaces.ICaptchaSolver solver)
+    public CaptchaSolver(Domain.Abstractions.Services.ICaptchaSolver solver)
     {
         _solver = solver;
     }

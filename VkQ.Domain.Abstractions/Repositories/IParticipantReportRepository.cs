@@ -1,5 +1,7 @@
 ﻿using VkQ.Domain.Abstractions.Interfaces;
-using VkQ.Domain.Reposts.ParticipantReport;
+using VkQ.Domain.Reposts.ParticipantReport.Entities;
+using VkQ.Domain.Reposts.ParticipantReport.Ordering.Visitor;
+using VkQ.Domain.Reposts.ParticipantReport.Specification.Visitor;
 
 namespace VkQ.Domain.Abstractions.Repositories;
 

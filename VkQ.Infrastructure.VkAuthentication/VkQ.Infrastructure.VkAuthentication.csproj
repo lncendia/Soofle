@@ -6,4 +6,18 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\VkQ.Application.Abstractions\VkQ.Application.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="VkNet" Version="1.72.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="VkNet.AudioBypassService">
+        <HintPath>..\VkNet.AudioBypassService.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

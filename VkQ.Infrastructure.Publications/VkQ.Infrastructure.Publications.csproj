@@ -11,8 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\VkQ.Application.Abstractions\VkQ.Application.Abstractions.csproj" />
-      <ProjectReference Include="..\VkQ.Infrastructure.AntiCaptcha\VkQ.Infrastructure.AntiCaptcha.csproj" />
+      <ProjectReference Include="..\VkQ.Domain.Abstractions\VkQ.Domain.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>

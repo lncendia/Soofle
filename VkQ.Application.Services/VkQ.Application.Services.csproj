@@ -10,9 +10,4 @@
       <ProjectReference Include="..\VkQ.Application.Abstractions\VkQ.Application.Abstractions.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-      <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="7.0.0" />
-    </ItemGroup>
-
 </Project>

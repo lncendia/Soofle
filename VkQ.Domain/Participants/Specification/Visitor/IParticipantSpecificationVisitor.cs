@@ -5,4 +5,5 @@ namespace VkQ.Domain.Participants.Specification.Visitor;
 
 public interface IParticipantSpecificationVisitor : ISpecificationVisitor<IParticipantSpecificationVisitor, Participant>
 {
+    void Visit(ParticipantsByUserIdSpecification specification);
 }

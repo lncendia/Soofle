@@ -10,4 +10,8 @@
       <PackageReference Include="CaptchaSharp" Version="1.0.10" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\VkQ.Domain.Abstractions\VkQ.Domain.Abstractions.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -1,10 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using VkQ.Application.Abstractions.DTO.Users;
+using VkQ.Application.Abstractions.Entities;
 using VkQ.Application.Abstractions.Exceptions.UsersAuthentication;
 using VkQ.Application.Abstractions.Interfaces.UsersAuthentication;
-using VkQ.Application.Services.Services.Authentication.Entities;
-using VkQ.Domain.Abstractions.Interfaces;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Users.Entities;
 
@@ -16,7 +15,8 @@ public class UserAuthenticationService : IUserAuthenticationService
     private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UserAuthenticationService(UserManager<UserData> userManager, IEmailService emailService, IUnitOfWork unitOfWork)
+    public UserAuthenticationService(UserManager<UserData> userManager, IEmailService emailService,
+        IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _emailService = emailService;
@@ -28,14 +28,14 @@ public class UserAuthenticationService : IUserAuthenticationService
         var user = await _userManager.FindByEmailAsync(userDto.Email);
         if (user != null) throw new UserAlreadyExistException();
         var userDomain = new User(userDto.Username, userDto.Email);
-        user = new UserData(userDto.Email);
+        user = new UserData(userDto.Email, userDto.Username);
         var result = await _userManager.CreateAsync(user, userDto.Password);
         if (result.Errors.Any()) throw new UserCreationException(result.Errors.First().Description);
         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var url = confirmUrl + $"?email={Uri.EscapeDataString(user.Email)}&code={Uri.EscapeDataString(code)}";
+        var url = confirmUrl + $"?email={Uri.EscapeDataString(user.Email!)}&code={Uri.EscapeDataString(code)}";
         try
         {
-            await _emailService.SendEmailAsync(user.Email,
+            await _emailService.SendEmailAsync(user.Email!,
                 $"Подтвердите регистрацию, перейдя по <a href=\"{url}\">ссылке</a>.");
             await AddAsync(userDomain);
         }
@@ -46,9 +46,9 @@ public class UserAuthenticationService : IUserAuthenticationService
         }
     }
 
-    public async Task ExternalLoginAsync(ExternalLoginInfo info)
+    public async Task<UserData> ExternalLoginAsync(ExternalLoginInfo info)
     {
-        var user = await _userManager.FindByEmailAsync(info.Principal.FindFirstValue(ClaimTypes.Email));
+        var user = await _userManager.FindByEmailAsync(info.Principal.FindFirstValue(ClaimTypes.Email)!);
         if (user != null)
         {
             var logins = await _userManager.GetLoginsAsync(user);
@@ -57,11 +57,11 @@ public class UserAuthenticationService : IUserAuthenticationService
         }
         else
         {
-            user = new UserData(info.Principal.FindFirstValue(ClaimTypes.Email));
-            var userDomain =
-                new User(
-                    info.Principal.FindFirstValue(ClaimTypes.GivenName) + ' ' +
-                    info.Principal.FindFirstValue(ClaimTypes.Surname), user.Email);
+            user = new UserData(info.Principal.FindFirstValue(ClaimTypes.Email)!,
+                info.Principal.FindFirstValue(ClaimTypes.GivenName) + ' ' +
+                info.Principal.FindFirstValue(ClaimTypes.Surname));
+            
+            var userDomain = new User(user.UserName!, user.Email!);
 
             var result = await _userManager.CreateAsync(user);
             if (result.Errors.Any()) throw new UserCreationException(result.Errors.First().Description);
@@ -75,7 +75,7 @@ public class UserAuthenticationService : IUserAuthenticationService
         return user;
     }
 
-    public async Task AcceptCodeAsync(string email, string code)
+    public async Task<UserData> AcceptCodeAsync(string email, string code)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null) throw new UserNotFoundException();
@@ -110,7 +110,7 @@ public class UserAuthenticationService : IUserAuthenticationService
         if (!result.Succeeded) throw new InvalidCodeException();
     }
 
-    public async Task AuthenticateAsync(string username, string password)
+    public async Task<UserData> AuthenticateAsync(string username, string password)
     {
         var user = await _userManager.FindByEmailAsync(username);
         if (user == null) throw new UserNotFoundException();
@@ -122,6 +122,6 @@ public class UserAuthenticationService : IUserAuthenticationService
     private async Task AddAsync(User user)
     {
         await _unitOfWork.UserRepository.Value.AddAsync(user);
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveChangesAsync();
     }
 }

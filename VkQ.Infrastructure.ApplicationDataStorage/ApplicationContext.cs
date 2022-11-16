@@ -1,17 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using VkQ.Application.Abstractions.Entities;
 
 namespace VkQ.Infrastructure.ApplicationDataStorage;
 
-public class ApplicationContext<TU, TR> : IdentityDbContext<TU, TR, string>
-    where TU : IdentityUser where TR : IdentityRole
+public class ApplicationContext : IdentityDbContext
 {
-    public ApplicationContext(DbContextOptions<ApplicationContext<TU, TR>> options)
+    public ApplicationContext(DbContextOptions<ApplicationContext> options)
         : base(options)
     {
     }
 
-    public DbSet<TU>? ApplicationUsers { get; set; } = null!;
-    public DbSet<TR>? ApplicationRoles { get; set; } = null!;
+    public DbSet<UserData>? ApplicationUsers { get; set; } = null!;
+    public DbSet<RoleData>? ApplicationRoles { get; set; } = null!;
 }

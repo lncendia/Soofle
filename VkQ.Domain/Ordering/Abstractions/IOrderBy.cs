@@ -1,3 +1,5 @@
+using VkQ.Domain.Proxies.Entities;
+
 namespace VkQ.Domain.Ordering.Abstractions;
 
 public interface IOrderBy<T, in TVisitor> where TVisitor : ISortingVisitor<TVisitor, T>

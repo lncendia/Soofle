@@ -2,12 +2,14 @@
 
 public class CommentsDto
 {
-    public CommentsDto(long publicationId, List<CommentDto> comments)
+    public CommentsDto(long ownerId, long publicationId, List<CommentDto> comments)
     {
         PublicationId = publicationId;
         Comments = comments;
+        OwnerId = ownerId;
     }
 
+    public long OwnerId { get; }
     public long PublicationId { get; }
     public List<CommentDto> Comments { get; }
 }

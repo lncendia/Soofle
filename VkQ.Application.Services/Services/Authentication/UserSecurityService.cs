@@ -2,8 +2,6 @@
 using VkQ.Application.Abstractions.Entities;
 using VkQ.Application.Abstractions.Exceptions.UsersAuthentication;
 using VkQ.Application.Abstractions.Interfaces.UsersAuthentication;
-using VkQ.Application.Services.Services.Authentication.Entities;
-using VkQ.Domain.Abstractions.Interfaces;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Users.Specification;
 
@@ -53,7 +51,7 @@ public class UserSecurityService : IUserSecurityService
         if (userDomain == null) throw new UserNotFoundException();
         userDomain.Email = newEmail;
         await _unitOfWork.UserRepository.Value.UpdateAsync(userDomain);
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task ChangePasswordAsync(string email, string oldPassword, string newPassword)

@@ -1,83 +1,81 @@
 using System.Net;
-using LikeBotVK.Domain.Proxies.Entities;
-using LikeBotVK.Domain.VK.Entities;
-using LikeBotVK.Infrastructure.VkAuthentication.AntiCaptcha;
 using LikeBotVK.Infrastructure.VkAuthentication.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Model;
 using VkNet.Utils.AntiCaptcha;
+using VkQ.Application.Abstractions.DTO.Users;
+using VkQ.Infrastructure.VkAuthentication.AntiCaptcha;
 
-namespace LikeBotVK.Infrastructure.VkAuthentication;
+namespace VkQ.Infrastructure.VkAuthentication;
 
-public class VkApi
+public static class VkApi
 {
-    private readonly string _antiCaptchaToken;
-
-    public VkApi(string antiCaptchaToken)
-    {
-        _antiCaptchaToken = antiCaptchaToken;
-    }
-
-    public VkNet.VkApi BuildApi(string accessToken, Proxy? proxy)
+    private static VkNet.VkApi BuildLoginApi(VkLoginDto info, VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
     {
         var services = new ServiceCollection();
         services.AddAudioBypass();
-        services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(_antiCaptchaToken));
-        if (proxy != null)
-            services.AddSingleton(_ => GetHttpClientWithProxy(proxy));
-
+        services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(solver));
+        services.AddSingleton(_ => GetHttpClientWithProxy(info.Proxy));
         var api = new VkNet.VkApi(services);
-        api.Authorize(new ApiAuthParams {AccessToken = accessToken});
         return api;
     }
 
-    private static HttpClient GetHttpClientWithProxy(Proxy proxy)
+    private static async Task<VkNet.VkApi> BuildTokenApiAsync(VkLogoutDto info, VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
+    {
+        var services = new ServiceCollection();
+        services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(solver));
+        services.AddSingleton(_ => GetHttpClientWithProxy(info.Proxy));
+
+        var api = new VkNet.VkApi(services);
+        await api.AuthorizeAsync(new ApiAuthParams { AccessToken = info.Token });
+        return api;
+    }
+
+    private static HttpClient GetHttpClientWithProxy(ProxyDto proxy)
     {
         var httpClientHandler = new HttpClientHandler
         {
-            Proxy = new WebProxy(proxy.Host, proxy.Port)
+            Proxy = new WebProxy(proxy.ProxyHost, proxy.ProxyPort)
             {
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(proxy.Login, proxy.Password)
+                Credentials = new NetworkCredential(proxy.ProxyLogin, proxy.ProxyPassword)
             }
         };
         return new HttpClient(httpClientHandler);
     }
 
-    public async Task Activate(Vk vk, Proxy? proxy)
+    public static async Task<string> ActivateAsync(VkLoginDto info,
+        VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
     {
-        var services = new ServiceCollection();
-        services.AddAudioBypass();
-        services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(_antiCaptchaToken));
-        if (proxy != null)
-            services.AddSingleton(_ => GetHttpClientWithProxy(proxy));
-        var api = new VkNet.VkApi(services);
+        var api = BuildLoginApi(info, solver);
 
         await api.AuthorizeAsync(new ApiAuthParams
         {
-            Login = vk.Username,
-            Password = vk.Password,
+            Login = info.Login,
+            Password = info.Password,
             TwoFactorAuthorization = () => throw new TwoFactorRequiredException()
         });
-        vk.AccessToken = api.Token;
+        return api.Token;
     }
 
-    public async Task ActivateWithTwoFactor(Vk vk, Proxy? proxy, string code)
+    public static async Task DeactivateAsync(VkLogoutDto info, VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
     {
-        var services = new ServiceCollection();
-        services.AddAudioBypass();
-        services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(_antiCaptchaToken));
-        if (proxy != null)
-            services.AddSingleton(_ => GetHttpClientWithProxy(proxy));
-        var api = new VkNet.VkApi(services);
+        var api = await BuildTokenApiAsync(info, solver);
+        await api.LogOutAsync();
+    }
+
+    public static async Task<string> ActivateWithTwoFactorAsync(VkLoginDto info, string code,
+        VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
+    {
+        var api = BuildLoginApi(info, solver);
 
         await api.AuthorizeAsync(new ApiAuthParams
         {
-            Login = vk.Username,
-            Password = vk.Password,
+            Login = info.Login,
+            Password = info.Password,
             TwoFactorAuthorization = () => code
         });
-        vk.AccessToken = api.Token;
+        return api.Token;
     }
 }

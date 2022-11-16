@@ -1,8 +1,7 @@
 ﻿using VkQ.Domain.Abstractions.Interfaces;
-using VkQ.Domain.Proxies.Entities;
-using VkQ.Domain.Proxies.Ordering.Visitor;
-using VkQ.Domain.Proxies.Specification.Visitor;
-using VkQ.Domain.Reposts.LikeReport;
+using VkQ.Domain.Reposts.LikeReport.Entities;
+using VkQ.Domain.Reposts.LikeReport.Ordering.Visitor;
+using VkQ.Domain.Reposts.LikeReport.Specification.Visitor;
 
 namespace VkQ.Domain.Abstractions.Repositories;
 

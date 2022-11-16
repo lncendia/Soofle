@@ -5,6 +5,7 @@ namespace VkQ.Domain.Abstractions.UnitOfWorks;
 public interface IUnitOfWork
 {
     Lazy<IUserRepository> UserRepository { get; }
+    Lazy<IProxyRepository> ProxyRepository { get; }
     Lazy<IParticipantRepository> ParticipantRepository { get; }
     Lazy<IReportLogRepository> ReportLogRepository { get; }
     Lazy<ILikeReportRepository> LikeReportRepository { get; }

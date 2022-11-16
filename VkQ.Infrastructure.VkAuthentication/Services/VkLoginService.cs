@@ -1,63 +1,58 @@
-using LikeBotVK.Application.Abstractions.Enums;
-using LikeBotVK.Application.Abstractions.Services.BotServices;
-using LikeBotVK.Domain.Abstractions.Repositories;
-using LikeBotVK.Domain.VK.Entities;
-using LikeBotVK.Infrastructure.VkAuthentication.Exceptions;
 using VkNet.AudioBypassService.Exceptions;
+using VkQ.Application.Abstractions.DTO.Users;
+using VkQ.Application.Abstractions.Exceptions.VkAuthentication;
+using VkQ.Application.Abstractions.Interfaces.VkAuthentication;
+using VkQ.Domain.Abstractions.Services;
 
-namespace LikeBotVK.Infrastructure.VkAuthentication.Services;
+namespace VkQ.Infrastructure.VkAuthentication.Services;
 
 public class VkLoginService : IVkLoginService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly VkApi _api;
+    private readonly ICaptchaSolver _solver;
 
-    public VkLoginService(IUnitOfWork unitOfWork, string antiCaptchaToken)
-    {
-        _unitOfWork = unitOfWork;
-        _api = new VkApi(antiCaptchaToken);
-    }
+    public VkLoginService(ICaptchaSolver solver) => _solver = solver;
 
-    public async Task<LoginResult> ActivateAsync(Vk vk)
+    public async Task<string> ActivateAsync(VkLoginDto info)
     {
-        var proxy = vk.ProxyId.HasValue ? await _unitOfWork.ProxyRepository.Value.GetAsync(vk.ProxyId.Value) : null;
         try
         {
-            await _api.Activate(vk, proxy);
-            return LoginResult.Succeeded;
+            return await VkApi.ActivateAsync(info, _solver);
         }
         catch (VkAuthException)
         {
-            return LoginResult.BadData;
+            throw new InvalidCredentialsException();
         }
-        catch (TwoFactorRequiredException)
+        catch (Exception ex) when (ex is not TwoFactorRequiredException)
         {
-            return LoginResult.TwoFactorRequired;
+            throw new ErrorActiveVkException(ex.Message, ex);
         }
     }
 
-    public async Task DeactivateAsync(Vk vk)
+    public async Task DeactivateAsync(VkLogoutDto info)
     {
-        var proxy = vk.ProxyId.HasValue ? await _unitOfWork.ProxyRepository.Value.GetAsync(vk.ProxyId.Value) : null;
-        if (!string.IsNullOrEmpty(vk.AccessToken))
-            await _api.BuildApi(vk.AccessToken, proxy).LogOutAsync();
-    }
-
-    public async Task<LoginResult> EnterTwoFactorAsync(Vk vk, string code)
-    {
-        var proxy = vk.ProxyId.HasValue ? await _unitOfWork.ProxyRepository.Value.GetAsync(vk.ProxyId.Value) : null;
         try
         {
-            await _api.ActivateWithTwoFactor(vk, proxy, code);
-            return LoginResult.Succeeded;
+            await VkApi.DeactivateAsync(info, _solver);
+        }
+        catch (Exception ex)
+        {
+            throw new ErrorActiveVkException(ex.Message, ex);
+        }
+    }
+
+    public async Task<string> ActivateTwoFactorAsync(VkLoginDto info, string code)
+    {
+        try
+        {
+            return await VkApi.ActivateWithTwoFactorAsync(info, code, _solver);
         }
         catch (VkAuthException)
         {
-            return LoginResult.BadData;
+            throw new InvalidCredentialsException();
         }
-        catch (TwoFactorRequiredException)
+        catch (Exception ex)
         {
-            return LoginResult.TwoFactorRequired;
+            throw new ErrorActiveVkException(ex.Message, ex);
         }
     }
 }

@@ -5,4 +5,5 @@ namespace VkQ.Domain.Proxies.Ordering.Visitor;
 
 public interface IProxySortingVisitor : ISortingVisitor<IProxySortingVisitor, Proxy>
 {
+    void Visit(ProxyByRandomOrder order);
 }

@@ -2,7 +2,7 @@ using CaptchaSharp;
 using CaptchaSharp.Enums;
 using CaptchaSharp.Models;
 using CaptchaSharp.Services;
-using VkQ.Infrastructure.AntiCaptcha.Interfaces;
+using VkQ.Domain.Abstractions.Services;
 
 namespace VkQ.Infrastructure.AntiCaptcha.AntiCaptcha;
 
@@ -29,5 +29,5 @@ public class CaptchaSolver : ICaptchaSolver
         return (captcha.Id, captcha.Response);
     }
 
-    public Task CaptchaIsFalseAsync(long id) => _service.ReportSolution(id, CaptchaType.ImageCaptcha, false);
+    public Task CaptchaIsFalseAsync(long id) => _service.ReportSolution(id, CaptchaType.ImageCaptcha);
 }
