@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VkNet.AudioBypassService.Extensions;
 using VkNet.Model;
 using VkNet.Utils.AntiCaptcha;
+using VkQ.Application.Abstractions.DTO.Proxy;
 using VkQ.Application.Abstractions.DTO.Users;
 using VkQ.Infrastructure.VkAuthentication.AntiCaptcha;
 

@@ -1,4 +1,7 @@
-﻿namespace VkQ.WEB.ViewModels.Reports
+﻿using VkQ.Domain.Reposts.BaseReport.Entities.Base;
+using VkQ.Domain.Users.Entities;
+
+namespace VkQ.WEB.ViewModels.Reports
 {
     public class ReportsViewModel
     {

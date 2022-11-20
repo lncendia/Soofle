@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VkQ.Domain.Reposts.BaseReport.Entities.Base;
+using VkQ.Domain.Reposts.ParticipantReport.Entities;
 
 namespace VkQ.WEB.ViewModels.Reports
 {

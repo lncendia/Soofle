@@ -1,9 +1,4 @@
-@using System.Globalization
-@using WebApplication.Data.Services
-@model WebApplication.ViewModels.Users.UsersViewModel
-@inject TimeService _timeService
 @{
-    var timeZone = await _timeService.GetTimeZoneInfo(User);
     ViewBag.Title = "Список пользователей";
 }
 <div class="row">

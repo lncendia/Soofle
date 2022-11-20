@@ -28,7 +28,6 @@ public class LikeReportProcessorService : IReportProcessorService<LikeReport>
         if (report.IsCompleted) throw new ReportAlreadyCompletedException();
         
         var info = await RequestInfoBuilder.GetInfoAsync(report, _unitOfWork);
-        if (report.IsCompleted) throw new Exception();
         await ProcessPublicationsAsync(report, info, token);
         report.Finish();
         await _unitOfWork.LikeReportRepository.Value.UpdateAsync(report);

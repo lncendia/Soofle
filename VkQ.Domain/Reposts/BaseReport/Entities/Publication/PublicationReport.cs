@@ -14,6 +14,7 @@ public abstract class PublicationReport : Report
     {
         Hashtag = hashtag;
         SearchStartDate = searchStartDate;
+        if (coAuthors is { Count: > 3 }) throw new TooManyLinksException();
         LinkedUsers = coAuthors;
     }
 
@@ -35,6 +36,8 @@ public abstract class PublicationReport : Report
         PublicationsList = dtos.Select(dto => new Publication(id++, dto.ItemId, dto.OwnerId)).ToList();
     }
 
+    ///<exception cref="ReportAlreadyCompletedException">Report already completed</exception>
+    ///<exception cref="ElementsListEmptyException">elements collection is empty</exception>
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     protected void LoadElements(IEnumerable<PublicationReportElement> elements)
     {

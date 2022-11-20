@@ -5,4 +5,6 @@ namespace VkQ.Domain.ReportLogs.Specification.Visitor;
 
 public interface IReportLogSpecificationVisitor : ISpecificationVisitor<IReportLogSpecificationVisitor, ReportLog>
 {
+    void Visit(LogByCreationDateSpecification specification);
+    void Visit(LogByUserIdSpecification specification);
 }

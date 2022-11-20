@@ -1,9 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using WebApplication.Models
-@inject SignInManager<User> _signInManager
-@inject UserManager<User> _userManager
-
-<ul class="navbar-nav">
+﻿<ul class="navbar-nav">
     @if (_signInManager.IsSignedIn(User))
     {
         var user = await _userManager.GetUserAsync(User);

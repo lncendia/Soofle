@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VkQ.Domain.Users.Entities;
 
 namespace VkQ.WEB.ViewModels.Users
 {

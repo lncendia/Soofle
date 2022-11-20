@@ -1,3 +1,6 @@
+using VkQ.Domain.Ordering.Abstractions;
+using VkQ.Domain.Users.Entities;
+using VkQ.Domain.Users.Ordering.Visitor;
 using VkQ.Infrastructure.DataStorage.Visitors.Sorting.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Visitors.Sorting;

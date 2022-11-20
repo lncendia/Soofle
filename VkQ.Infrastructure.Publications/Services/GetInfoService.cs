@@ -26,6 +26,7 @@ public class GetInfoService : IPublicationInfoService
                 api.Likes.GetListAsync(new LikesGetListParams
                     { Type = LikeObjectType.Post, Count = 1000, ItemId = x.id, OwnerId = x.owner })).ToList();
             await Task.WhenAll(likes);
+            //UserAuthorizationFailException
             for (int j = 0; j < pubs.Count; j++)
             {
                 var like = likes[i].IsCompletedSuccessfully
@@ -34,7 +35,7 @@ public class GetInfoService : IPublicationInfoService
                 info.Add(like);
             }
 
-            await Task.Delay(1000, token);
+            await Task.Delay(500, token);
         }
 
         return info;
@@ -59,7 +60,7 @@ public class GetInfoService : IPublicationInfoService
                         : new List<CommentDto>()));
             }
 
-            await Task.Delay(1000, token);
+            await Task.Delay(500, token);
         }
 
         return info;
@@ -75,8 +76,6 @@ public class GetInfoService : IPublicationInfoService
             { PostId = id, OwnerId = ownerId, Count = 100, PreviewLength = 15, StartCommentId = startId });
         comments.AddRange(commentsInfo.Items);
         if (commentsInfo.Count <= comments.Count || !commentsInfo.Items.Any()) return comments;
-
-        await Task.Delay(500);
         await GetCommentsOfPostAsync(comments, api, id, ownerId, comments.Last().Id);
 
         return comments;

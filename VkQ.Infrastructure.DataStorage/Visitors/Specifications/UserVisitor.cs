@@ -1,4 +1,8 @@
 using System.Linq.Expressions;
+using VkQ.Domain.Specifications.Abstractions;
+using VkQ.Domain.Users.Entities;
+using VkQ.Domain.Users.Specification;
+using VkQ.Domain.Users.Specification.Visitor;
 
 namespace VkQ.Infrastructure.DataStorage.Visitors.Specifications;
 

@@ -6,6 +6,7 @@ using Overoom.WEB.Models.Account;
 using VkQ.Application.Abstractions.DTO.Users;
 using VkQ.Application.Abstractions.Exceptions.UsersAuthentication;
 using VkQ.Application.Abstractions.Interfaces.UsersAuthentication;
+using VkQ.Domain.Users.Exceptions;
 
 namespace VkQ.WEB.Controllers;
 

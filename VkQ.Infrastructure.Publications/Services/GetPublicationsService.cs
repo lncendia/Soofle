@@ -6,11 +6,11 @@ using VkQ.Domain.Abstractions.Services;
 
 namespace VkQ.Infrastructure.Publications.Services;
 
-public class GetPublicationService : IPublicationGetterService
+public class GetPublicationsService : IPublicationGetterService
 {
     private readonly ICaptchaSolver _solver;
 
-    public GetPublicationService(ICaptchaSolver solver) => _solver = solver;
+    public GetPublicationsService(ICaptchaSolver solver) => _solver = solver;
 
 
     private static async Task GetNewsAsync(IVkApiCategories api, List<NewsSearchItem> items, string query,
@@ -25,7 +25,7 @@ public class GetPublicationService : IPublicationGetterService
         if (!response.Items.Any()) return;
         items.AddRange(response.Items);
         if (string.IsNullOrEmpty(response.NextFrom)) return;
-        await Task.Delay(1000, token);
+        await Task.Delay(500, token);
         await GetNewsAsync(api, items, query, startTimeLocal, count, response.NextFrom, token);
     }
 

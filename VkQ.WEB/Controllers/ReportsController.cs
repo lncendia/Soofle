@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using VkQ.Domain.ReportLogs.Enums;
+using VkQ.Domain.Reposts.BaseReport.Entities.Base;
+using VkQ.Domain.Users.Entities;
 using VkQ.WEB.ViewModels.Reports;
 
 namespace VkQ.WEB.Controllers

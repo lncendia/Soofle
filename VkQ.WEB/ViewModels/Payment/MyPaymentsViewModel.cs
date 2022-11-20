@@ -1,4 +1,6 @@
-﻿namespace VkQ.WEB.ViewModels.Payment
+﻿using VkQ.Domain.Users.Entities;
+
+namespace VkQ.WEB.ViewModels.Payment
 {
     public class MyPaymentsViewModel
     {

@@ -1,4 +1,6 @@
-﻿namespace VkQ.Application.Abstractions.DTO.Users;
+﻿using VkQ.Application.Abstractions.DTO;
+
+namespace VkQ.Application.Abstractions.DTO.Users;
 
 public class VkLoginDto
 {

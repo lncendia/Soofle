@@ -6,7 +6,7 @@ using VkQ.Domain.Reposts.BaseReport.Entities.Base;
 
 namespace VkQ.Domain.Services.StaticMethods;
 
-public static class RequestInfoBuilder
+internal static class RequestInfoBuilder
 {
     public static async Task<RequestInfo> GetInfoAsync(Report report, IUnitOfWork unitOfWork)
     {

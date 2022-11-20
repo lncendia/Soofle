@@ -1,4 +1,6 @@
-﻿namespace VkQ.WEB.ViewModels.Settings
+﻿using VkQ.Domain.Users.Entities;
+
+namespace VkQ.WEB.ViewModels.Settings
 {
     public class CommunicationsViewModel
     {

@@ -1,13 +1,19 @@
-﻿using VkQ.Domain.Abstractions.DTOs;
-using VkQ.Domain.Abstractions.Exceptions;
+﻿using VkQ.Domain.Abstractions.Exceptions;
 using VkQ.Domain.Abstractions.Interfaces;
-using VkQ.Domain.Abstractions.Services;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Participants.Entities;
-using VkQ.Domain.Reposts.ParticipantReport;
+using VkQ.Domain.Participants.Specification;
+using VkQ.Domain.Participants.Specification.Visitor;
+using VkQ.Domain.Reposts.BaseReport.Exceptions.Base;
 using VkQ.Domain.Reposts.ParticipantReport.Entities;
+using VkQ.Domain.Services.StaticMethods;
+using VkQ.Domain.Specifications;
+using VkQ.Domain.Specifications.Abstractions;
+using VkQ.Domain.Users.Entities;
+using VkQ.Domain.Users.Specification;
+using VkQ.Domain.Users.Specification.Visitor;
 
-namespace VkQ.Domain.Services.Services;
+namespace VkQ.Domain.Services.Services.Processors;
 
 public class ParticipantReportProcessorService : IReportProcessorService<ParticipantReport>
 {
@@ -20,10 +26,31 @@ public class ParticipantReportProcessorService : IReportProcessorService<Partici
 
     public async Task ProcessReportAsync(ParticipantReport report, CancellationToken token)
     {
-        var user = await _unitOfWork.UserRepository.Value.GetAsync(report.UserId);
-        if (user?.Vk?.IsActive() ?? true) throw new VkIsNotActiveException();
-        if (!user.Vk.ProxyId.HasValue) throw new ProxyIsNotSetException();
-        var proxy = await _unitOfWork.ProxyRepository.Value.GetAsync(user.Vk.ProxyId.Value);
-        var publications = await _publicationGetterService.GetPublicationsAsync
+        if (!report.IsStarted) throw new ReportNotStartedException();
+        if (report.IsCompleted) throw new ReportAlreadyCompletedException();
+        var info = await RequestInfoBuilder.GetInfoAsync(report, _unitOfWork);
+        
+        report.Finish();
+        await _unitOfWork.LikeReportRepository.Value.UpdateAsync(report);
+        await _unitOfWork.SaveChangesAsync();
     }
+    
+    private async Task LoadParticipantsAsync(ParticipantReport report)
+    {
+        ISpecification<Participant, IParticipantSpecificationVisitor> participantSpec =
+            new ParticipantsByUserIdSpecification(report.UserId);
+        var participants = await _unitOfWork.ParticipantRepository.Value.FindAsync(participantSpec);
+
+        try
+        {
+            var participantsList = participants.Result.GroupBy(x => x.UserId)
+                .Select(x => (x.AsEnumerable(), chats.Result.First(y => y.Id == x.Key).Name)).ToList();
+            report.LoadElements(participantsList);
+        }
+        catch (InvalidOperationException)
+        {
+            throw new LinkedUserNotFoundException();
+        }
+    }
+    
 }
