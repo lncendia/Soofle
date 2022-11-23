@@ -6,13 +6,13 @@ namespace VkQ.Domain.Reposts.LikeReport.Entities;
 
 public class LikeReportElement : PublicationReportElement
 {
-    public LikeReportElement(int id, string name, string likeChatName, long vkId, Guid participantId, IEnumerable<LikeReportElement>? children) : base(
-        id, name, likeChatName, vkId, participantId, children?.Cast<PublicationReportElement>().ToList())
+    public LikeReportElement(string name, string likeChatName, long vkId, Guid participantId,
+        IEnumerable<LikeReportElement>? children) : base(name, likeChatName, vkId, participantId, children)
     {
     }
 
     public List<LikeInfo> Likes { get; } = new();
-    
+
     public void AddLike(LikeInfo like)
     {
         if (Likes.Any(x => x.PublicationId == like.PublicationId))

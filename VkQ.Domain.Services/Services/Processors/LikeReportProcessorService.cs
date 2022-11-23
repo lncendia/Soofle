@@ -3,7 +3,6 @@ using VkQ.Domain.Abstractions.Interfaces;
 using VkQ.Domain.Abstractions.Services;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Reposts.BaseReport.Exceptions.Base;
-using VkQ.Domain.Reposts.BaseReport.Exceptions.Publication;
 using VkQ.Domain.Reposts.LikeReport.Entities;
 using VkQ.Domain.Services.StaticMethods;
 using LikeDto = VkQ.Domain.Reposts.LikeReport.DTOs;
@@ -23,10 +22,9 @@ public class LikeReportProcessorService : IReportProcessorService<LikeReport>
 
     public async Task ProcessReportAsync(LikeReport report, CancellationToken token)
     {
-        if (!report.IsInitialized) throw new ReportNotInitializedException();
-        if (!report.IsStarted) throw new ReportNotStartedException();
-        if (report.IsCompleted) throw new ReportAlreadyCompletedException();
-        
+        if (!report.IsStarted) throw new ReportNotStartedException(report.Id);
+        if (report.IsCompleted) throw new ReportAlreadyCompletedException(report.Id);
+
         var info = await RequestInfoBuilder.GetInfoAsync(report, _unitOfWork);
         await ProcessPublicationsAsync(report, info, token);
         report.Finish();

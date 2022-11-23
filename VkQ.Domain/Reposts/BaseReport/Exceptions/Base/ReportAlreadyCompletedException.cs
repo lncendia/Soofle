@@ -2,7 +2,10 @@
 
 public class ReportAlreadyCompletedException : Exception
 {
-    public ReportAlreadyCompletedException() : base("Report already completed")
+    public ReportAlreadyCompletedException(Guid reportId) : base("Report already completed")
     {
+        ReportId = reportId;
     }
+    
+    public Guid ReportId { get; }
 }

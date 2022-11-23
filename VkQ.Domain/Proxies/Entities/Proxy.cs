@@ -3,7 +3,7 @@ using VkQ.Domain.Proxies.Exceptions;
 
 namespace VkQ.Domain.Proxies.Entities;
 
-public class Proxy
+public class Proxy : IAggregateRoot
 {
     public Proxy(string host, int port, string login, string password)
     {

@@ -2,17 +2,17 @@
 
 namespace VkQ.Domain.Users.Entities;
 
-public class Vk
+public class Vk : IEntity
 {
-    public Vk(int id, string username, string password)
+    public Vk(string username, string password)
     {
-        Id = id;
+        Id = Guid.NewGuid();
         Username = username;
         Password = password;
     }
 
-    public int Id { get; }
-    
+    public Guid Id { get; }
+
     public string Username { get; }
     public string Password { get; }
     public string? AccessToken { get; private set; }
@@ -20,7 +20,7 @@ public class Vk
     public Guid? ProxyId { get; private set; }
 
     public void SetProxy(Proxy proxy) => ProxyId = proxy.Id;
-    
+
     public void UpdateToken(string token) => AccessToken = token;
 
     public bool IsActive() => !string.IsNullOrEmpty(AccessToken);

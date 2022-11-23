@@ -2,7 +2,11 @@
 
 public class ParticipantRecordAlreadyExistException : Exception
 {
-    public ParticipantRecordAlreadyExistException() : base("Record for this participant already exist")
+    public ParticipantRecordAlreadyExistException(long vkId) : base(
+        "Record for this participant already exist")
     {
+        VkId = vkId;
     }
+
+    public long VkId { get; }
 }

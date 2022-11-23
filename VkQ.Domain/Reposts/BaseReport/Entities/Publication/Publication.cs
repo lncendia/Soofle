@@ -1,15 +1,15 @@
 ﻿namespace VkQ.Domain.Reposts.BaseReport.Entities.Publication;
 
-public class Publication
+public class Publication : IEntity
 {
-    public Publication(int id, long itemId, long ownerId)
+    public Publication(long itemId, long ownerId)
     {
-        Id = id;
+        Id = Guid.NewGuid();
         ItemId = itemId;
         OwnerId = ownerId;
     }
 
-    public int Id { get; }
+    public Guid Id { get; }
     public long ItemId { get; }
     public long OwnerId { get; }
 }

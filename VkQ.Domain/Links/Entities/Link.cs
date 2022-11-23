@@ -3,14 +3,14 @@ using VkQ.Domain.Users.Entities;
 
 namespace VkQ.Domain.Links.Entities;
 
-public class Link
+public class Link : IAggregateRoot
 {
-    public Link(User user1, User user2)
+    public Link(Guid user1Id, Guid user2Id)
     {
         Id = Guid.NewGuid();
-        if (user1.Id == user2.Id) throw new SameUsersException();
-        User1Id = user1.Id;
-        User2Id = user2.Id;
+        if (user1Id == user2Id) throw new SameUsersException();
+        User1Id = user1Id;
+        User2Id = user2Id;
     }
 
     public Guid Id { get; }

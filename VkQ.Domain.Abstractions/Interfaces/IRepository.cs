@@ -3,7 +3,7 @@ using VkQ.Domain.Specifications.Abstractions;
 
 namespace VkQ.Domain.Abstractions.Interfaces;
 
-public interface IRepository<T, out TX, out TM> where T : class
+public interface IRepository<T, out TX, out TM> where T : IAggregateRoot
     where TX : ISpecificationVisitor<TX, T>
     where TM : ISortingVisitor<TM, T>
 {
@@ -12,10 +12,8 @@ public interface IRepository<T, out TX, out TM> where T : class
     Task UpdateAsync(T entity);
     Task DeleteAsync(Guid id);
 
-
-    Task DeleteAsync(ISpecification<T, TX>? specification);
+    Task DeleteAsync(ISpecification<T, TX> specification);
     Task<int> CountAsync(ISpecification<T, TX>? specification);
-    Task<bool> AnyAsync(ISpecification<T, TX>? specification);
 
     Task<IList<T>> FindAsync(ISpecification<T, TX>? specification, IOrderBy<T, TM>? orderBy = null, int? skip = null,
         int? take = null);

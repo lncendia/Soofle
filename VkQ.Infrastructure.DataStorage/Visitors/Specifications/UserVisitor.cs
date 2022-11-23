@@ -3,6 +3,7 @@ using VkQ.Domain.Specifications.Abstractions;
 using VkQ.Domain.Users.Entities;
 using VkQ.Domain.Users.Specification;
 using VkQ.Domain.Users.Specification.Visitor;
+using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Visitors.Specifications;
 

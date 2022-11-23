@@ -1,10 +1,14 @@
 using System.Linq.Expressions;
+using VkQ.Domain;
 using VkQ.Domain.Specifications;
 using VkQ.Domain.Specifications.Abstractions;
+using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Visitors.Specifications;
 
 public abstract class BaseVisitor<TEntity, TVisitor, TItem> where TVisitor : ISpecificationVisitor<TVisitor, TItem>
+    where TEntity : IModel
+    where TItem : IAggregateRoot
 {
     public Expression<Func<TEntity, bool>>? Expr { get; protected set; }
 

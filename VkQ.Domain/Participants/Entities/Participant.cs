@@ -3,7 +3,7 @@ using VkQ.Domain.Participants.Exceptions;
 
 namespace VkQ.Domain.Participants.Entities;
 
-public class Participant
+public class Participant : IAggregateRoot
 {
     public Participant(Guid userId, string name, long vkId, ParticipantType type)
     {

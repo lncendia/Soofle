@@ -6,6 +6,7 @@ using VkNet.Model;
 using VkNet.Model.RequestParams;
 using VkNet.Utils;
 using VkQ.Domain.Abstractions.DTOs;
+using VkQ.Domain.Abstractions.Exceptions;
 using VkQ.Domain.Abstractions.Services;
 using VkQ.Domain.Participants.Enums;
 
@@ -78,9 +79,19 @@ public class GetParticipantsService : IParticipantsGetterService
     private static ParticipantDto GetParticipant(User user) =>
         new(user.Id, user.FirstName + ' ' + user.LastName, ParticipantType.User);
 
-    public Task<List<ParticipantDto>> GetParticipantsAsync(RequestInfo data, long id, CancellationToken token)
+    public async Task<List<ParticipantDto>> GetParticipantsAsync(RequestInfo data, long id, CancellationToken token)
     {
-        //VkApiMethodInvokeException 30
-        throw new NotImplementedException();
+        var api = await VkApi.BuildApiAsync(data, _solver);
+        var friends = GetFriendsAsync(api, id);
+        var subscriptions = GetSubscriptionsAsync(api, id);
+        try
+        {
+            await Task.WhenAll(friends, subscriptions);
+            return friends.Result.Concat(subscriptions.Result).ToList();
+        }
+        catch (VkApiMethodInvokeException ex)
+        {
+            throw new VkRequestException(ex.ErrorCode, ex.Message, ex);
+        }
     }
 }

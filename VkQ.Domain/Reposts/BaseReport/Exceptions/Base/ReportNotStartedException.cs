@@ -2,7 +2,9 @@
 
 public class ReportNotStartedException : Exception
 {
-    public ReportNotStartedException() : base("Report not started")
+    public ReportNotStartedException(Guid reportId) : base("Report not started")
     {
+        ReportId = reportId;
     }
+    public Guid ReportId { get; }
 }

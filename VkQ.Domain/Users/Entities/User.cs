@@ -6,7 +6,7 @@ using VkQ.Domain.Users.ValueObjects;
 
 namespace VkQ.Domain.Users.Entities;
 
-public class User
+public class User : IAggregateRoot
 {
     public User(string name, string email)
     {
@@ -66,10 +66,7 @@ public class User
         Vk.SetProxy(proxy);
     }
 
-    public void SetVk(string username, string password)
-    {
-        Vk = new Vk(1, username, password);
-    }
+    public void SetVk(string username, string password) => Vk = new Vk(username, password);
 
     public void ActivateVk(string token)
     {

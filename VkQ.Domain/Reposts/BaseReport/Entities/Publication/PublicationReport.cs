@@ -10,41 +10,43 @@ namespace VkQ.Domain.Reposts.BaseReport.Entities.Publication;
 public abstract class PublicationReport : Report
 {
     protected PublicationReport(User user, string hashtag, DateTimeOffset? searchStartDate = null,
-        List<Guid>? coAuthors = null) : base(user)
+        IReadOnlyCollection<Guid>? coAuthors = null) : base(user)
     {
         Hashtag = hashtag;
         SearchStartDate = searchStartDate;
-        if (coAuthors is { Count: > 3 }) throw new TooManyLinksException();
-        LinkedUsers = coAuthors;
+        if (coAuthors == null) return;
+        if (coAuthors.Count > 3) throw new TooManyLinksException();
+        _linkedUsersList.AddRange(coAuthors);
     }
 
-    public List<Guid>? LinkedUsers { get; }
+    private readonly List<Guid> _linkedUsersList = new();
+    public List<Guid> LinkedUsers => _linkedUsersList.ToList();
     public string Hashtag { get; }
     public DateTimeOffset? SearchStartDate { get; }
 
-    protected List<Publication>? PublicationsList;
-    public List<Publication>? Publications => PublicationsList?.ToList();
-
-    protected List<PublicationReportElement>? ReportElementsList;
+    protected List<Publication> PublicationsList = new();
+    public List<Publication> Publications => PublicationsList.ToList();
 
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-    public void LoadPublications(IEnumerable<PublicationDto> dtos)
+    private void LoadPublications(IEnumerable<PublicationDto> dtos)
     {
-        if (!IsCompleted) throw new ReportAlreadyCompletedException();
         if (!dtos.Any()) throw new PublicationsListEmptyException();
-        var id = 0;
-        PublicationsList = dtos.Select(dto => new Publication(id++, dto.ItemId, dto.OwnerId)).ToList();
+        PublicationsList = dtos.Select(dto => new Publication(dto.ItemId, dto.OwnerId)).ToList();
     }
 
     ///<exception cref="ReportAlreadyCompletedException">Report already completed</exception>
     ///<exception cref="ElementsListEmptyException">elements collection is empty</exception>
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-    protected void LoadElements(IEnumerable<PublicationReportElement> elements)
+    private void LoadElements(IEnumerable<PublicationReportElement> elements)
     {
-        if (!IsCompleted) throw new ReportAlreadyCompletedException();
         if (!elements.Any()) throw new ElementsListEmptyException();
-        ReportElementsList = elements.ToList();
+        ReportElementsList.AddRange(elements);
     }
 
-    public bool IsInitialized => PublicationsList != null && ReportElementsList != null;
+    protected void Start(IEnumerable<PublicationDto> dtos, IEnumerable<PublicationReportElement> elements)
+    {
+        LoadPublications(dtos);
+        LoadElements(elements);
+        base.Start();
+    }
 }
