@@ -1,6 +1,6 @@
 ﻿namespace VkQ.Infrastructure.DataStorage.Models;
 
-public interface IModel
+internal interface IModel
 {
     public Guid Id { get; set; }
 }

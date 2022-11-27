@@ -24,27 +24,22 @@ public class ParticipantReport : Report
     {
         if (!IsStarted) throw new ReportNotStartedException(Id);
         if (IsCompleted) throw new ReportAlreadyCompletedException(Id);
-
         var addParticipantDtos = dtos.ToList();
         if (ReportElementsList.Any())
         {
             var participants =
-                ReportElementsList.Concat(ReportElementsList.Where(x => x.Children.Any())
-                    .SelectMany(x => x.Children)).Select(x => x.VkId); //All elements
+                ReportElementsList.Concat(ReportElementsList.Cast<ParticipantReportElement>().SelectMany(x => x.Children)).Select(x => x.VkId); //All elements
 
             var intersectFirst = addParticipantDtos.Select(x => x.VkId).Intersect(participants).FirstOrDefault();
             if (intersectFirst != default) throw new ParticipantRecordAlreadyExistException(intersectFirst);
         }
 
-        ReportElementsList.AddRange(GetElements(addParticipantDtos));
+        ReportElementsList.AddRange(addParticipantDtos.Select(GetElement));
     }
 
-    private static IEnumerable<ParticipantReportElement> GetElements(IEnumerable<AddParticipantDto> dtos)
-    {
-        var elements = dtos.Select(x =>
-            new ParticipantReportElement(x, x.Children?.Select(y => new ParticipantReportElement(y, null))));
-        return elements;
-    }
+    private static ParticipantReportElement GetElement(AddParticipantDto dto) =>
+        new(dto.Name, dto.OldName, dto.VkId, dto.Type, dto.Children?.Select(GetElement));
+
 
     ///<exception cref="ReportAlreadyStartedException">Report already started</exception>
     ///<exception cref="ReportAlreadyCompletedException">Report already completed</exception>

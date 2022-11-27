@@ -5,7 +5,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Factories.AggregateFactories;
 
-public class LinkFactory : IAggregateFactory<Link, LinkModel>
+internal class LinkFactory : IAggregateFactory<Link, LinkModel>
 {
     private static readonly FieldInfo LinkId =
         typeof(Link).GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;

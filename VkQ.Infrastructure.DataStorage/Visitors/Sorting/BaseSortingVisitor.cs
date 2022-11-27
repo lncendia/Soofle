@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Visitors.Sorting.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Visitors.Sorting;
 
-public abstract class BaseSortingVisitor<TEntity, TVisitor, TItem> where TVisitor : ISortingVisitor<TVisitor, TItem>
+internal abstract class BaseSortingVisitor<TEntity, TVisitor, TItem> where TVisitor : ISortingVisitor<TVisitor, TItem>
     where TEntity : IModel
     where TItem : IAggregateRoot
 {

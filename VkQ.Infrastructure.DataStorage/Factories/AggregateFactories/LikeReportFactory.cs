@@ -1,90 +1,51 @@
 ﻿using System.Reflection;
-using VkQ.Domain.Reposts.BaseReport.Entities.Base;
-using VkQ.Domain.Reposts.BaseReport.Entities.Publication;
+using System.Runtime.Serialization;
 using VkQ.Domain.Reposts.LikeReport.Entities;
-using VkQ.Domain.Users.Entities;
-using VkQ.Domain.Users.ValueObjects;
+using VkQ.Domain.Reposts.LikeReport.ValueObjects;
 using VkQ.Infrastructure.DataStorage.Factories.Abstractions;
-using VkQ.Infrastructure.DataStorage.Models;
+using VkQ.Infrastructure.DataStorage.Factories.AggregateFactories.StaticMethods;
 using VkQ.Infrastructure.DataStorage.Models.Reports.LikeReport;
 
 namespace VkQ.Infrastructure.DataStorage.Factories.AggregateFactories;
 
-public class LikeReportFactory : IAggregateFactory<LikeReport, LikeReportModel>
+internal class LikeReportFactory : IAggregateFactory<LikeReport, LikeReportModel>
 {
-    private static readonly Type PublicationReportType = typeof(PublicationReport);
+    private static readonly Type LikeReportType = typeof(LikeReport);
+    private static readonly Type LikeReportElementType = typeof(LikeReportElement);
 
-    private static readonly FieldInfo LikeReportId =
-        LikeReportType.GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
+    private static readonly FieldInfo ElementId =
+        LikeReportElementType.GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
-    
-    
-    
-    
-    
-    
-    
-    public Guid Id { get; }
-    public Guid UserId { get; }
-    public DateTimeOffset CreationDate { get; } = DateTimeOffset.Now;
-    public DateTimeOffset? StartDate { get; private set; }
-    public DateTimeOffset? EndDate { get; private set; }
-    public bool IsCompleted { get; private set; }
-    public bool IsSucceeded { get; private set; }
-    public string? Message { get; private set; }
+    private static readonly FieldInfo ElementLikes =
+        LikeReportElementType.GetField("<Likes>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
-    protected readonly List<ReportElement> ReportElementsList = new();
-    
-    
-    
-    
-    private readonly List<Guid> _linkedUsersList = new();
-    public string Hashtag { get; }
-    public DateTimeOffset? SearchStartDate { get; }
-
-    protected List<Publication> PublicationsList = new();
-
+    private static readonly FieldInfo LikeInfoId =
+        typeof(LikeInfo).GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
 
     public LikeReport Create(LikeReportModel model)
     {
-        var likeReport = new LikeReport(model.Name, model.Email);
-        LikeReportId.SetValue(likeReport, model.Id);
-
-        if (model.SubscriptionDate.HasValue)
-            LikeReportSubscription.SetValue(likeReport, GetSubscription(model.SubscriptionDate.Value, model.ExpirationDate!.Value));
-
-        if (model.Vk != null) LikeReportVk.SetValue(likeReport, GetVk(model.Vk));
-        return likeReport;
+        var report = (LikeReport)FormatterServices.GetUninitializedObject(LikeReportType);
+        var elements = model.ReportElementsList.Where(x => x.OwnerId == null).Cast<LikeReportElementModel>()
+            .Select(x => GetLikeElement(x, model.ReportElementsList.Cast<LikeReportElementModel>()));
+        ReportInitializer.InitPublicationReport(report, elements, model);
+        return report;
     }
 
-
-    private static readonly Type VkType = typeof(Vk);
-
-    private static readonly FieldInfo VkId =
-        VkType.GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
-
-    private static readonly FieldInfo VkProxy =
-        VkType.GetField("<ProxyId>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
-
-
-    private static Vk GetVk(VkModel model)
+    private static LikeReportElement GetLikeElement(LikeReportElementModel model,
+        IEnumerable<LikeReportElementModel>? allElements)
     {
-        var vk = new Vk(model.LikeReportname, model.Password);
-        VkId.SetValue(vk, model.Id);
-        VkProxy.SetValue(vk, model.ProxyId);
-        if (!string.IsNullOrEmpty(model.AccessToken)) vk.UpdateToken(model.AccessToken);
-        return vk;
+        var element = new LikeReportElement(model.Name, model.LikeChatName, model.VkId, model.ParticipantId,
+            allElements?.Where(x => x.OwnerId == model.Id).Select(x => GetLikeElement(x, null)).ToList());
+        ElementId.SetValue(element, model.Id);
+        ElementLikes.SetValue(element, model.Likes.Select(GetLikeInfo).ToList());
+        return element;
     }
 
-    private static readonly FieldInfo SubscriptionEndDate =
-        typeof(Subscription).GetField("<SubscriptionDate>k__BackingField",
-            BindingFlags.Instance | BindingFlags.NonPublic)!;
-
-    private static Subscription GetSubscription(DateTimeOffset start, DateTimeOffset end)
+    private static LikeInfo GetLikeInfo(LikeModel model)
     {
-        var sub = new Subscription(end);
-        SubscriptionEndDate.SetValue(sub, start);
-        return sub;
+        var like = new LikeInfo(model.PublicationId, model.IsLiked, model.IsLoaded);
+        LikeInfoId.SetValue(like, model.Id);
+        return like;
     }
 }

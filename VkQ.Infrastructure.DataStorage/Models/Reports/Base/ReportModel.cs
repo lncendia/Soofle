@@ -11,7 +11,7 @@ public class ReportModel : IModel
     public bool IsCompleted { get; set; }
     public bool IsSucceeded { get; set; }
     public string? Message { get; set; }
-    public bool IsStarted => StartDate.HasValue;
+    public bool IsStarted { get; set; }
 
-    protected List<ReportElementModel> ReportElementsList { get; set; } = new();
+    public List<ReportElementModel> ReportElementsList { get; set; } = new();
 }

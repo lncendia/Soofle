@@ -2,6 +2,8 @@
 using VkQ.Domain.Abstractions.Interfaces;
 using VkQ.Domain.Abstractions.Services;
 using VkQ.Domain.Abstractions.UnitOfWorks;
+using VkQ.Domain.Participants.Entities;
+using VkQ.Domain.Reposts.LikeReport.DTOs;
 using VkQ.Domain.Reposts.LikeReport.Entities;
 using VkQ.Domain.Services.StaticMethods;
 
@@ -25,6 +27,19 @@ public class LikeReportInitializerService : IReportInitializerService<LikeReport
         var t1 = ReportInitializer.GetPublicationsAsync(report, info, _publicationGetterService, token);
         var t2 = ReportInitializer.GetParticipantsAsync(report, _unitOfWork);
         await Task.WhenAll(t1, t2);
-        report.Start(t2.Result, t1.Result);
+        
+        var dtos = t2.Result.SelectMany(x =>
+            x.Item1.Where(participant => participant.ParentParticipantId == null)
+                .Select(y => GetElementDto(y, x.name, x.Item1)));
+        
+        report.Start(dtos, t1.Result);
+    }
+
+    private static LikeElementDto GetElementDto(Participant participant, string chatName,
+        IEnumerable<Participant>? allElements)
+    {
+        return new LikeElementDto(participant.Name, chatName, participant.VkId, participant.Id,
+            allElements?.Where(x => x.ParentParticipantId == participant.Id)
+                .Select(y => GetElementDto(y, chatName, null)));
     }
 }

@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Visitors.Specifications;
 
-public abstract class BaseVisitor<TEntity, TVisitor, TItem> where TVisitor : ISpecificationVisitor<TVisitor, TItem>
+internal abstract class BaseVisitor<TEntity, TVisitor, TItem> where TVisitor : ISpecificationVisitor<TVisitor, TItem>
     where TEntity : IModel
     where TItem : IAggregateRoot
 {

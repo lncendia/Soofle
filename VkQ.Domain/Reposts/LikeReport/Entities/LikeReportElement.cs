@@ -11,6 +11,8 @@ public class LikeReportElement : PublicationReportElement
     {
     }
 
+    public new List<LikeReportElement> Children => base.Children.Cast<LikeReportElement>().ToList();
+
     public List<LikeInfo> Likes { get; } = new();
 
     public void AddLike(LikeInfo like)

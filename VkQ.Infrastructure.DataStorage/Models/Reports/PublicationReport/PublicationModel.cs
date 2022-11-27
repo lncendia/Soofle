@@ -1,6 +1,4 @@
-﻿using VkQ.Infrastructure.DataStorage.Models.Reports.Base;
-
-namespace VkQ.Infrastructure.DataStorage.Models.Reports.PublicationReport;
+﻿namespace VkQ.Infrastructure.DataStorage.Models.Reports.PublicationReport;
 
 public class PublicationModel : IModel
 {

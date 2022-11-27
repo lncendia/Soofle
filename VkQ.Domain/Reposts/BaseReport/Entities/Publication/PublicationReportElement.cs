@@ -10,10 +10,8 @@ public abstract class PublicationReportElement : ReportElement
         ParticipantId = participantId;
         LikeChatName = likeChatName;
     }
-
     public string LikeChatName { get; }
+    public void Accept() => IsAccepted = true;
     public Guid ParticipantId { get; }
     public bool IsAccepted { get; private set; }
-
-    public void Accept() => IsAccepted = true;
 }

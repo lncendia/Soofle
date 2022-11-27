@@ -13,5 +13,5 @@ public abstract class ReportElement : IEntity
     public Guid Id { get; }
     public string Name { get; }
     public long VkId { get; }
-    public List<ReportElement> Children { get; } = new();
+    protected readonly List<ReportElement> Children = new();
 }

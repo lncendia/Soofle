@@ -5,7 +5,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Factories.AggregateFactories;
 
-public class ParticipantFactory : IAggregateFactory<Participant, ParticipantModel>
+internal class ParticipantFactory : IAggregateFactory<Participant, ParticipantModel>
 {
     private static readonly FieldInfo ParticipantId =
         typeof(Participant).GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;

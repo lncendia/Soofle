@@ -5,7 +5,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Factories.AggregateFactories;
 
-public class ReportLogFactory : IAggregateFactory<ReportLog, ReportLogModel>
+internal class ReportLogFactory : IAggregateFactory<ReportLog, ReportLogModel>
 {
     private static readonly FieldInfo ReportLogId =
         typeof(ReportLog).GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;

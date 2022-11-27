@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Factories.AggregateFactories;
 
-public class UserFactory : IAggregateFactory<User, UserModel>
+internal class UserFactory : IAggregateFactory<User, UserModel>
 {
     private static readonly Type UserType = typeof(User);
 

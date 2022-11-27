@@ -8,15 +8,19 @@ using VkQ.Domain.Users.Specification.Visitor;
 using VkQ.Infrastructure.DataStorage.Context;
 using VkQ.Infrastructure.DataStorage.Factories.Abstractions;
 using VkQ.Infrastructure.DataStorage.Models;
+using VkQ.Infrastructure.DataStorage.Visitors.Sorting;
 using VkQ.Infrastructure.DataStorage.Visitors.Specifications;
 
 namespace VkQ.Infrastructure.DataStorage.Repositories;
 
-public class UserRepository : IUserRepository
+internal class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _context;
     private readonly IAggregateFactory<User, UserModel> _factory;
     private readonly IModelFactory<UserModel, User> _modelFactory;
+    private readonly UserVisitor _visitor = new();
+    private readonly UserSortingVisitor _sortingVisitor = new();
+
 
     public UserRepository(ApplicationDbContext context, IAggregateFactory<User, UserModel> factory,
         IModelFactory<UserModel, User> modelFactory)
@@ -53,20 +57,48 @@ public class UserRepository : IUserRepository
     public async Task DeleteAsync(ISpecification<User, IUserSpecificationVisitor> specification)
     {
         var query = _context.Users.AsQueryable();
-        var visitor = new UserVisitor();
-        specification.Accept(visitor);
-        if (visitor.Expr != null) query = query.Where(visitor.Expr);
+        specification.Accept(_visitor);
+        if (_visitor.Expr != null) query = query.Where(_visitor.Expr);
         _context.RemoveRange(await query.ToListAsync());
     }
 
     public Task<int> CountAsync(ISpecification<User, IUserSpecificationVisitor>? specification)
     {
-        throw new NotImplementedException();
+        var query = _context.Users.AsQueryable();
+        if (specification == null) return query.CountAsync();
+
+        specification.Accept(_visitor);
+        if (_visitor.Expr != null) query = query.Where(_visitor.Expr);
+        return query.CountAsync();
     }
 
-    public Task<IList<User>> FindAsync(ISpecification<User, IUserSpecificationVisitor>? specification,
+    public async Task<IList<User>> FindAsync(ISpecification<User, IUserSpecificationVisitor>? specification = null,
         IOrderBy<User, IUserSortingVisitor>? orderBy = null, int? skip = null, int? take = null)
     {
-        throw new NotImplementedException();
+        var query = _context.Users.AsQueryable();
+        if (specification != null)
+        {
+            specification.Accept(_visitor);
+            if (_visitor.Expr != null) query = query.Where(_visitor.Expr);
+        }
+
+        if (orderBy != null)
+        {
+            orderBy.Accept(_sortingVisitor);
+            var firstQuery = _sortingVisitor.SortItems.First();
+            var orderedQuery = firstQuery.IsDescending
+                ? query.OrderByDescending(firstQuery.Expr)
+                : query.OrderBy(firstQuery.Expr);
+
+            query = _sortingVisitor.SortItems.Skip(1)
+                .Aggregate(orderedQuery, (current, sort) => sort.IsDescending
+                    ? current.ThenByDescending(sort.Expr)
+                    : current.ThenBy(sort.Expr));
+        }
+
+        if (skip.HasValue) query = query.Skip(skip.Value);
+        if (take.HasValue) query = query.Take(take.Value);
+
+        return (await query.ToListAsync()).Select(_factory.Create).ToList();
     }
 }

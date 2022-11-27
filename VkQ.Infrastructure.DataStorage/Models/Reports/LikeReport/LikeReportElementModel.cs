@@ -1,6 +1,8 @@
-﻿namespace VkQ.Infrastructure.DataStorage.Models.Reports.LikeReport;
+﻿using VkQ.Infrastructure.DataStorage.Models.Reports.PublicationReport;
 
-public class LikeReportElementModel
+namespace VkQ.Infrastructure.DataStorage.Models.Reports.LikeReport;
+
+public class LikeReportElementModel : PublicationReportElementModel
 {
-    
+    public List<LikeModel> Likes { get; set; } = new();
 }

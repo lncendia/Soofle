@@ -3,7 +3,6 @@
 public class VkModel : IModel
 {
     public Guid Id { get; set; }
-    public int EId { get; set; }
     public string Username { get; set; } = null!;
     public string Password { get; set; } = null!;
     public string? AccessToken { get; set; }

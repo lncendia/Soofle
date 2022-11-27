@@ -6,4 +6,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\VkQ.Infrastructure.DataStorage\VkQ.Infrastructure.DataStorage.csproj" />
+      <ProjectReference Include="..\VkQ.WEB\VkQ.WEB.csproj" />
+    </ItemGroup>
+
 </Project>

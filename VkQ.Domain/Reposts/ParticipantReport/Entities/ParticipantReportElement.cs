@@ -1,21 +1,20 @@
 ﻿using VkQ.Domain.Reposts.BaseReport.Entities.Base;
-using VkQ.Domain.Reposts.ParticipantReport.DTOs;
 using VkQ.Domain.Reposts.ParticipantReport.Enums;
 
 namespace VkQ.Domain.Reposts.ParticipantReport.Entities;
 
 public class ParticipantReportElement : ReportElement
 {
-    public ParticipantReportElement(AddParticipantDto dto, IEnumerable<ParticipantReportElement>? children) :
-        base(dto.Name, dto.VkId, children)
+    public ParticipantReportElement(string name, string? oldName, long vkId, ElementType type,
+        IEnumerable<ParticipantReportElement>? children) : base(name, vkId, children)
     {
-        if (dto.Type == ElementType.Rename && string.IsNullOrEmpty(dto.OldName))
+        if (type == ElementType.Rename && string.IsNullOrEmpty(oldName))
             throw new ArgumentException("OldName is required for rename element");
-        Type = dto.Type;
-        OldName = dto.OldName;
-        Type = dto.Type;
+        Type = type;
+        OldName = oldName;
     }
 
+    public new List<ParticipantReportElement> Children => base.Children.Cast<ParticipantReportElement>().ToList();
     public string? OldName { get; }
     public ElementType Type { get; }
 }

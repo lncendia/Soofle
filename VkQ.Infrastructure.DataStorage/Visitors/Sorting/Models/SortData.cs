@@ -2,7 +2,7 @@
 
 namespace VkQ.Infrastructure.DataStorage.Visitors.Sorting.Models;
 
-public class SortData<TEntity>
+internal class SortData<TEntity>
 {
     public SortData(Expression<Func<TEntity, dynamic>> expr, bool isDescending)
     {

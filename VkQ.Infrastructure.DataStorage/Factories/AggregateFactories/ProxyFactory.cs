@@ -5,7 +5,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Factories.AggregateFactories;
 
-public class ProxyFactory : IAggregateFactory<Proxy, ProxyModel>
+internal class ProxyFactory : IAggregateFactory<Proxy, ProxyModel>
 {
     private static readonly FieldInfo ProxyId =
         typeof(Proxy).GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;

@@ -7,7 +7,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Visitors.Specifications;
 
-public class UserVisitor : BaseVisitor<UserModel, IUserSpecificationVisitor, User>, IUserSpecificationVisitor
+internal class UserVisitor : BaseVisitor<UserModel, IUserSpecificationVisitor, User>, IUserSpecificationVisitor
 {
     protected override Expression<Func<UserModel, bool>> ConvertSpecToExpression(
         ISpecification<User, IUserSpecificationVisitor> spec)
