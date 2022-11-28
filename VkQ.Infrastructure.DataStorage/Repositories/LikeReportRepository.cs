@@ -6,7 +6,7 @@ using VkQ.Domain.Reposts.LikeReport.Ordering.Visitor;
 using VkQ.Domain.Reposts.LikeReport.Specification.Visitor;
 using VkQ.Domain.Specifications.Abstractions;
 using VkQ.Infrastructure.DataStorage.Context;
-using VkQ.Infrastructure.DataStorage.Factories.Abstractions;
+using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
 using VkQ.Infrastructure.DataStorage.Models.Reports.LikeReport;
 using VkQ.Infrastructure.DataStorage.Visitors.Sorting;
 using VkQ.Infrastructure.DataStorage.Visitors.Specifications;
@@ -16,18 +16,18 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class LikeReportRepository : ILikeReportRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateFactory<LikeReport, LikeReportModel> _factory;
-    private readonly IModelFactory<LikeReportModel, LikeReport> _modelFactory;
+    private readonly IAggregateMapper<LikeReport, LikeReportModel> _mapper;
+    private readonly IModelMapper<LikeReportModel, LikeReport> _modelMapper;
     private readonly LikeReportVisitor _visitor = new();
     private readonly LikeReportSortingVisitor _sortingVisitor = new();
 
 
-    public LikeReportRepository(ApplicationDbContext context, IAggregateFactory<LikeReport, LikeReportModel> factory,
-        IModelFactory<LikeReportModel, LikeReport> modelFactory)
+    public LikeReportRepository(ApplicationDbContext context, IAggregateMapper<LikeReport, LikeReportModel> mapper,
+        IModelMapper<LikeReportModel, LikeReport> modelMapper)
     {
         _context = context;
-        _factory = factory;
-        _modelFactory = modelFactory;
+        _mapper = mapper;
+        _modelMapper = modelMapper;
     }
 
     public async Task<LikeReport?> GetAsync(Guid id)
@@ -35,18 +35,18 @@ internal class LikeReportRepository : ILikeReportRepository
         var model = await _context.LikeReports.Include(x => x.Publications).Include(x => x.LinkedUsers)
             .Include(x => x.ReportElementsList.Cast<LikeReportElementModel>()).ThenInclude(x => x.Likes)
             .FirstOrDefaultAsync(x => x.Id == id);
-        return model == null ? null : _factory.Create(model);
+        return model == null ? null : _mapper.Map(model);
     }
 
     public async Task AddAsync(LikeReport entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Add(model);
     }
 
     public async Task UpdateAsync(LikeReport entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Update(model);
     }
 
@@ -103,6 +103,6 @@ internal class LikeReportRepository : ILikeReportRepository
         if (skip.HasValue) query = query.Skip(skip.Value);
         if (take.HasValue) query = query.Take(take.Value);
 
-        return (await query.ToListAsync()).Select(_factory.Create).ToList();
+        return (await query.ToListAsync()).Select(_mapper.Map).ToList();
     }
 }

@@ -6,7 +6,7 @@ using VkQ.Domain.Proxies.Ordering.Visitor;
 using VkQ.Domain.Proxies.Specification.Visitor;
 using VkQ.Domain.Specifications.Abstractions;
 using VkQ.Infrastructure.DataStorage.Context;
-using VkQ.Infrastructure.DataStorage.Factories.Abstractions;
+using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
 using VkQ.Infrastructure.DataStorage.Models;
 using VkQ.Infrastructure.DataStorage.Visitors.Sorting;
 using VkQ.Infrastructure.DataStorage.Visitors.Specifications;
@@ -16,35 +16,35 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class ProxyRepository : IProxyRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateFactory<Proxy, ProxyModel> _factory;
-    private readonly IModelFactory<ProxyModel, Proxy> _modelFactory;
+    private readonly IAggregateMapper<Proxy, ProxyModel> _mapper;
+    private readonly IModelMapper<ProxyModel, Proxy> _modelMapper;
     private readonly ProxyVisitor _visitor = new();
     private readonly ProxySortingVisitor _sortingVisitor = new();
 
 
-    public ProxyRepository(ApplicationDbContext context, IAggregateFactory<Proxy, ProxyModel> factory,
-        IModelFactory<ProxyModel, Proxy> modelFactory)
+    public ProxyRepository(ApplicationDbContext context, IAggregateMapper<Proxy, ProxyModel> mapper,
+        IModelMapper<ProxyModel, Proxy> modelMapper)
     {
         _context = context;
-        _factory = factory;
-        _modelFactory = modelFactory;
+        _mapper = mapper;
+        _modelMapper = modelMapper;
     }
 
     public async Task<Proxy?> GetAsync(Guid id)
     {
         var model = await _context.Proxies.FirstOrDefaultAsync(x => x.Id == id);
-        return model == null ? null : _factory.Create(model);
+        return model == null ? null : _mapper.Map(model);
     }
 
     public async Task AddAsync(Proxy entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Add(model);
     }
 
     public async Task UpdateAsync(Proxy entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Update(model);
     }
 
@@ -99,6 +99,6 @@ internal class ProxyRepository : IProxyRepository
         if (skip.HasValue) query = query.Skip(skip.Value);
         if (take.HasValue) query = query.Take(take.Value);
 
-        return (await query.ToListAsync()).Select(_factory.Create).ToList();
+        return (await query.ToListAsync()).Select(_mapper.Map).ToList();
     }
 }

@@ -1,4 +1,4 @@
-namespace LikeBotVK.Application.Abstractions.Exceptions;
+namespace VkQ.Application.Abstractions.Exceptions.Payments;
 
 public class ErrorCheckBillException : Exception
 {

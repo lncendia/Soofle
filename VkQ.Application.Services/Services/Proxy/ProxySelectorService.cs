@@ -1,4 +1,5 @@
-﻿using VkQ.Application.Abstractions.Interfaces.Proxy;
+﻿using VkQ.Application.Abstractions.Exceptions.Proxy;
+using VkQ.Application.Abstractions.Interfaces.Proxy;
 using VkQ.Domain.Abstractions.Exceptions;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Proxies.Ordering;

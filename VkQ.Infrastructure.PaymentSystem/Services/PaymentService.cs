@@ -1,5 +1,4 @@
 using System.Net;
-using LikeBotVK.Application.Abstractions.Exceptions;
 using Newtonsoft.Json;
 using Qiwi.BillPayments.Client;
 using Qiwi.BillPayments.Model;
@@ -7,7 +6,9 @@ using Qiwi.BillPayments.Model.In;
 using Qiwi.BillPayments.Model.Out;
 using RestSharp;
 using VkQ.Application.Abstractions.DTO.Payments;
+using VkQ.Application.Abstractions.Exceptions.Payments;
 using VkQ.Application.Abstractions.Interfaces;
+using VkQ.Application.Abstractions.Interfaces.Payments;
 
 namespace VkQ.Infrastructure.PaymentSystem.Services;
 

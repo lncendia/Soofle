@@ -6,7 +6,7 @@ using VkQ.Domain.Reposts.ParticipantReport.Ordering.Visitor;
 using VkQ.Domain.Reposts.ParticipantReport.Specification.Visitor;
 using VkQ.Domain.Specifications.Abstractions;
 using VkQ.Infrastructure.DataStorage.Context;
-using VkQ.Infrastructure.DataStorage.Factories.Abstractions;
+using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
 using VkQ.Infrastructure.DataStorage.Models.Reports.ParticipantReport;
 using VkQ.Infrastructure.DataStorage.Visitors.Sorting;
 using VkQ.Infrastructure.DataStorage.Visitors.Specifications;
@@ -16,19 +16,19 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class ParticipantReportRepository : IParticipantReportRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateFactory<ParticipantReport, ParticipantReportModel> _factory;
-    private readonly IModelFactory<ParticipantReportModel, ParticipantReport> _modelFactory;
+    private readonly IAggregateMapper<ParticipantReport, ParticipantReportModel> _mapper;
+    private readonly IModelMapper<ParticipantReportModel, ParticipantReport> _modelMapper;
     private readonly ParticipantReportVisitor _visitor = new();
     private readonly ParticipantReportSortingVisitor _sortingVisitor = new();
 
 
     public ParticipantReportRepository(ApplicationDbContext context,
-        IAggregateFactory<ParticipantReport, ParticipantReportModel> factory,
-        IModelFactory<ParticipantReportModel, ParticipantReport> modelFactory)
+        IAggregateMapper<ParticipantReport, ParticipantReportModel> mapper,
+        IModelMapper<ParticipantReportModel, ParticipantReport> modelMapper)
     {
         _context = context;
-        _factory = factory;
-        _modelFactory = modelFactory;
+        _mapper = mapper;
+        _modelMapper = modelMapper;
     }
 
     public async Task<ParticipantReport?> GetAsync(Guid id)
@@ -36,18 +36,18 @@ internal class ParticipantReportRepository : IParticipantReportRepository
         var model = await _context.ParticipantReports
             .Include(x => x.ReportElementsList.Cast<ParticipantReportElementModel>())
             .FirstOrDefaultAsync(x => x.Id == id);
-        return model == null ? null : _factory.Create(model);
+        return model == null ? null : _mapper.Map(model);
     }
 
     public async Task AddAsync(ParticipantReport entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Add(model);
     }
 
     public async Task UpdateAsync(ParticipantReport entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Update(model);
     }
 
@@ -107,6 +107,6 @@ internal class ParticipantReportRepository : IParticipantReportRepository
         if (skip.HasValue) query = query.Skip(skip.Value);
         if (take.HasValue) query = query.Take(take.Value);
 
-        return (await query.ToListAsync()).Select(_factory.Create).ToList();
+        return (await query.ToListAsync()).Select(_mapper.Map).ToList();
     }
 }

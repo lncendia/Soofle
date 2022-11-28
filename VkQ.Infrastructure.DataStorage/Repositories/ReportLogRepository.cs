@@ -6,7 +6,7 @@ using VkQ.Domain.ReportLogs.Entities;
 using VkQ.Domain.ReportLogs.Ordering.Visitor;
 using VkQ.Domain.ReportLogs.Specification.Visitor;
 using VkQ.Infrastructure.DataStorage.Context;
-using VkQ.Infrastructure.DataStorage.Factories.Abstractions;
+using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
 using VkQ.Infrastructure.DataStorage.Models;
 using VkQ.Infrastructure.DataStorage.Visitors.Sorting;
 using VkQ.Infrastructure.DataStorage.Visitors.Specifications;
@@ -16,35 +16,35 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class ReportLogRepository : IReportLogRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateFactory<ReportLog, ReportLogModel> _factory;
-    private readonly IModelFactory<ReportLogModel, ReportLog> _modelFactory;
+    private readonly IAggregateMapper<ReportLog, ReportLogModel> _mapper;
+    private readonly IModelMapper<ReportLogModel, ReportLog> _modelMapper;
     private readonly ReportLogVisitor _visitor = new();
     private readonly ReportLogSortingVisitor _sortingVisitor = new();
 
 
-    public ReportLogRepository(ApplicationDbContext context, IAggregateFactory<ReportLog, ReportLogModel> factory,
-        IModelFactory<ReportLogModel, ReportLog> modelFactory)
+    public ReportLogRepository(ApplicationDbContext context, IAggregateMapper<ReportLog, ReportLogModel> mapper,
+        IModelMapper<ReportLogModel, ReportLog> modelMapper)
     {
         _context = context;
-        _factory = factory;
-        _modelFactory = modelFactory;
+        _mapper = mapper;
+        _modelMapper = modelMapper;
     }
 
     public async Task<ReportLog?> GetAsync(Guid id)
     {
         var model = await _context.ReportLogs.FirstOrDefaultAsync(x => x.Id == id);
-        return model == null ? null : _factory.Create(model);
+        return model == null ? null : _mapper.Map(model);
     }
 
     public async Task AddAsync(ReportLog entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Add(model);
     }
 
     public async Task UpdateAsync(ReportLog entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Update(model);
     }
 
@@ -99,6 +99,6 @@ internal class ReportLogRepository : IReportLogRepository
         if (skip.HasValue) query = query.Skip(skip.Value);
         if (take.HasValue) query = query.Take(take.Value);
 
-        return (await query.ToListAsync()).Select(_factory.Create).ToList();
+        return (await query.ToListAsync()).Select(_mapper.Map).ToList();
     }
 }

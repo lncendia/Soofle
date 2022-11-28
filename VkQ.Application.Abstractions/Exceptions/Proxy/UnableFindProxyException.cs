@@ -1,4 +1,4 @@
-﻿namespace VkQ.Domain.Abstractions.Exceptions;
+﻿namespace VkQ.Application.Abstractions.Exceptions.Proxy;
 
 public class UnableFindProxyException : Exception
 {

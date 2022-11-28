@@ -1,15 +1,13 @@
-﻿using VkQ.Application.Abstractions.DTO;
-
-namespace VkQ.Application.Abstractions.DTO.Users;
+﻿namespace VkQ.Application.Abstractions.DTO.Users;
 
 public class VkLogoutDto
 {
-    public VkLogoutDto(string proxyHost, int proxyPort, string proxyLogin, string proxyPassword, string token)
+    public VkLogoutDto(string token, VkProxyDto proxy)
     {
-        Proxy = new ProxyDto(proxyPort, proxyHost, proxyLogin, proxyPassword);
+        Proxy = proxy;
         Token = token;
     }
-    
+
     public string Token { get; }
-    public ProxyDto Proxy { get; }
+    public VkProxyDto Proxy { get; }
 }

@@ -1,6 +1,6 @@
 using VkQ.Application.Abstractions.DTO.Payments;
 
-namespace VkQ.Application.Abstractions.Interfaces;
+namespace VkQ.Application.Abstractions.Interfaces.Payments;
 
 public interface IPaymentCreatorService
 {

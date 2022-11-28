@@ -1,4 +1,6 @@
 ﻿using VkQ.Application.Abstractions.DTO.Reports;
+using VkQ.Application.Abstractions.DTO.Reports.LikeReportDto;
+using VkQ.Application.Abstractions.DTO.Reports.ParticipantReportDto;
 
 namespace VkQ.Application.Abstractions.Interfaces.Reports;
 

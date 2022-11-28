@@ -6,7 +6,7 @@ using VkQ.Domain.Links.Entities;
 using VkQ.Domain.Links.Ordering.Visitor;
 using VkQ.Domain.Links.Specification.Visitor;
 using VkQ.Infrastructure.DataStorage.Context;
-using VkQ.Infrastructure.DataStorage.Factories.Abstractions;
+using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
 using VkQ.Infrastructure.DataStorage.Models;
 using VkQ.Infrastructure.DataStorage.Visitors.Sorting;
 using VkQ.Infrastructure.DataStorage.Visitors.Specifications;
@@ -16,35 +16,35 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class LinkRepository : ILinkRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateFactory<Link, LinkModel> _factory;
-    private readonly IModelFactory<LinkModel, Link> _modelFactory;
+    private readonly IAggregateMapper<Link, LinkModel> _mapper;
+    private readonly IModelMapper<LinkModel, Link> _modelMapper;
     private readonly LinkVisitor _visitor = new();
     private readonly LinkSortingVisitor _sortingVisitor = new();
 
 
-    public LinkRepository(ApplicationDbContext context, IAggregateFactory<Link, LinkModel> factory,
-        IModelFactory<LinkModel, Link> modelFactory)
+    public LinkRepository(ApplicationDbContext context, IAggregateMapper<Link, LinkModel> mapper,
+        IModelMapper<LinkModel, Link> modelMapper)
     {
         _context = context;
-        _factory = factory;
-        _modelFactory = modelFactory;
+        _mapper = mapper;
+        _modelMapper = modelMapper;
     }
 
     public async Task<Link?> GetAsync(Guid id)
     {
         var model = await _context.Links.FirstOrDefaultAsync(x => x.Id == id);
-        return model == null ? null : _factory.Create(model);
+        return model == null ? null : _mapper.Map(model);
     }
 
     public async Task AddAsync(Link entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Add(model);
     }
 
     public async Task UpdateAsync(Link entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Update(model);
     }
 
@@ -99,6 +99,6 @@ internal class LinkRepository : ILinkRepository
         if (skip.HasValue) query = query.Skip(skip.Value);
         if (take.HasValue) query = query.Take(take.Value);
 
-        return (await query.ToListAsync()).Select(_factory.Create).ToList();
+        return (await query.ToListAsync()).Select(_mapper.Map).ToList();
     }
 }

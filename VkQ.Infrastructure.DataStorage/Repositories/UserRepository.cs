@@ -6,7 +6,7 @@ using VkQ.Domain.Users.Entities;
 using VkQ.Domain.Users.Ordering.Visitor;
 using VkQ.Domain.Users.Specification.Visitor;
 using VkQ.Infrastructure.DataStorage.Context;
-using VkQ.Infrastructure.DataStorage.Factories.Abstractions;
+using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
 using VkQ.Infrastructure.DataStorage.Models;
 using VkQ.Infrastructure.DataStorage.Visitors.Sorting;
 using VkQ.Infrastructure.DataStorage.Visitors.Specifications;
@@ -16,35 +16,35 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateFactory<User, UserModel> _factory;
-    private readonly IModelFactory<UserModel, User> _modelFactory;
+    private readonly IAggregateMapper<User, UserModel> _mapper;
+    private readonly IModelMapper<UserModel, User> _modelMapper;
     private readonly UserVisitor _visitor = new();
     private readonly UserSortingVisitor _sortingVisitor = new();
 
 
-    public UserRepository(ApplicationDbContext context, IAggregateFactory<User, UserModel> factory,
-        IModelFactory<UserModel, User> modelFactory)
+    public UserRepository(ApplicationDbContext context, IAggregateMapper<User, UserModel> mapper,
+        IModelMapper<UserModel, User> modelMapper)
     {
         _context = context;
-        _factory = factory;
-        _modelFactory = modelFactory;
+        _mapper = mapper;
+        _modelMapper = modelMapper;
     }
 
     public async Task<User?> GetAsync(Guid id)
     {
         var model = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
-        return model == null ? null : _factory.Create(model);
+        return model == null ? null : _mapper.Map(model);
     }
 
     public async Task AddAsync(User entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Add(model);
     }
 
     public async Task UpdateAsync(User entity)
     {
-        var model = await _modelFactory.CreateAsync(entity);
+        var model = await _modelMapper.MapAsync(entity);
         _context.Update(model);
     }
 
@@ -99,6 +99,6 @@ internal class UserRepository : IUserRepository
         if (skip.HasValue) query = query.Skip(skip.Value);
         if (take.HasValue) query = query.Take(take.Value);
 
-        return (await query.ToListAsync()).Select(_factory.Create).ToList();
+        return (await query.ToListAsync()).Select(_mapper.Map).ToList();
     }
 }

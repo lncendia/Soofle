@@ -1,6 +1,6 @@
 ﻿namespace VkQ.Infrastructure.DataStorage.Models.Reports.Base;
 
-public class ReportModel : IModel
+public abstract class ReportModel : IModel
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
