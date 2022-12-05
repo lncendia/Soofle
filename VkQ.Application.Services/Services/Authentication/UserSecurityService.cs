@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using VkQ.Application.Abstractions.Entities;
-using VkQ.Application.Abstractions.Exceptions.UsersAuthentication;
-using VkQ.Application.Abstractions.Interfaces.UsersAuthentication;
+using VkQ.Application.Abstractions.Users.Entities;
+using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
+using VkQ.Application.Abstractions.Users.ServicesInterfaces.UsersAuthentication;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Users.Specification;
 

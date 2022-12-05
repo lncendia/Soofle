@@ -8,30 +8,9 @@
 <h3>Оплата подписки</h3>
 <div class="row pb-5">
     <div class="col-sm-6">
-        @if (Model.User.EndOfSubscribe.HasValue && Model.User.EndOfSubscribe > DateTime.UtcNow && Model.User.Rate != null)
-        {
-            <p>Ваша подписка действует до @TimeZoneInfo.ConvertTimeFromUtc(Model.User.EndOfSubscribe.Value, timeZone).ToString("f", new CultureInfo("Ru"))</p>
-            <p>Вам доступно до @Model.User.Rate.CountPosts публикаций</p>
-        }
         <div class="card">
             <div class="card-header">
                 Оплата подписки
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">Выберите тариф</h5>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Тарифы
-                    </button>
-                    <ul class="dropdown-menu">
-                        @foreach (var rate in Model.Rates)
-                        {
-                            <li>
-                                <a class="dropdown-item" asp-action="CreatePayment" asp-route-id="@rate.Id">@rate.CountPosts.ToString("D") публикаций (@rate.Amount.ToString("C", new CultureInfo("Ru")))</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
             </div>
             <div class="card-footer text-muted">
                 Доступные способы оплаты: Visa, MasterCard, Мир, Qiwi
@@ -44,8 +23,8 @@
 
 @if (Model.Count != 0)
 {
-    int count = (Model.Page - 1) * 30;
-    int limit = count + 30;
+    var count = (Model.Page - 1) * 30;
+    var limit = count + 30;
     <p>Показаны @(count + 1) - @(limit > Model.Count ? Model.Count : limit) из @Model.Count записей.</p>
 }
 else
@@ -71,15 +50,15 @@ else
             var payment = Model.Payments[i];
             <tr>
                 <th scope="row">@(i + 1)</th>
-                <td class="main">@TimeZoneInfo.ConvertTimeFromUtc(payment.CreationDate, timeZone).ToString("f", new CultureInfo("Ru"))</td>
-                <td class="child">@payment.Rate?.Amount.ToString("C", new CultureInfo("Ru"))</td>
-                @if (payment.Success)
+                <td class="main">@payment.CreationDate.ToOffset(TimeSpan.FromHours(3)).ToString("f", new CultureInfo("Ru"))</td>
+                <td class="child">@payment.Amount.ToString("C", new CultureInfo("Ru"))</td>
+                @if (payment.IsSuccessful)
                 {
                     <td>
                         <span class="badge bg-success">Оплачено</span>
                     </td>
                     <td>-</td>
-                    <td>@TimeZoneInfo.ConvertTimeFromUtc(payment.PaymentDate, timeZone).ToString("f", new CultureInfo("Ru"))</td>
+                    <td>@payment.CompletionDate!.Value.ToOffset(TimeSpan.FromHours(3)).ToString("f", new CultureInfo("Ru"))</td>
                 }
                 else
                 {

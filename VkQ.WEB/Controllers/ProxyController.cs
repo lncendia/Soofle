@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VkQ.Application.Abstractions.Proxies.ServicesInterfaces;
 using VkQ.WEB.ViewModels.Proxy;
 
 namespace VkQ.WEB.Controllers
@@ -7,21 +8,20 @@ namespace VkQ.WEB.Controllers
     [Authorize(Roles = "admin")]
     public class ProxyController : Controller
     {
-        private readonly ProxyService _proxyService;
-        private readonly ApplicationDbContext _db;
+        private readonly IProxyManager _proxyManager;
 
-        public ProxyController(ProxyService proxyService, ApplicationDbContext db)
+        public ProxyController(IProxyManager proxyManager)
         {
-            _proxyService = proxyService;
-            _db = db;
+            _proxyManager = proxyManager;
         }
 
         [HttpGet]
         public IActionResult Index(string message)
         {
             if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+            var proxies = await _proxyManager.GetProxiesAsync();
             return View(new AddProxyViewModel()
-                { Proxies = _db.Proxies.OrderByDescending(proxy => proxy.Id).ToList() });
+                { Proxies =  });
         }
         
         public IActionResult DeleteProxy(int id)

@@ -1,7 +1,7 @@
-﻿using VkQ.Application.Abstractions.DTO.Reports.Base.PublicationReportBaseDto;
+﻿using VkQ.Application.Abstractions.Reports.DTOs.Reports.Base.PublicationReportBaseDto;
 using VkQ.Domain.Reposts.BaseReport.Entities.Publication;
 
-namespace VkQ.Application.Services.Services.Reports.Mappers;
+namespace VkQ.Application.Services.Services.Reports.Mappers.StaticMethods;
 
 internal class ReportMapper
 {

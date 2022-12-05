@@ -5,14 +5,15 @@ using VkNet.AudioBypassService.Extensions;
 using VkNet.Model;
 using VkNet.Utils.AntiCaptcha;
 using VkQ.Application.Abstractions.DTO.Proxy;
-using VkQ.Application.Abstractions.DTO.Users;
+using VkQ.Application.Abstractions.Proxies.DTOs;
+using VkQ.Application.Abstractions.Users.DTOs;
 using VkQ.Infrastructure.VkAuthentication.AntiCaptcha;
 
 namespace VkQ.Infrastructure.VkAuthentication;
 
 public static class VkApi
 {
-    private static VkNet.VkApi BuildLoginApi(VkLoginDto info, VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
+    private static VkNet.VkApi BuildLoginApi(VkLoginDto info, Application.Abstractions.ReportsProcessors.ServicesInterfaces.ICaptchaSolver solver)
     {
         var services = new ServiceCollection();
         services.AddAudioBypass();
@@ -22,7 +23,7 @@ public static class VkApi
         return api;
     }
 
-    private static async Task<VkNet.VkApi> BuildTokenApiAsync(VkLogoutDto info, VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
+    private static async Task<VkNet.VkApi> BuildTokenApiAsync(VkLogoutDto info, Application.Abstractions.ReportsProcessors.ServicesInterfaces.ICaptchaSolver solver)
     {
         var services = new ServiceCollection();
         services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(solver));
@@ -47,7 +48,7 @@ public static class VkApi
     }
 
     public static async Task<string> ActivateAsync(VkLoginDto info,
-        VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
+        Application.Abstractions.ReportsProcessors.ServicesInterfaces.ICaptchaSolver solver)
     {
         var api = BuildLoginApi(info, solver);
 
@@ -60,14 +61,14 @@ public static class VkApi
         return api.Token;
     }
 
-    public static async Task DeactivateAsync(VkLogoutDto info, VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
+    public static async Task DeactivateAsync(VkLogoutDto info, Application.Abstractions.ReportsProcessors.ServicesInterfaces.ICaptchaSolver solver)
     {
         var api = await BuildTokenApiAsync(info, solver);
         await api.LogOutAsync();
     }
 
     public static async Task<string> ActivateWithTwoFactorAsync(VkLoginDto info, string code,
-        VkQ.Domain.Abstractions.Services.ICaptchaSolver solver)
+        Application.Abstractions.ReportsProcessors.ServicesInterfaces.ICaptchaSolver solver)
     {
         var api = BuildLoginApi(info, solver);
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using VkQ.Application.Abstractions.Entities;
+using VkQ.Application.Abstractions.Users.Entities;
 using VkQ.Infrastructure.ApplicationDataStorage.Models;
 
 namespace VkQ.Infrastructure.ApplicationDataStorage;

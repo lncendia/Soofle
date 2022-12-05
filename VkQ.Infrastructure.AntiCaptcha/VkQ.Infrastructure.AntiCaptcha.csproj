@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\VkQ.Domain.Abstractions\VkQ.Domain.Abstractions.csproj" />
+      <ProjectReference Include="..\VkQ.Application.Abstractions\VkQ.Application.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>

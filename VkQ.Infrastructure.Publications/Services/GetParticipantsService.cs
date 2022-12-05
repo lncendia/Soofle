@@ -5,10 +5,11 @@ using VkNet.Exception;
 using VkNet.Model;
 using VkNet.Model.RequestParams;
 using VkNet.Utils;
-using VkQ.Domain.Abstractions.DTOs;
-using VkQ.Domain.Abstractions.Exceptions;
-using VkQ.Domain.Abstractions.Services;
+using VkQ.Application.Abstractions.ReportsProcessors.DTOs;
+using VkQ.Application.Abstractions.ReportsProcessors.Exceptions;
+using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
 using VkQ.Domain.Participants.Enums;
+using VkQ.Domain.Reposts.ParticipantReport.DTOs;
 
 namespace VkQ.Infrastructure.Publications.Services;
 

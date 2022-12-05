@@ -20,4 +20,9 @@ internal class LinkVisitor : BaseVisitor<LinkModel, ILinkSpecificationVisitor, L
 
     public void Visit(LinkByUserIdSpecification specification) =>
         Expr = x => x.User1Id == specification.Id || x.User2Id == specification.Id;
+
+    public void Visit(LinkByUserIdsSpecification specification) => Expr = x =>
+        specification.Ids.Contains(x.User1Id) && specification.Ids.Contains(x.User2Id);
+
+    public void Visit(AcceptedLinkSpecification specification) => Expr = x => x.IsAccepted;
 }

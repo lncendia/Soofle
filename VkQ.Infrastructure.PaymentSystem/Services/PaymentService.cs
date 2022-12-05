@@ -5,10 +5,10 @@ using Qiwi.BillPayments.Model;
 using Qiwi.BillPayments.Model.In;
 using Qiwi.BillPayments.Model.Out;
 using RestSharp;
-using VkQ.Application.Abstractions.DTO.Payments;
-using VkQ.Application.Abstractions.Exceptions.Payments;
-using VkQ.Application.Abstractions.Interfaces;
-using VkQ.Application.Abstractions.Interfaces.Payments;
+using VkQ.Application.Abstractions.Payments.DTOs;
+using VkQ.Application.Abstractions.Payments.Exceptions;
+using VkQ.Application.Abstractions.Payments.ServicesInterfaces;
+using VkQ.Application.Abstractions.Proxies.DTOs;
 
 namespace VkQ.Infrastructure.PaymentSystem.Services;
 
@@ -23,7 +23,7 @@ public class PaymentService : IPaymentCreatorService
         _client = BillPaymentsClientFactory.Create(qiwiToken);
     }
 
-    public async Task<PaymentData> CreatePayAsync(long id, decimal cost)
+    public async Task<PaymentData> CreatePayAsync(Guid id, decimal cost)
     {
         try
         {
@@ -51,7 +51,7 @@ public class PaymentService : IPaymentCreatorService
         }
     }
 
-    public async Task<(decimal, DateTime)> GetPaymentData(string billId)
+    public async Task<bool> CheckPaymentAsync(string billId)
     {
         try
         {
@@ -63,10 +63,9 @@ public class PaymentService : IPaymentCreatorService
             if (response1.StatusCode != HttpStatusCode.OK)
                 throw new ErrorCheckBillException(response1.StatusDescription ?? "Bad status code", null);
             var response = JsonConvert.DeserializeObject<BillResponse>(response1.Content!);
-            if (response?.Status.ValueString != "PAID") throw new BillNotPaidException(billId);
-            return (response.Amount.ValueDecimal, response.Status.ChangedDateTime.ToUniversalTime());
+            return response?.Status.ValueString == "PAID";
         }
-        catch (Exception ex) when (ex is not BillNotPaidException)
+        catch (Exception ex)
         {
             throw new ErrorCheckBillException(ex.Message, ex);
         }

@@ -1,6 +1,6 @@
-﻿using VkQ.Application.Abstractions.DTO.Reports.LikeReportDto;
-using VkQ.Application.Abstractions.DTO.Reports.ParticipantReportDto;
-using VkQ.Application.Abstractions.Interfaces.Reports;
+﻿using VkQ.Application.Abstractions.Reports.DTOs.Reports.LikeReportDto;
+using VkQ.Application.Abstractions.Reports.DTOs.Reports.ParticipantReportDto;
+using VkQ.Application.Abstractions.Reports.ServicesInterfaces;
 using VkQ.Domain.Reposts.LikeReport.Entities;
 using VkQ.Domain.Reposts.ParticipantReport.Entities;
 

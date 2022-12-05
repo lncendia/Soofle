@@ -3,8 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using VkNet.Exception;
 using VkNet.Model;
 using VkNet.Utils.AntiCaptcha;
-using VkQ.Domain.Abstractions.DTOs;
-using VkQ.Domain.Abstractions.Exceptions;
+using VkQ.Application.Abstractions.ReportsProcessors.DTOs;
+using VkQ.Application.Abstractions.ReportsProcessors.Exceptions;
 using VkQ.Infrastructure.Publications.AntiCaptcha;
 
 namespace VkQ.Infrastructure.Publications;
@@ -12,7 +12,7 @@ namespace VkQ.Infrastructure.Publications;
 public static class VkApi
 {
     public static async Task<VkNet.VkApi> BuildApiAsync(RequestInfo info,
-        Domain.Abstractions.Services.ICaptchaSolver captchaSolver)
+        Application.Abstractions.ReportsProcessors.ServicesInterfaces.ICaptchaSolver captchaSolver)
     {
         var services = new ServiceCollection();
         services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(captchaSolver));

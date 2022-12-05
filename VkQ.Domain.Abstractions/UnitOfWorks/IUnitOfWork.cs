@@ -11,5 +11,6 @@ public interface IUnitOfWork
     Lazy<IReportLogRepository> ReportLogRepository { get; }
     Lazy<ILikeReportRepository> LikeReportRepository { get; }
     Lazy<IParticipantReportRepository> ParticipantReportRepository { get; }
+    Lazy<ITransactionRepository> TransactionRepository { get; }
     Task SaveChangesAsync();
 }

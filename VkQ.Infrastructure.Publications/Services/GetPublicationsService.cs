@@ -1,7 +1,8 @@
 using VkNet.Abstractions;
 using VkNet.Model;
 using VkNet.Model.RequestParams;
-using VkQ.Domain.Abstractions.DTOs;
+using VkQ.Application.Abstractions.ReportsProcessors.DTOs;
+using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
 using VkQ.Domain.Abstractions.Services;
 
 namespace VkQ.Infrastructure.Publications.Services;

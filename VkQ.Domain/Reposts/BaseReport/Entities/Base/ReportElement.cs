@@ -1,17 +1,16 @@
-﻿namespace VkQ.Domain.Reposts.BaseReport.Entities.Base;
+﻿using VkQ.Domain.Abstractions;
 
-public abstract class ReportElement : IEntity
+namespace VkQ.Domain.Reposts.BaseReport.Entities.Base;
+
+public abstract class ReportElement : Entity
 {
-    protected ReportElement(string name, long vkId, IEnumerable<ReportElement>? children)
+    protected ReportElement(string name, long vkId, ReportElement? parent = null)
     {
         Name = name;
-        if (children != null) Children.AddRange(children);
-        Id = Guid.NewGuid();
         VkId = vkId;
+        Parent = parent;
     }
-
-    public Guid Id { get; }
     public string Name { get; }
     public long VkId { get; }
-    protected readonly List<ReportElement> Children = new();
+    protected readonly ReportElement? Parent;
 }

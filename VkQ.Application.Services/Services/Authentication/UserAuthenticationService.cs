@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using VkQ.Application.Abstractions.DTO.Users;
-using VkQ.Application.Abstractions.Entities;
-using VkQ.Application.Abstractions.Exceptions.UsersAuthentication;
-using VkQ.Application.Abstractions.Interfaces.UsersAuthentication;
+using VkQ.Application.Abstractions.Users.DTOs;
+using VkQ.Application.Abstractions.Users.Entities;
+using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
+using VkQ.Application.Abstractions.Users.ServicesInterfaces.UsersAuthentication;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Users.Entities;
 
@@ -31,6 +31,8 @@ public class UserAuthenticationService : IUserAuthenticationService
         user = new UserData(userDto.Email, userDto.Username);
         var result = await _userManager.CreateAsync(user, userDto.Password);
         if (result.Errors.Any()) throw new UserCreationException(result.Errors.First().Description);
+        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Sid, userDomain.Id.ToString()));
+        
         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var url = confirmUrl + $"?email={Uri.EscapeDataString(user.Email!)}&code={Uri.EscapeDataString(code)}";
         try
@@ -60,7 +62,7 @@ public class UserAuthenticationService : IUserAuthenticationService
             user = new UserData(info.Principal.FindFirstValue(ClaimTypes.Email)!,
                 info.Principal.FindFirstValue(ClaimTypes.GivenName) + ' ' +
                 info.Principal.FindFirstValue(ClaimTypes.Surname));
-            
+
             var userDomain = new User(user.UserName!, user.Email!);
 
             var result = await _userManager.CreateAsync(user);

@@ -1,21 +1,30 @@
-﻿using VkQ.Application.Abstractions.Interfaces.BackgroundScheduler;
+﻿using Microsoft.EntityFrameworkCore;
+using VkQ.Application.Abstractions.Reports.ServicesInterfaces.BackgroundScheduler;
+using VkQ.Infrastructure.ApplicationDataStorage.Models;
 
 namespace VkQ.Infrastructure.ApplicationDataStorage;
 
-public class JobStorage:IJobStorage
+public class JobStorage : IJobStorage
 {
-    public Task<string> GetJobIdAsync(Guid reportId)
+    private readonly ApplicationContext _context;
+
+    public JobStorage(ApplicationContext context) => _context = context;
+
+    public async Task<string?> GetJobIdAsync(Guid reportId)
     {
-        throw new NotImplementedException();
+        return (await _context.Jobs.FirstOrDefaultAsync(r => r.ReportId == reportId))?.JobId;
     }
 
     public Task StoreJobIdAsync(Guid reportId, string jobId)
     {
-        throw new NotImplementedException();
+        _context.Jobs.Add(new Job { ReportId = reportId, JobId = jobId });
+        return _context.SaveChangesAsync();
     }
 
     public Task DeleteJobIdAsync(Guid reportId)
     {
-        throw new NotImplementedException();
+        var job = _context.Jobs.FirstOrDefault(r => r.ReportId == reportId);
+        if (job != null) _context.Jobs.Remove(job);
+        return _context.SaveChangesAsync();
     }
 }

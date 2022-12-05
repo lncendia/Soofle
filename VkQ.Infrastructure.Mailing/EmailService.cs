@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mail;
-using VkQ.Application.Abstractions.Interfaces.UsersAuthentication;
+using VkQ.Application.Abstractions.Users.ServicesInterfaces.UsersAuthentication;
 
 namespace VkQ.Infrastructure.Mailing;
 

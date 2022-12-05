@@ -2,8 +2,9 @@
 using VkNet.Enums.SafetyEnums;
 using VkNet.Model;
 using VkNet.Model.RequestParams;
-using VkQ.Domain.Abstractions.DTOs;
-using VkQ.Domain.Abstractions.Services;
+using VkQ.Application.Abstractions.ReportsProcessors.DTOs;
+using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
+using LikesDto = VkQ.Application.Abstractions.ReportsProcessors.DTOs.LikesDto;
 
 namespace VkQ.Infrastructure.Publications.Services;
 

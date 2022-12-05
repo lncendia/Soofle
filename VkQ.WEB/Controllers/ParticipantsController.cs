@@ -9,9 +9,7 @@ namespace VkQ.WEB.Controllers
     [Authorize]
     public class ParticipantsController : Controller
     {
-        private readonly UserManager<User> _userManager;
         private readonly ParticipantsService _participantsService;
-        private readonly ApplicationDbContext _db;
 
         public ParticipantsController(ParticipantsService participantsService, UserManager<User> userManager,
             ApplicationDbContext db)
@@ -26,7 +24,6 @@ namespace VkQ.WEB.Controllers
         {
             var x = _db.Participants
                 .Where(participant => _db.Participants.Any(participant1 => participant1.Pk == participant.Pk)).ToList();
-            if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
             var user = await _userManager.GetUserAsync(User);
             return View(_db.Instagrams.Where(instagram => instagram.User == user).ToList());
         }
@@ -47,42 +44,13 @@ namespace VkQ.WEB.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ParticipantsFromNicks(int id)
+        public async Task<IActionResult> Participant(int id)
         {
-            if (id <= 0) return RedirectToAction("SelectChat", new { message = "Неверный ID." });
-            var user = await _userManager.GetUserAsync(User);
-            var instagram =
-                _db.Instagrams.FirstOrDefault(instagram1 =>
-                    instagram1.Id == id && instagram1.User == user);
-            if (instagram == null) return RedirectToAction("SelectChat", new { message = "Аккаунт не найден." });
-            return View(new ParticipantsFromNicksViewModel() { Id = instagram.Id });
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ParticipantsFromNicks(ParticipantsFromNicksViewModel model)
-        {
-            if (!ModelState.IsValid) return View(model);
-            var user = await _userManager.GetUserAsync(User);
-            var instagram =
-                _db.Instagrams.FirstOrDefault(instagram1 =>
-                    instagram1.Id == model.Id && instagram1.User == user);
-            if (instagram == null) return RedirectToAction("SelectChat", new { message = "Аккаунт не найден." });
-            model.Participants = _participantsService.GetParticipants(model);
-            return View(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Participant(int id, string message)
-        {
-            if (id <= 0) return RedirectToAction("SelectChat", new { message = "Неверный ID." });
-            if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
             var user = await _userManager.GetUserAsync(User);
             var participant =
                 _db.Participants.Include(participant1 => participant1.ParentParticipant)
                     .Include(participant1 => participant1.Instagram).FirstOrDefault(participant1 =>
                         participant1.Instagram.User == user && participant1.Id == id);
-            if (participant == null)
-                return RedirectToAction("SelectChat", new { message = "Участник не найден." });
             var model = new EditParticipantViewModel
             {
                 Id = participant.Id,

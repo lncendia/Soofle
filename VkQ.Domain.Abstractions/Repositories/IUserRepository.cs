@@ -1,5 +1,4 @@
-﻿using VkQ.Domain.Abstractions.Interfaces;
-using VkQ.Domain.Users.Entities;
+﻿using VkQ.Domain.Users.Entities;
 using VkQ.Domain.Users.Ordering.Visitor;
 using VkQ.Domain.Users.Specification.Visitor;
 

@@ -11,13 +11,6 @@ internal static class ReportInitializer
     private static readonly Type PublicationReportType = typeof(PublicationReport);
     private static readonly Type ReportType = PublicationReportType.BaseType!;
 
-
-    private static readonly FieldInfo PublicationId =
-        typeof(Publication).GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
-
-    private static readonly FieldInfo ReportId =
-        ReportType.GetField("<Id>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
-
     private static readonly FieldInfo ReportUserId =
         ReportType.GetField("<UserId>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
@@ -68,13 +61,13 @@ internal static class ReportInitializer
     private static Publication GetPublication(PublicationModel model)
     {
         var pub = new Publication(model.ItemId, model.OwnerId);
-        PublicationId.SetValue(pub, model.Id);
+        IdFields.EntityId.SetValue(pub, model.Id);
         return pub;
     }
 
     internal static void InitReport(Report report, IEnumerable<ReportElement> elements, ReportModel reportModel)
     {
-        ReportId.SetValue(report, reportModel.Id);
+        IdFields.AggregateId.SetValue(report, reportModel.Id);
         ReportUserId.SetValue(report, reportModel.UserId);
         ReportCreationDate.SetValue(report, reportModel.CreationDate);
         ReportStartDate.SetValue(report, reportModel.StartDate);

@@ -1,18 +1,19 @@
-﻿using VkQ.Domain.Reposts.BaseReport.Exceptions.Base;
+﻿using VkQ.Domain.Abstractions;
+using VkQ.Domain.Reposts.BaseReport.Events;
+using VkQ.Domain.Reposts.BaseReport.Exceptions.Base;
 using VkQ.Domain.Users.Entities;
 
 namespace VkQ.Domain.Reposts.BaseReport.Entities.Base;
 
-public abstract class Report : IAggregateRoot
+public abstract class Report : AggregateRoot
 {
     protected Report(User user)
     {
         if (!user.IsSubscribed) throw new UserSubscribeException(user.Id, user.Name);
-        Id = Guid.NewGuid();
         UserId = user.Id;
     }
 
-    public Guid Id { get; }
+
     public Guid UserId { get; }
     public DateTimeOffset CreationDate { get; } = DateTimeOffset.Now;
     public DateTimeOffset? StartDate { get; private set; }
@@ -31,6 +32,7 @@ public abstract class Report : IAggregateRoot
         EndDate = DateTimeOffset.Now;
         IsCompleted = true;
         IsSucceeded = true;
+        AddDomainEvent(new ReportFinishedEvent(Id, true));
     }
 
     protected void Fail(string message)
@@ -39,5 +41,6 @@ public abstract class Report : IAggregateRoot
         IsCompleted = true;
         IsSucceeded = false;
         Message = message;
+        AddDomainEvent(new ReportFinishedEvent(Id, false));
     }
 }

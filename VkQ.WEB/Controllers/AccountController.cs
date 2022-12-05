@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Overoom.WEB.Models.Account;
-using VkQ.Application.Abstractions.DTO.Users;
-using VkQ.Application.Abstractions.Exceptions.UsersAuthentication;
-using VkQ.Application.Abstractions.Interfaces.UsersAuthentication;
+using VkQ.Application.Abstractions.Users.DTOs;
+using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
+using VkQ.Application.Abstractions.Users.ServicesInterfaces.UsersAuthentication;
 using VkQ.Domain.Users.Exceptions;
 
 namespace VkQ.WEB.Controllers;
@@ -131,7 +131,7 @@ public class AccountController : Controller
     public IActionResult Login(string message, string returnUrl = "/")
     {
         if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
-        return View(new LoginViewModel() {ReturnUrl = returnUrl});
+        return View(new LoginViewModel {ReturnUrl = returnUrl});
     }
 
     [HttpPost]

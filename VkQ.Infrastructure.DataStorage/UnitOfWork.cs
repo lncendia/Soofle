@@ -22,6 +22,9 @@ public class UnitOfWork : IUnitOfWork
     public Lazy<IProxyRepository> ProxyRepository => new(() =>
         new ProxyRepository(_context, new ProxyMapper(), new ProxyModelMapper(_context)));
 
+    public Lazy<ITransactionRepository> TransactionRepository => new(() =>
+        new TransactionRepository(_context, new TransactionMapper(), new TransactionModelMapper(_context)));
+
     public Lazy<IParticipantRepository> ParticipantRepository => new(() =>
         new ParticipantRepository(_context, new ParticipantMapper(), new ParticipantModelMapper(_context)));
 

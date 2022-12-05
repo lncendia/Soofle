@@ -22,4 +22,6 @@ internal class ReportLogVisitor : BaseVisitor<ReportLogModel, IReportLogSpecific
         x.CreatedAt >= specification.MinDate && x.CreatedAt <= specification.MaxDate;
 
     public void Visit(LogByUserIdSpecification specification) => Expr = x => x.UserId == specification.Id;
+
+    public void Visit(LogByReportIdSpecification specification) => Expr = x => x.ReportId == specification.Id;
 }

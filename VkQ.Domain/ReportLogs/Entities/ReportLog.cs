@@ -1,12 +1,13 @@
-﻿using VkQ.Domain.ReportLogs.Enums;
+﻿using VkQ.Domain.Abstractions;
+using VkQ.Domain.ReportLogs.Enums;
 
 namespace VkQ.Domain.ReportLogs.Entities;
 
-public class ReportLog : IAggregateRoot
+public class ReportLog : AggregateRoot
 {
     public ReportLog(Guid userId, Guid reportId, ReportType type, DateTimeOffset createdAt, string additionalInfo)
     {
-        Id = Guid.NewGuid();
+        
         UserId = userId;
         ReportId = reportId;
         Type = type;
@@ -14,7 +15,7 @@ public class ReportLog : IAggregateRoot
         AdditionalInfo = additionalInfo;
     }
 
-    public Guid Id { get; }
+    
     public Guid UserId { get; }
     public Guid ReportId { get; }
     public ReportType Type { get; }

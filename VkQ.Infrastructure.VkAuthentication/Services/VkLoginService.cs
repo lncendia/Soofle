@@ -1,8 +1,8 @@
 using VkNet.AudioBypassService.Exceptions;
-using VkQ.Application.Abstractions.DTO.Users;
-using VkQ.Application.Abstractions.Exceptions.VkAuthentication;
-using VkQ.Application.Abstractions.Interfaces.Vk;
-using VkQ.Domain.Abstractions.Services;
+using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
+using VkQ.Application.Abstractions.Users.DTOs;
+using VkQ.Application.Abstractions.Users.Exceptions.VkAuthentication;
+using VkQ.Application.Abstractions.Users.ServicesInterfaces.Vk;
 
 namespace VkQ.Infrastructure.VkAuthentication.Services;
 

@@ -6,16 +6,16 @@ namespace VkQ.Domain.Reposts.LikeReport.Entities;
 
 public class LikeReportElement : PublicationReportElement
 {
-    public LikeReportElement(string name, string likeChatName, long vkId, Guid participantId,
-        IEnumerable<LikeReportElement>? children) : base(name, likeChatName, vkId, participantId, children)
+    internal LikeReportElement(string name, string likeChatName, long vkId, Guid participantId,
+        LikeReportElement? parent) : base(name, likeChatName, vkId, participantId, parent)
     {
     }
 
-    public new List<LikeReportElement> Children => base.Children.Cast<LikeReportElement>().ToList();
+    public new LikeReportElement? Parent => base.Parent as LikeReportElement;
 
     public List<LikeInfo> Likes { get; } = new();
 
-    public void AddLike(LikeInfo like)
+    internal void AddLike(LikeInfo like)
     {
         if (Likes.Any(x => x.PublicationId == like.PublicationId))
             throw new LikeAlreadyExistException();

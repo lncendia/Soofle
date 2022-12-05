@@ -1,5 +1,4 @@
-﻿using VkQ.Domain.Abstractions.Interfaces;
-using VkQ.Domain.ReportLogs.Entities;
+﻿using VkQ.Domain.ReportLogs.Entities;
 using VkQ.Domain.ReportLogs.Ordering.Visitor;
 using VkQ.Domain.ReportLogs.Specification.Visitor;
 

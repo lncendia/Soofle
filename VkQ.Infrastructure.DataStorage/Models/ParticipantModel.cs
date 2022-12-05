@@ -6,6 +6,8 @@ public class ParticipantModel : IModel
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
+    public string? Notes { get; set; }
+    public bool Vip { get; set; }
     public ParticipantType Type { get; set; }
     public long VkId { get; set; }
     public Guid? ParentParticipantId { get; set; }

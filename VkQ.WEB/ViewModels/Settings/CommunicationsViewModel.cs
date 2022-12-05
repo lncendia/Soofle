@@ -4,8 +4,14 @@ namespace VkQ.WEB.ViewModels.Settings
 {
     public class CommunicationsViewModel
     {
-        public List<CommunicationLink> Links { get; set; }
-        public User CurrentUser { get; set; }
-        public string Scheme { get; set; }
+        public CommunicationsViewModel(Guid currentUserId, string scheme)
+        {
+            CurrentUserId = currentUserId;
+            Scheme = scheme;
+        }
+
+        public List<CommunicationLink> Links { get; }
+        public Guid CurrentUserId { get; }
+        public string Scheme { get; }
     }
 }

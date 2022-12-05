@@ -1,10 +1,12 @@
-﻿namespace VkQ.Domain.Reposts.BaseReport.Entities.Publication;
+﻿using VkQ.Domain.Abstractions;
 
-public class Publication : IEntity
+namespace VkQ.Domain.Reposts.BaseReport.Entities.Publication;
+
+public class Publication : Entity
 {
     public Publication(long itemId, long ownerId)
     {
-        Id = Guid.NewGuid();
+        
         ItemId = itemId;
         OwnerId = ownerId;
     }

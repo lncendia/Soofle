@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model WebApplication.ViewModels.Proxy.AddProxyViewModel
+@model VkQ.WEB.ViewModels.Proxy.AddProxyViewModel
 @{
     ViewData["Title"] = "Прокси";
 }
@@ -55,7 +55,6 @@
                 <td>@Model.Proxies[i].Port</td>
                 <td>@Model.Proxies[i].Login</td>
                 <td>@Model.Proxies[i].Password</td>
-                <td>@Model.Proxies[i].Country</td>
                 <td>
                     <a class="action" asp-action="DeleteProxy" asp-route-id="@Model.Proxies[i].Id">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">

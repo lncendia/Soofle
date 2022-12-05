@@ -1,4 +1,5 @@
 using VkQ.Domain;
+using VkQ.Domain.Abstractions;
 using VkQ.Domain.Ordering;
 using VkQ.Domain.Ordering.Abstractions;
 using VkQ.Infrastructure.DataStorage.Models;
@@ -8,7 +9,7 @@ namespace VkQ.Infrastructure.DataStorage.Visitors.Sorting;
 
 internal abstract class BaseSortingVisitor<TEntity, TVisitor, TItem> where TVisitor : ISortingVisitor<TVisitor, TItem>
     where TEntity : IModel
-    where TItem : IAggregateRoot
+    where TItem : AggregateRoot
 {
     public List<SortData<TEntity>> SortItems { get; } = new();
     protected abstract List<SortData<TEntity>> ConvertOrderToList(IOrderBy<TItem, TVisitor> spec);

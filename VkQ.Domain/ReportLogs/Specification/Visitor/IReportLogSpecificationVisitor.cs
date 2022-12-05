@@ -7,4 +7,5 @@ public interface IReportLogSpecificationVisitor : ISpecificationVisitor<IReportL
 {
     void Visit(LogByCreationDateSpecification specification);
     void Visit(LogByUserIdSpecification specification);
+    void Visit(LogByReportIdSpecification specification);
 }

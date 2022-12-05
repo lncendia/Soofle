@@ -1,225 +1,202 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VkQ.Domain.Users.Entities;
+using VkQ.Application.Abstractions.Links.ServicesInterfaces;
+using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
+using VkQ.Application.Abstractions.Users.ServicesInterfaces.UsersAuthentication;
+using VkQ.Domain.Users.Exceptions;
 using VkQ.WEB.ViewModels.Settings;
 
-namespace VkQ.WEB.Controllers
+namespace VkQ.WEB.Controllers;
+
+[Authorize]
+public class SettingsController : Controller
 {
-    [Authorize]
-    public class SettingsController : Controller
+    private readonly IUserSecurityService _userService;
+    private readonly ILinkManager _linkManager;
+
+    public SettingsController(IUserSecurityService userManager, ILinkManager linkManager)
     {
-        private readonly UserManager<User> _userManager;
-        private readonly EmailService _emailService;
-        private readonly CommunicationService _communicationLink;
-        private readonly ApplicationDbContext _db;
+        _userService = userManager;
+        _linkManager = linkManager;
+    }
 
-        public SettingsController(UserManager<User> userManager, EmailService emailService,
-            CommunicationService communicationLink, ApplicationDbContext db)
+    [HttpGet]
+    public async Task<IActionResult> Communications(string message)
+    {
+        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var links = await _linkManager.GetLinksAsync(id);
+
+        var data = new CommunicationsViewModel
         {
-            _userManager = userManager;
-            _emailService = emailService;
-            _communicationLink = communicationLink;
-            _db = db;
-        }
+            Links = _communicationLink.GetCommunications(user),
+            CurrentUser = user,
+            Scheme = HttpContext.Request.Scheme
+        };
+        return View(data);
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Communications(string message)
+
+    [HttpGet]
+    public IActionResult CreateCommunication()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateCommunication(Guid userId)
+    {
+        if (!ModelState.IsValid) return View(userId);
+        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        await _linkManager.AddLinkAsync(id, userId);
+        return RedirectToAction("Communications", new { message = "Приглашение успешно создано." });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteCommunication(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        await _linkManager.RemoveLinkAsync(id, userId);
+        return Ok();
+    }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AcceptCommunication(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        await _linkManager.AcceptLinkAsync(id, userId);
+        return Ok();
+    }
+
+
+    [HttpGet]
+    public IActionResult ChangeEmail(string message)
+    {
+        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+        return View(new ChangeEmailViewModel { Email = User.Identity!.Name! });
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost]
+    public async Task<IActionResult> ChangeEmail(ChangeEmailViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+        try
         {
-            if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
-            var user = await _userManager.GetUserAsync(User);
-            var data = new CommunicationsViewModel
-            {
-                Links = _communicationLink.GetCommunications(user),
-                CurrentUser = user,
-                Scheme = HttpContext.Request.Scheme
-            };
-            return View(data);
-        }
-
-        [HttpGet]
-        public IActionResult CreateCommunication()
-        {
-            return View(new CreateCommunicationLinkViewModel());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCommunication(CreateCommunicationLinkViewModel model)
-        {
-            if (!ModelState.IsValid) return View(model);
-            if (!(model.CommonReports || model.CommonThieves))
-            {
-                ModelState.AddModelError(String.Empty, "Выберите разрешения");
-                return View(model);
-            }
-
-            User user = await _userManager.GetUserAsync(User);
-            if (_db.CommunicationLinks.Count(link => link.Sender == user || link.Recipient == user) >= 10)
-                return RedirectToAction("Communications", new {message = "Вы не можете создать более 10 связей."});
-            _communicationLink.CreateCommunication(user, model.CommonThieves, model.CommonReports);
-            return RedirectToAction("Communications", new {message = "Приглашение успешно создано."});
-        }
-
-        public async Task<IActionResult> DeleteCommunication(Guid id)
-        {
-            User user = await _userManager.GetUserAsync(User);
-            var link = _db.CommunicationLinks.FirstOrDefault(communicationLink =>
-                communicationLink.Id == id &&
-                (communicationLink.Sender == user || communicationLink.Recipient == user));
-            if (link == null) return RedirectToAction("Communications", new {message = "Приглашение не найдено."});
-            _db.Remove(link);
-            await _db.SaveChangesAsync();
-            return RedirectToAction("Communications", new {message = "Связь удалена."});
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Communication(Guid id)
-        {
-            User user = await _userManager.GetUserAsync(User);
-            var link = _db.CommunicationLinks.FirstOrDefault(communicationLink =>
-                communicationLink.Id == id && communicationLink.Sender != user);
-            if (link == null) return RedirectToAction("Communications", new {message = "Приглашение не найдено."});
-            return View(link);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AcceptCommunication(Guid id)
-        {
-            if (!ModelState.IsValid) return RedirectToAction("Communications");
-
-            User user = await _userManager.GetUserAsync(User);
-
-            if (_db.CommunicationLinks.Count(communicationLink =>
-                communicationLink.Sender == user || communicationLink.Recipient == user) >= 10)
-                return RedirectToAction("Communications", new {message = "Вы не можете создать более 10 связей."});
-
-            var link = _db.CommunicationLinks.FirstOrDefault(communicationLink =>
-                communicationLink.Id == id && communicationLink.Sender != user);
-            if (link == null) return RedirectToAction("Communications", new {message = "Приглашение не найдено."});
-
-            _communicationLink.AcceptCommunication(user, link);
-            return RedirectToAction("Communications", new {message = "Приглашение успешно принято."});
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ChangeEmail(string message)
-        {
-            if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
-            var user = await _userManager.GetUserAsync(User);
-            return View(new ChangeEmailViewModel {Email = user.Email});
-        }
-
-        [ValidateAntiForgeryToken]
-        [HttpPost]
-        public async Task<IActionResult> ChangeEmail(ChangeEmailViewModel model)
-        {
-            if (!ModelState.IsValid) return View(model);
-            User user = await _userManager.GetUserAsync(User);
-            if (model.Email == user.Email)
-            {
-                ModelState.AddModelError(String.Empty, "Вы уже используете эту почту");
-                return View(model);
-            }
-
-            var code = await _userManager.GenerateChangeEmailTokenAsync(user, model.Email);
-            var callbackUrl = Url.Action(
+            await _userService.RequestResetEmailAsync(User.Identity!.Name!, model.Email, Url.Action(
                 "AcceptChangeEmail",
-                "Settings",
-                new {email = model.Email, code},
-                HttpContext.Request.Scheme);
-            _emailService.SendMessage(user.UserName, model.Email,
-                $"Подтвердите смену почты, перейдя по <a href=\"{callbackUrl}\">ссылке</a>.");
+                "Settings", null,
+                HttpContext.Request.Scheme)!);
+
             return RedirectToAction("ChangeEmail",
                 new
                 {
                     message = "Для завершения проверьте электронную почту и перейдите по ссылке, указанной в письме."
                 });
         }
-
-        [HttpGet]
-        public async Task<IActionResult> AcceptChangeEmail(string email, string code)
+        catch (Exception ex)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (code == null || email == null)
+            var text = ex switch
             {
-                return RedirectToAction("ChangeEmail", new
-                {
-                    message =
-                        "Ссылка недействительна."
-                });
-            }
+                UserNotFoundException => "Пользователь не найден",
+                EmailException => "Произошла ошибка при отправке письма",
+                ArgumentException => "Некорректные данные",
+                _ => "Произошла ошибка при изменении почты"
+            };
 
-            var result = await _userManager.ChangeEmailAsync(user, email, code);
-            if (result.Succeeded)
-                return RedirectToAction("ChangeEmail", new
-                {
-                    message =
-                        "Почта успешно изменена."
-                });
-            string errorMessage =
-                result.Errors.Aggregate(String.Empty, (current, error) => current + "\n" + error.Description);
-
-            return RedirectToAction("ChangeEmail",
-                new {message = $"Ошибка: {errorMessage}."});
-        }
-
-        [HttpGet]
-        public IActionResult ChangePassword(string message)
-        {
-            if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            if (!ModelState.IsValid) return View(model);
-            var user = await _userManager.GetUserAsync(User);
-            if (model.OldPassword == model.Password)
-            {
-                ModelState.AddModelError(String.Empty, "Этот пароль уже используется.");
-                return View(model);
-            }
-
-            var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.Password);
-            if (result.Succeeded)
-                return RedirectToAction("ChangePassword", new {message = "Пароль успешно изменен."});
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
+            ModelState.AddModelError("", text);
             return View(model);
         }
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> ChangeTimeZone(string message)
+    [HttpGet]
+    public async Task<IActionResult> AcceptChangeEmail(string? email, string? code)
+    {
+        if (code == null || email == null)
+            return RedirectToAction("ChangeEmail", new { message = "Ссылка недействительна." });
+
+        try
         {
-            if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
-            var user = await _userManager.GetUserAsync(User);
-            return View(new SetTimeZoneViewModel() {Id = user.TimeZoneId});
+            await _userService.ResetEmailAsync(User.Identity!.Name!, email, code);
+            return RedirectToAction("ChangeEmail", new { message = "Почта успешно изменена." });
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangeTimeZone(SetTimeZoneViewModel model)
+        catch (Exception ex)
         {
-            if (!ModelState.IsValid) return View(model);
-            var user = await _userManager.GetUserAsync(User);
-            user.TimeZoneId = model.Id;
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded)
-                return RedirectToAction("ChangeTimeZone", new {message = "Часовой пояс успешно изменен."});
-
-            foreach (var error in result.Errors)
+            var text = ex switch
             {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+                UserNotFoundException => "Пользователь с таким email не найден",
+                InvalidCodeException => "Ссылка недействительна",
+                _ => "Произошла ошибка при смене почты"
+            };
 
+            return RedirectToAction("ChangeEmail", new { message = text });
+        }
+    }
+
+    [HttpGet]
+    public IActionResult ChangePassword(string message)
+    {
+        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+        try
+        {
+            await _userService.ChangePasswordAsync(User.Identity!.Name!, model.OldPassword,
+                model.Password);
+            return RedirectToAction("ChangePassword", new { message = "Пароль успешно изменен." });
+        }
+        catch (Exception ex)
+        {
+            var text = ex switch
+            {
+                UserNotFoundException => "Пользователь не найден",
+                ArgumentException => "Некорректные данные",
+                _ => "Произошла ошибка при изменении пароля"
+            };
+
+            ModelState.AddModelError("", text);
+            return View(model);
+        }
+    }
+
+    [HttpGet]
+    public IActionResult ChangeName(string message)
+    {
+        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangeName(ChangeNameViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+        try
+        {
+            await _userService.ChangeNameAsync(User.Identity!.Name!, model.Name);
+            return RedirectToAction("ChangeName", new { message = "Имя успешно изменено." });
+        }
+        catch (Exception ex)
+        {
+            var text = ex switch
+            {
+                UserNotFoundException => "Пользователь не найден",
+                InvalidNicknameException => "Некорректные данные",
+                _ => "Произошла ошибка при изменении имени"
+            };
+
+            ModelState.AddModelError("", text);
             return View(model);
         }
     }
