@@ -11,4 +11,8 @@
       <ProjectReference Include="..\VkQ.WEB\VkQ.WEB.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Rate\Index.cshtml" />
+    </ItemGroup>
+
 </Project>

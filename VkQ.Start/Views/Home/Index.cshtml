@@ -4,13 +4,13 @@
 
 <div class="text-center">
     @{
-        if (!_signInManager.IsSignedIn(User))
+        if (User.Identity?.IsAuthenticated ?? false)
         {
-            <h1 class="display-4">Привет</h1>
+            <h1 class="display-4">Привет, @User.Identity?.Name</h1>
         }
         else
         {
-            <h1 class="display-4">Привет, @User.Identity?.Name</h1>
+            <h1 class="display-4">Привет</h1>
         }
     }
 </div>

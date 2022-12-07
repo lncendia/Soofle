@@ -19,14 +19,20 @@ internal class ParticipantReportModelMapper : IModelMapper<ParticipantReportMode
             await _context.ParticipantReports.Include(x => x.ReportElementsList)
                 .FirstOrDefaultAsync(x => x.Id == model.Id) ?? new ParticipantReportModel();
 
-        var elements = model.Participants
-            .ExceptBy(participantReport.ReportElementsList.Select(x => x.Id), element => element.Id);
-
-        foreach (var element in elements)
+        if (!participantReport.ReportElementsList.Any())
         {
-            var parent = Map(element, null);
-            participantReport.ReportElementsList.AddRange(element.Children.Select(x => Map(x, parent)));
-            participantReport.ReportElementsList.Add(parent);
+            participantReport.ReportElementsList.AddRange(model.Participants.Select(Create));
+        }
+        else
+        {
+            var allElements = model.Participants;
+            var deleteElements = participantReport.ReportElementsList
+                .ExceptBy(allElements.Select(x => x.Id), element => element.Id).Cast<ParticipantReportElementModel>()
+                .ToList();
+            participantReport.ReportElementsList.RemoveAll(deleteElements.Contains);
+
+            model.Participants.ForEach(x =>
+                Map(x, (ParticipantReportElementModel)participantReport.ReportElementsList.First(y => x.Id == y.Id)));
         }
 
         ReportModelInitializer.InitReportModel(participantReport, model);
@@ -35,7 +41,7 @@ internal class ParticipantReportModelMapper : IModelMapper<ParticipantReportMode
     }
 
 
-    private static ParticipantReportElementModel Map(ParticipantReportElement element)
+    private static ParticipantReportElementModel Create(ParticipantReportElement element)
     {
         var model = new ParticipantReportElementModel
         {
@@ -43,5 +49,11 @@ internal class ParticipantReportModelMapper : IModelMapper<ParticipantReportMode
             OwnerId = element.Parent?.Id
         };
         return model;
+    }
+
+    private static void Map(ParticipantReportElement element, ParticipantReportElementModel model)
+    {
+        model.Type = element.Type;
+        model.NewName = element.NewName;
     }
 }

@@ -34,7 +34,8 @@ public class Participant : AggregateRoot
 
     public void SetNotes(string notes)
     {
-        if (notes.Length > 500) throw new ArgumentException("Notes length must be less than 500");
+        if (notes.Length > 500 || string.IsNullOrEmpty(notes))
+            throw new ArgumentException("Notes length must be less than 500");
         Notes = notes;
     }
 

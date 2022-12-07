@@ -1,15 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace VkQ.WEB.ViewModels.AccountsInstagram
-{
-    public class TwoFactorViewModel
-    {
-        [Required(ErrorMessage = "Поле не должно быть пустым")]
-        public int Id { get; set; }
+namespace VkQ.WEB.ViewModels.Vk;
 
-        [Required(ErrorMessage = "Поле не должно быть пустым")]
-        [StringLength(50, ErrorMessage = "Не больше 50 символов")]
-        [Display(Name = "Код")]
-        public string Code { get; set; }
-    }
+public class TwoFactorViewModel
+{
+    [Required(ErrorMessage = "Поле не должно быть пустым")]
+    [StringLength(50, ErrorMessage = "Не больше 50 символов")]
+    [Display(Name = "Код")]
+    public string Code { get; set; } = null!;
 }

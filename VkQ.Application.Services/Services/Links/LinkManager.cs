@@ -4,6 +4,7 @@ using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
 using VkQ.Domain.Abstractions.Exceptions;
 using VkQ.Domain.Abstractions.Services;
 using VkQ.Domain.Abstractions.UnitOfWorks;
+using VkQ.Domain.Links.Entities;
 using VkQ.Domain.Links.Specification;
 using VkQ.Domain.Specifications;
 using VkQ.Domain.Specifications.Abstractions;
@@ -16,19 +17,24 @@ namespace VkQ.Application.Services.Services.Links;
 public class LinkManager : ILinkManager
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILinkBuilder _linkBuilder;
 
-    public LinkManager(IUnitOfWork unitOfWork, ILinkBuilder linkBuilder)
+    public LinkManager(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _linkBuilder = linkBuilder;
     }
 
-    public async Task AddLinkAsync(Guid user1, Guid user2)
+    public async Task<AddLinkDto> AddLinkAsync(Guid user1, string email)
     {
-        var link = await _linkBuilder.BuildAsync(user1, user2);
-        await _unitOfWork.LinkRepository.Value.AddAsync(link);
+        var user = (await _unitOfWork.UserRepository.Value.FindAsync(new UserByEmailSpecification(email), null, 0, 1))
+            .FirstOrDefault();
+        if (user == null) throw new UserNotFoundException();
+        var links1Count = await _unitOfWork.LinkRepository.Value.CountAsync(new LinkByUserIdSpecification(user1));
+        var links = await _unitOfWork.LinkRepository.Value.FindAsync(new LinkByUserIdsSpecification(user1, user.Id));
+        if (links.Any()) throw new LinkAlreadyExistsException(user1, user.Id);
+        var link = new Link(user1, links1Count, user.Id);
+        await _unitOfWork.LinkRepository.Value.AddAsync();
         await _unitOfWork.SaveChangesAsync();
+        return new AddLinkDto(link.Id, user.Name);
     }
 
     public async Task<List<LinkDto>> GetLinksAsync(Guid userId)
@@ -42,10 +48,14 @@ public class LinkManager : ILinkManager
                 new OrSpecification<User, IUserSpecificationVisitor>(current, new UserByIdSpecification(id)));
 
         var users = await _unitOfWork.UserRepository.Value.FindAsync(spec);
-        return links.Select(l => new LinkDto(l.User1Id, l.User2Id,
-            users.FirstOrDefault(x => x.Id == l.Id)?.Name ?? throw new UserNotFoundException(),
-            users.FirstOrDefault(x => x.Id == l.Id)?.Name ?? throw new UserNotFoundException(),
-            l.IsConfirmed)).ToList();
+        return links.Select(l =>
+        {
+            var user1 = new LinkDto.UserDto(l.User1Id,
+                users.FirstOrDefault(x => x.Id == l.User1Id)?.Name ?? throw new UserNotFoundException());
+            var user2 = new LinkDto.UserDto(l.User2Id,
+                users.FirstOrDefault(x => x.Id == l.User2Id)?.Name ?? throw new UserNotFoundException());
+            return new LinkDto(l.IsConfirmed, user1, user2);
+        }).ToList();
     }
 
     public async Task RemoveLinkAsync(Guid user1, Guid user2)
@@ -59,11 +69,13 @@ public class LinkManager : ILinkManager
 
     public async Task AcceptLinkAsync(Guid user1, Guid user2)
     {
-        var links = await _unitOfWork.LinkRepository.Value.FindAsync(new LinkByUserIdsSpecification(user1, user2), null,
+        var t1 = _unitOfWork.LinkRepository.Value.FindAsync(new LinkByUserIdsSpecification(user1, user2), null,
             0, 1);
-        var link = links.FirstOrDefault(); 
+        var t2 = _unitOfWork.LinkRepository.Value.CountAsync(new LinkByUserIdSpecification(user2));
+        await Task.WhenAll(t1, t2);
+        var link = t1.Result.FirstOrDefault();
         if (link == null) throw new LinkNotFoundException();
-        link.Confirm();
+        link.Confirm(t2.Result);
         await _unitOfWork.LinkRepository.Value.UpdateAsync(link);
         await _unitOfWork.SaveChangesAsync();
     }

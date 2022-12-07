@@ -16,7 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Participants\Exceptions" />
       <Folder Include="Reports\DTOs" />
       <Folder Include="Users\Exceptions" />
       <Folder Include="Users\ServicesInterfaces" />

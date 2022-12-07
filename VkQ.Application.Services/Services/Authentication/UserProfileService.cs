@@ -7,13 +7,13 @@ using VkQ.Domain.Users.Specification;
 
 namespace VkQ.Application.Services.Services.Authentication;
 
-public class UserSecurityService : IUserSecurityService
+public class UserProfileService : IUserProfileService
 {
     private readonly UserManager<UserData> _userManager;
     private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UserSecurityService(UserManager<UserData> userManager, IEmailService emailService, IUnitOfWork unitOfWork)
+    public UserProfileService(UserManager<UserData> userManager, IEmailService emailService, IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _emailService = emailService;
@@ -39,7 +39,7 @@ public class UserSecurityService : IUserSecurityService
         }
     }
 
-    public async Task ResetEmailAsync(string email, string newEmail, string code)
+    public async Task<UserData> ResetEmailAsync(string email, string newEmail, string code)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null) throw new UserNotFoundException();
@@ -52,6 +52,7 @@ public class UserSecurityService : IUserSecurityService
         userDomain.Email = newEmail;
         await _unitOfWork.UserRepository.Value.UpdateAsync(userDomain);
         await _unitOfWork.SaveChangesAsync();
+        return user;
     }
 
     public async Task ChangePasswordAsync(string email, string oldPassword, string newPassword)
@@ -67,5 +68,20 @@ public class UserSecurityService : IUserSecurityService
         var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
         if (!result.Succeeded)
             throw new ArgumentException("The old password is specified incorrectly.", nameof(oldPassword));
+    }
+
+    public async Task<UserData> ChangeNameAsync(string email, string newName)
+    {
+        var userDomain =
+            (await _unitOfWork.UserRepository.Value.FindAsync(new UserByEmailSpecification(email), null, 0, 1))
+            .FirstOrDefault();
+        if (userDomain == null) throw new UserNotFoundException();
+        userDomain.Name = newName;
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null) throw new UserNotFoundException();
+        await _userManager.SetUserNameAsync(user, newName);
+        await _unitOfWork.UserRepository.Value.UpdateAsync(userDomain);
+        await _unitOfWork.SaveChangesAsync();
+        return user;
     }
 }

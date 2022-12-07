@@ -45,20 +45,22 @@ public class ReportCreationService : IReportCreationService
     {
         var report = await _unitOfWork.LikeReportRepository.Value.GetAsync(reportId);
         if (report == null) throw new ReportNotFoundException();
-        if (report.UserId != userId) throw new UserNotOwnerException();
+        if (report.UserId != userId) throw new ReportNotFoundException();
         var t1 = _unitOfWork.LikeReportRepository.Value.DeleteAsync(report.Id);
         var t2 = CancelJobAsync(reportId);
         await Task.WhenAll(t1, t2);
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task DeleteParticipantReportAsync(Guid reportId, Guid userId)
     {
         var report = await _unitOfWork.ParticipantReportRepository.Value.GetAsync(reportId);
         if (report == null) throw new ReportNotFoundException();
-        if (report.UserId != userId) throw new UserNotOwnerException();
+        if (report.UserId != userId) throw new ReportNotFoundException();
         var t1 = _unitOfWork.ParticipantReportRepository.Value.DeleteAsync(report.Id);
         var t2 = CancelJobAsync(reportId);
         await Task.WhenAll(t1, t2);
+        await _unitOfWork.SaveChangesAsync();
     }
 
     private async Task CancelJobAsync(Guid reportId)

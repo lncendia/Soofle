@@ -2,7 +2,7 @@
 
 public class LinkNotFoundException : Exception
 {
-    public LinkNotFoundException() : base("Can't find link.")
+    public LinkNotFoundException() : base("Can't find link")
     {
     }
 }

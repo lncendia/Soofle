@@ -4,8 +4,8 @@ namespace VkQ.Application.Abstractions.Links.ServicesInterfaces;
 
 public interface ILinkManager
 {
-    Task AddLinkAsync(Guid user1, Guid user2);
+    Task<AddLinkDto> AddLinkAsync(Guid user1, string email);
     Task<List<LinkDto>> GetLinksAsync(Guid userId);
-    Task RemoveLinkAsync(Guid user1, Guid user2);
-    Task AcceptLinkAsync(Guid user1, Guid user2);
+    Task RemoveLinkAsync(Guid user, Guid linkId);
+    Task AcceptLinkAsync(Guid user, Guid linkId);
 }

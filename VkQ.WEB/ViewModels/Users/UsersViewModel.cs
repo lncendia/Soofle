@@ -1,15 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VkQ.Domain.Users.Entities;
 
-namespace VkQ.WEB.ViewModels.Users
+namespace VkQ.WEB.ViewModels.Users;
+
+public class UsersViewModel
 {
-    public class UsersViewModel
-    {
-        [StringLength(50)] public string Username { get; set; }
-        [StringLength(50)] public string Email { get; set; }
-        public List<User> Users { get; set; }
-        public int Count { get; set; }
-        public int Page { get; set; } = 1;
-        public string Message { get; set; }
-    }
+    [StringLength(50)] public string Username { get; }
+    [StringLength(50)] public string Email { get; }
+    public List<User> Users { get;  }
+    public int Count { get; }
+    public int Page { get; } = 1;
 }

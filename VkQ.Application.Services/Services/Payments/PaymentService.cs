@@ -23,13 +23,14 @@ public class PaymentService : IPaymentService
     }
 
     /// <exception cref="ErrorCreateBillException"></exception>
-    public async Task<string> CreatePaymentAsync(Guid userId, decimal amount)
+    public async Task<PaymentDto> CreatePaymentAsync(Guid userId, decimal amount)
     {
         var paymentData = await _paymentCreatorService.CreatePayAsync(userId, amount);
         var transaction = new Transaction(paymentData.BillId, paymentData.PayUrl, amount, userId);
         await _unitOfWork.TransactionRepository.Value.AddAsync(transaction);
         await _unitOfWork.SaveChangesAsync();
-        return paymentData.PayUrl;
+        return new PaymentDto(transaction.Id, transaction.PaymentSystemId, transaction.Amount, transaction.CreationDate,
+            false, null, transaction.PaymentSystemUrl);
     }
 
     /// <exception cref="TransactionNotFoundException"></exception>
@@ -56,7 +57,8 @@ public class PaymentService : IPaymentService
             new DescendingOrder<Transaction, ITransactionSortingVisitor>(new TransactionByCreationDateOrder()),
             page * 10, 10);
         return payments.Select(x =>
-                new PaymentDto(x.PaymentSystemId, x.Amount, x.CreationDate, x.IsSuccessful, x.ConfirmationDate, x.PaymentSystemUrl))
+                new PaymentDto(x.Id, x.PaymentSystemId, x.Amount, x.CreationDate, x.IsSuccessful, x.ConfirmationDate,
+                    x.PaymentSystemUrl))
             .ToList();
     }
 }

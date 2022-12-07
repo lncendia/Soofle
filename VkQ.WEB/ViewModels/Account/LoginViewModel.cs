@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Overoom.WEB.Models.Account;
+namespace VkQ.WEB.ViewModels.Account;
 
 public class LoginViewModel
 {

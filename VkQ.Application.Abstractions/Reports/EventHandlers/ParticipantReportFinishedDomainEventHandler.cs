@@ -42,5 +42,7 @@ public class ParticipantReportFinishedDomainEventHandler : INotificationHandler<
                     break;
             }
         }
+
+        await _unitOfWork.SaveChangesAsync();
     }
 }

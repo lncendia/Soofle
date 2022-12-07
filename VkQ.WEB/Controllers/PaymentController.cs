@@ -1,56 +1,71 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VkQ.Application.Abstractions.Payments.Exceptions;
 using VkQ.Application.Abstractions.Payments.ServicesInterfaces;
+using VkQ.Domain.Transactions.Exceptions;
+using VkQ.WEB.ViewModels.Payments;
 
-namespace VkQ.WEB.Controllers
+namespace VkQ.WEB.Controllers;
+
+[Authorize]
+public class PaymentController : Controller
 {
-    [Authorize]
-    public class PaymentController : Controller
+    private readonly IPaymentService _paymentService;
+    public PaymentController(IPaymentService paymentService) => _paymentService = paymentService;
+
+
+    [HttpPost]
+    public async Task<IActionResult> CreatePayment(CreatePaymentViewModel model)
     {
-        private readonly IPaymentService _paymentService;
-
-        public PaymentController(IPaymentService paymentService)
+        if (!ModelState.IsValid)
         {
-            _paymentService = paymentService;
+            var firstError = ModelState.Values.SelectMany(v => v.Errors).First();
+            return BadRequest(firstError.ErrorMessage);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> MyPayments(int page = 1)
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        try
         {
-            var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
-            var payments = await _paymentService.GetPaymentsAsync(id, page);
-            return View(model);
+            var payment = await _paymentService.CreatePaymentAsync(userId, model.Amount);
+            return Json(new PaymentViewModel(payment.Id, payment.PaymentSystemId, payment.Amount, payment.CreationDate,
+                payment.PayUrl));
         }
-
-        [HttpGet]
-        public async Task<IActionResult> CreatePayment(decimal amount)
+        catch (Exception ex)
         {
-            var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
-            try
+            var text = ex switch
             {
-                var url = await _paymentService.CreatePaymentAsync(id, amount);
-                return Redirect(url);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+                TransactionNotFoundException => "Счёт не найден",
+                BillNotPaidException => "Счёт не оплачен",
+                TransactionAlreadyAcceptedException => "Счёт уже подтверждён",
+                ErrorCheckBillException => "Ошибка при отправке запроса на проверку оплаты",
+                _ => "Произошла ошибка при проверке оплаты"
+            };
+            return BadRequest(text);
         }
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> CheckPayment(Guid id)
+    [HttpPost]
+    public async Task<IActionResult> CheckPayment(Guid? id)
+    {
+        if (!id.HasValue) return BadRequest("Id is null");
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        try
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
-            try
+            await _paymentService.ConfirmPaymentAsync(userId, id.Value);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            var text = ex switch
             {
-                
-                await _paymentService.ConfirmPaymentAsync(userId, id);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+                TransactionNotFoundException => "Счёт не найден",
+                BillNotPaidException => "Счёт не оплачен",
+                TransactionAlreadyAcceptedException => "Счёт уже подтверждён",
+                ErrorCheckBillException => "Ошибка при отправке запроса на проверку оплаты",
+                _ => "Произошла ошибка при проверке оплаты"
+            };
+            return BadRequest(text);
         }
     }
 }

@@ -131,7 +131,7 @@
                     <td style="width: 130px">
                         @if (Model.Links[i].Recipient == null)
                         {
-                            <input type="hidden" value="@Url.Action("Communication", "Settings", new {id = Model.Links[i].Id.ToString()}, Context.Request.Scheme)" id="@($"link{i}")">
+                            <input type="hidden" value="@Url.Action("Communication", "Profile", new {id = Model.Links[i].Id.ToString()}, Context.Request.Scheme)" id="@($"link{i}")">
                             <a class="action" onclick="copy(@i, this)" href="#" onmouseout="mouseout(this)">
                                 Скопировать
                             </a>

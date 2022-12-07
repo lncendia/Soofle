@@ -2,18 +2,16 @@
 
 public class LinkDto
 {
-    public LinkDto(Guid user1Id, Guid user2Id, string user1Name, string user2Name, bool isConfirmed)
+    public LinkDto(Guid id, string user1, string user2, bool isConfirmed)
     {
-        User1Id = user1Id;
-        User2Id = user2Id;
-        User1Name = user1Name;
-        User2Name = user2Name;
+        Id = id;
+        User1 = user1;
+        User2 = user2;
         IsConfirmed = isConfirmed;
     }
-    
-    public Guid User1Id { get; }
-    public Guid User2Id { get; }
-    public string User1Name { get; }
-    public string User2Name { get; }
-    public bool IsConfirmed { get;}
+
+    public Guid Id { get;  }
+    public string User1 { get; }
+    public string User2 { get; }
+    public bool IsConfirmed { get; }
 }

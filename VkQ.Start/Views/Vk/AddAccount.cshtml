@@ -2,8 +2,6 @@
 @using WebApplication.Data.Enums.AccountsInstagram
 @using WebApplication.Data.Services
 @model WebApplication.ViewModels.AccountsInstagram.InstagramLoginViewModel
-@inject ProxyService _proxyService
-
 @{
     ViewData["Title"] = "Добавление аккаунта";
 }
@@ -24,14 +22,6 @@
                         <label asp-for="Password"></label>
                         <input asp-for="Password" class="form-control"/>
                         <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                    <div class="col-12">
-                        <label asp-for="Country"></label>
-                        <select asp-for="Country" asp-items=@_proxyService.GetCountries() class="form-select">
-                            <option selected="selected" disabled="disabled">Выберите страну</option>
-                        </select>
-                        <span asp-validation-for="Country" class="text-danger"></span>
-                        <p class="hint-block">Используется для определения подходящего прокси для вашего аккаунта.</p>
                     </div>
                     <div class="col-12">
                         <label asp-for="LikeChat"></label>

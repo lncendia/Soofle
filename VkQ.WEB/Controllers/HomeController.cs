@@ -2,19 +2,18 @@
 using Microsoft.AspNetCore.Mvc;
 using VkQ.WEB.ViewModels;
 
-namespace VkQ.WEB.Controllers
-{
-    public class HomeController : Controller
-    {
-        public IActionResult Index(string message)
-        {
-            if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
-            return View();
-        }
+namespace VkQ.WEB.Controllers;
 
-        public IActionResult About()
-        {
-            return View();
-        }
+public class HomeController : Controller
+{
+    public IActionResult Index(string message)
+    {
+        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+        return View();
+    }
+
+    public IActionResult About()
+    {
+        return View();
     }
 }

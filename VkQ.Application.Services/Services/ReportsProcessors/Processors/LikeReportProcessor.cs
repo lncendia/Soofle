@@ -37,6 +37,7 @@ public class LikeReportProcessor : IReportProcessorUnit<LikeReport>
             }
             catch (Exception e)
             {
+                //todo: error handling
                 publications.ForEach(x => report.SetLikes(new LikeDto.LikesDto(x.ItemId, x.OwnerId)));
             }
 
