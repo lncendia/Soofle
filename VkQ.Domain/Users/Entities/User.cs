@@ -72,7 +72,13 @@ public class User : AggregateRoot
         Vk.SetProxy(proxy);
     }
 
-    public void SetVk(string username, string password) => Vk = new Vk(username, password);
+    public void SetVk(string username, string password)
+    {
+        if (Vk == null) Vk = new Vk(username, password);
+        else Vk.UpdateData(username, password);
+    }
+
+    public bool HasVk => Vk != null;
 
     /// <exception cref="VkIsNotSetException"></exception>
     public void ActivateVk(string token)

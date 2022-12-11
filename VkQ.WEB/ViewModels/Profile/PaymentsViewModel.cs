@@ -2,10 +2,10 @@
 
 public class PaymentsViewModel
 {
-    public PaymentsViewModel(List<PaymentViewModel> payments, DateTimeOffset? subscriptionStart,
+    public PaymentsViewModel(IEnumerable<PaymentViewModel> payments, DateTimeOffset? subscriptionStart,
         DateTimeOffset? subscriptionEnd)
     {
-        Payments = payments;
+        Payments = payments.ToList();
         SubscriptionStart = subscriptionStart;
         SubscriptionEnd = subscriptionEnd;
     }
@@ -16,22 +16,22 @@ public class PaymentsViewModel
 
     public class PaymentViewModel
     {
-        public PaymentViewModel(string id, decimal amount, DateTimeOffset creationDate, DateTimeOffset? completionDate,
+        public PaymentViewModel(Guid id, decimal amount, DateTimeOffset creationDate, DateTimeOffset? completionDate,
             bool isSuccessful, string payUrl)
         {
             Amount = amount;
             CreationDate = creationDate;
             CompletionDate = completionDate;
             IsSuccessful = isSuccessful;
-            PayUrl = payUrl;
+            PayUrl = isSuccessful ? null : payUrl;
             Id = id;
         }
 
-        public string Id { get; }
+        public Guid Id { get; }
         public decimal Amount { get; }
         public DateTimeOffset CreationDate { get; }
         public DateTimeOffset? CompletionDate { get; }
         public bool IsSuccessful { get; }
-        public string PayUrl { get; }
+        public string? PayUrl { get; }
     }
 }

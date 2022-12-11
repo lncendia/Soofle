@@ -1,0 +1,17 @@
+﻿@model VkQ.WEB.ViewModels.Proxy.ProxySearchQueryViewModel
+
+<tr>
+    <form asp-action="Proxies" method="get" class="form-horizontal" id="filter">
+        <th scope="col"></th>
+        <th scope="col">
+            <input asp-for="Host" class="form-control auto-submit"/>
+        </th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </form>
+</tr>
+
+@section scripts {
+    <script src="~/js/autoSubmit.js"></script>

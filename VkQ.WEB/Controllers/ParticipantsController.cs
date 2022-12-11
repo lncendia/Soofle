@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VkQ.Application.Abstractions.Participants.DTOs;
+using VkQ.Application.Abstractions.Participants.Exceptions;
 using VkQ.Application.Abstractions.Participants.ServicesInterfaces;
 using VkQ.WEB.ViewModels.Participants;
 
@@ -8,71 +11,84 @@ namespace VkQ.WEB.Controllers;
 [Authorize]
 public class ParticipantsController : Controller
 {
-    private readonly IParticipantService _participantsService;
-    
-    public ParticipantsController(IParticipantService participantsService) => _participantsService = participantsService;
+    private readonly IParticipantManager _participantManager;
+
+    public ParticipantsController(IParticipantManager participantManager) => _participantManager = participantManager;
 
 
     [HttpGet]
-    public async Task<IActionResult> Index(string? message)
+    public IActionResult Index(string? message)
     {
-        if (!ModelState.IsValid) return RedirectToAction("SelectChat");
-        var user = await _userManager.GetUserAsync(User);
-        if (!_db.Instagrams.Any(instagram1 =>
-                instagram1.User == user && instagram1.Id == model.Id))
-            return RedirectToAction("SelectChat", new { message = "Аккаунт не найден." });
-        model.Count = _participantsService.GetParticipantsCount(model);
-        if ((model.Page - 1) * 30 > model.Count) model.Page = 1;
-        model.Participants = _participantsService.GetParticipants(model);
-        return View(model);
+        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+        return View();
     }
 
+
     [HttpGet]
-    public async Task<IActionResult> Participant(Guid? id)
+    public async Task<IActionResult> Participants(ParticipantsSearchQueryViewModel model)
     {
-        var user = await _userManager.GetUserAsync(User);
-        var participant =
-            _db.Participants.Include(participant1 => participant1.ParentParticipant)
-                .Include(participant1 => participant1.Instagram).FirstOrDefault(participant1 =>
-                    participant1.Instagram.User == user && participant1.Id == id);
-        var model = new EditParticipantViewModel
+        if (!ModelState.IsValid) model = new ParticipantsSearchQueryViewModel();
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var participants = await _participantManager.FindAsync(userId,
+            new SearchQuery(model.Page, model.Username, model.Type, model.Vip, model.HasChild));
+
+        return Json(participants.Select(Map));
+    }
+
+
+    private ParticipantViewModel Map(ParticipantDto participant) =>
+        new(participant.Id, participant.Name, participant.Notes, participant.Vip,
+            participant.Type, participant.Children.Select(Map));
+
+
+    [HttpGet]
+    public async Task<IActionResult> EditParticipant(Guid? id)
+    {
+        if (!id.HasValue) return RedirectToAction("Index", new { message = "Участник не найден" });
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        try
         {
-            Id = participant.Id,
-            Vip = participant.Vip,
-            Note = participant.Note,
-            Username = participant.Username,
-            Participants = _participantsService.GetParticipantsSelectList(participant)
-        };
-        if (participant.ParentParticipant != null) model.ParentId = participant.ParentParticipant.Id;
-        return View(model);
+            var participant = await _participantManager.GetAsync(userId, id.Value);
+            return View(new EditParticipantViewModel
+            {
+                Id = participant.Id,
+                Note = participant.Notes,
+                ParentId = participant.ParentParticipantId,
+                Username = participant.Name,
+                Vip = participant.Vip,
+                Type = participant.Type
+            });
+        }
+        catch (Exception e)
+        {
+            var message = e switch
+            {
+                ParticipantNotFoundException => "Участник не найден",
+                _ => "Произошла ошибка"
+            };
+            return RedirectToAction("Index", new { message });
+        }
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Participant(EditParticipantViewModel model)
+    public async Task<IActionResult> EditParticipant(EditParticipantViewModel model)
     {
-        var user = await _userManager.GetUserAsync(User);
-        var participant =
-            _db.Participants.Include(participant1 => participant1.ParentParticipant)
-                .Include(participant1 => participant1.Instagram).FirstOrDefault(participant1 =>
-                    participant1.Id == model.Id &&
-                    participant1.Instagram.User == user);
-        if (participant == null)
-            return RedirectToAction("SelectChat", new { message = "Участник не найден." });
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid) return View(model);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        try
         {
-            model.Participants = _participantsService.GetParticipantsSelectList(participant);
-            return View(model);
+            await _participantManager.EditAsync(userId, model.Id, model.ParentId, model.Note, model.Vip);
+            return RedirectToAction("Index", new { message = "Участник успешно изменен" });
         }
-
-        var success = _participantsService.EditParticipant(participant, model);
-        return RedirectToAction("Participant",
-            new
+        catch (Exception e)
+        {
+            var message = e switch
             {
-                id = model.Id,
-                message = success.Succeeded && success.Value
-                    ? "Участник успешно изменен."
-                    : $"Не удалось изменить данные участника ({success.Message})."
-            });
+                ParticipantNotFoundException => "Участник не найден",
+                _ => "Произошла ошибка"
+            };
+            return RedirectToAction("Index", new { message });
+        }
     }
 }

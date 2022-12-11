@@ -6,4 +6,9 @@ namespace VkQ.Domain.Participants.Specification.Visitor;
 public interface IParticipantSpecificationVisitor : ISpecificationVisitor<IParticipantSpecificationVisitor, Participant>
 {
     void Visit(ParticipantsByUserIdSpecification specification);
+    void Visit(ParticipantsByNameSpecification specification);
+    void Visit(ParticipantsByTypeSpecification specification);
+    void Visit(VipParticipantsSpecification specification);
+    void Visit(ParentParticipantsSpecification specification);
+    void Visit(ParticipantsByParentIdsSpecification specification);
 }

@@ -1,8 +1,9 @@
 using VkNet.AudioBypassService.Exceptions;
 using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
 using VkQ.Application.Abstractions.Users.DTOs;
-using VkQ.Application.Abstractions.Users.Exceptions.VkAuthentication;
-using VkQ.Application.Abstractions.Users.ServicesInterfaces.Vk;
+using VkQ.Application.Abstractions.Vk.DTOs;
+using VkQ.Application.Abstractions.Vk.Exceptions;
+using VkQ.Application.Abstractions.Vk.ServicesInterfaces;
 
 namespace VkQ.Infrastructure.VkAuthentication.Services;
 
@@ -40,7 +41,7 @@ public class VkLoginService : IVkLoginService
         }
     }
 
-    public async Task<string> ActivateTwoFactorAsync(VkLoginDto info, string code)
+    public async Task<string> ActivateAsync(VkLoginDto info, string code)
     {
         try
         {

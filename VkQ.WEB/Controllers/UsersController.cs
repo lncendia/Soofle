@@ -9,21 +9,6 @@ namespace VkQ.WEB.Controllers;
 [Authorize(Roles = "admin")]
 public class UsersController : Controller
 {
-    private readonly UserManager<User> _userManager;
-    private readonly ApplicationDbContext _context;
-    private readonly PaymentService _paymentService;
-    private readonly TimeService _timeService;
-    private readonly UserService _userService;
-
-    public UsersController(UserManager<User> userManager, ApplicationDbContext context,
-        PaymentService paymentService, TimeService timeService, UserService userService)
-    {
-        _userManager = userManager;
-        _context = context;
-        _paymentService = paymentService;
-        _timeService = timeService;
-        _userService = userService;
-    }
 
     [HttpGet]
     public IActionResult Index(UsersViewModel model)

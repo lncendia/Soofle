@@ -1,22 +1,15 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using WebApplication.Data.Enums.AccountsInstagram
-@using WebApplication.Data.Services
-@model WebApplication.ViewModels.AccountsInstagram.InstagramLoginViewModel
-@{
-    ViewData["Title"] = "Добавление аккаунта";
-}
-
+﻿@model VkQ.WEB.ViewModels.Vk.SetVkViewModel
 <div class="row">
     <div class="col-lg-6">
         <h3>Добавление аккаунта</h3>
-        <form asp-action="AddAccount" method="post" class="form-horizontal">
+        <form asp-action="SetVk" method="post" class="form-horizontal">
             <div asp-validation-summary="ModelOnly"></div>
             <div class="form-group">
                 <div class="row g-3">
                     <div class="col-sm-6">
-                        <label asp-for="Username"></label>
-                        <input asp-for="Username" class="form-control"/>
-                        <span asp-validation-for="Username" class="text-danger"></span>
+                        <label asp-for="Login"></label>
+                        <input asp-for="Login" class="form-control"/>
+                        <span asp-validation-for="Login" class="text-danger"></span>
                     </div>
                     <div class="col-sm-6">
                         <label asp-for="Password"></label>
@@ -24,18 +17,7 @@
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="col-12">
-                        <label asp-for="LikeChat"></label>
-                        <input asp-for="LikeChat" class="form-control"/>
-                        <span asp-validation-for="LikeChat" class="text-danger"></span>
-                        <p class="hint-block">Продублируйте логин, если аккаунт и есть необходимый чат активности.</p>
-                    </div>
-                    <div class="col-12">
-                        <label asp-for="LikeChatType"></label>
-                        <select class="form-select" asp-for="LikeChatType" asp-items="Html.GetEnumSelectList<LikeChatType>()"></select>
-                        <span asp-validation-for="LikeChatType" class="text-danger"></span>
-                    </div>
-                    <div class="col-12">
-                        <input class="btn shadow-none btn-outline-dark" type="submit" value="Добавить">
+                        <input class="btn shadow-none btn-outline-dark" type="submit" value="Изменить">
                     </div>
                 </div>
             </div>

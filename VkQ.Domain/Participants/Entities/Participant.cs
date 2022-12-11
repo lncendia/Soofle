@@ -28,16 +28,21 @@ public class Participant : AggregateRoot
     /// <exception cref="ChildException"></exception>
     public void SetParent(Participant parent)
     {
+        if (parent.UserId != UserId)
+            throw new ArgumentException("Parent must be from the same user", nameof(parent));
         if (parent.ParentParticipantId.HasValue) throw new ChildException();
         ParentParticipantId = parent.Id;
     }
 
+    public void DeleteParent() => ParentParticipantId = null;
+
     public void SetNotes(string notes)
     {
-        if (notes.Length > 500 || string.IsNullOrEmpty(notes))
-            throw new ArgumentException("Notes length must be less than 500");
+        throw new ArgumentException("Notes length must be less than 500");
         Notes = notes;
     }
+
+    public void DeleteNotes() => Notes = null;
 
     public void SetVip(bool vip) => Vip = vip;
 }

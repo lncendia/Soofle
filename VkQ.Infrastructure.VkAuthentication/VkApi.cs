@@ -7,6 +7,7 @@ using VkNet.Utils.AntiCaptcha;
 using VkQ.Application.Abstractions.DTO.Proxy;
 using VkQ.Application.Abstractions.Proxies.DTOs;
 using VkQ.Application.Abstractions.Users.DTOs;
+using VkQ.Application.Abstractions.Vk.DTOs;
 using VkQ.Infrastructure.VkAuthentication.AntiCaptcha;
 
 namespace VkQ.Infrastructure.VkAuthentication;

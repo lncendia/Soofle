@@ -29,7 +29,7 @@ internal class UserModelMapper : IModelMapper<UserModel, User>
                 AccessToken = model.Vk.AccessToken,
                 Password = model.Vk.Password,
                 ProxyId = model.Vk.ProxyId,
-                Username = model.Vk.Username
+                Username = model.Vk.Login
             };
         }
 

@@ -17,7 +17,7 @@ public class ReportManager : IReportManager
         _mapper = mapper;
     }
 
-    public Task<List<ReportDto>> GetReportsAsync(Guid userId)
+    public Task<List<ReportDto>> FindAsync(Guid userId)
     {
         throw new NotImplementedException();
     }

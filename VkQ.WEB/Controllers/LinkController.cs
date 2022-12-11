@@ -32,8 +32,8 @@ public class LinkController : Controller
         var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
         try
         {
-            var dto = await _linkManager.AddLinkAsync(id, model.Email);
-            return Json(new { Id = dto.Id, Name = dto.User2Name });
+            var dto = await _linkManager.AddAsync(id, model.Email);
+            return Json(new { Id1 = id, Name1 = User.Identity!.Name, Id2 = dto.Id, Name2 = dto.User2Name });
         }
         catch (Exception ex)
         {
@@ -56,7 +56,7 @@ public class LinkController : Controller
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
         try
         {
-            await _linkManager.RemoveLinkAsync(userId, id.Value);
+            await _linkManager.DeleteAsync(userId, id.Value);
             return Ok();
         }
         catch (Exception ex)
@@ -79,7 +79,7 @@ public class LinkController : Controller
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
         try
         {
-            await _linkManager.AcceptLinkAsync(userId, id.Value);
+            await _linkManager.AcceptAsync(userId, id.Value);
         }
         catch (Exception ex)
         {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
-using VkQ.Application.Abstractions.Users.ServicesInterfaces.UsersAuthentication;
+using VkQ.Application.Abstractions.Users.ServicesInterfaces.Manage;
 using VkQ.Domain.Users.Exceptions;
 using VkQ.WEB.ViewModels.Profile;
 using VkQ.WEB.ViewModels.Users;
@@ -13,9 +13,9 @@ namespace VkQ.WEB.Controllers;
 [Authorize]
 public class SettingsController : Controller
 {
-    private readonly IUserProfileService _userService;
+    private readonly IUserParametersService _userService;
 
-    public SettingsController(IUserProfileService userService)
+    public SettingsController(IUserParametersService userService)
     {
         _userService = userService;
     }

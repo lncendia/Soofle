@@ -2,11 +2,11 @@
 
 public class LinksViewModel
 {
-    public LinksViewModel(Guid currentUserId, string scheme, List<LinkViewModel> links)
+    public LinksViewModel(Guid currentUserId, string scheme, IEnumerable<LinkViewModel> links)
     {
         CurrentUserId = currentUserId;
         Scheme = scheme;
-        Links = links;
+        Links = links.ToList();
     }
 
     public List<LinkViewModel> Links { get; }

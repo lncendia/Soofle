@@ -6,7 +6,7 @@ namespace VkQ.Application.Abstractions.Reports.ServicesInterfaces;
 
 public interface IReportManager
 {
-    public Task<List<ReportDto>> GetReportsAsync(Guid userId);
+    public Task<List<ReportDto>> FindAsync(Guid userId);
     public Task<LikeReportDto> GetLikeReportAsync(Guid userId, Guid reportId);
     public Task<ParticipantReportDto> GetParticipantReportAsync(Guid userId, Guid reportId);
 }

@@ -10,39 +10,27 @@ public class ProxyController : Controller
 {
     private readonly IProxyManager _proxyManager;
 
-    public ProxyController(IProxyManager proxyManager)
+    public ProxyController(IProxyManager proxyManager) => _proxyManager = proxyManager;
+
+    [HttpGet]
+    public IActionResult Index()
     {
-        _proxyManager = proxyManager;
+        return View();
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(string message)
+    public async Task<IActionResult> Proxies(int page = 1, string? host = null)
     {
-        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
-        var proxies = await _proxyManager.GetProxiesAsync();
-        return View(new AddProxyViewModel()
-            { Proxies =  });
+        var proxies = await _proxyManager.FindAsync(page, host);
+        return Json(proxies.Select(dto => new ProxyViewModel(dto.Id, dto.Host, dto.Port, dto.Login, dto.Password)));
     }
 
-    public IActionResult DeleteProxy(Guid? id)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteProxy(Guid? id)
     {
-        var proxy = _db.Proxies.Include(proxy1 => proxy1.Instagrams).FirstOrDefault(proxy1 => proxy1.Id == id);
-        if (proxy == null)
-            return RedirectToAction("Index",
-                new
-                {
-                    message = "Прокси не найдена."
-                });
-        return _proxyService.DeleteProxy(proxy)
-            ? RedirectToAction("Index",
-                new
-                {
-                    message = "Прокси успешно удалена."
-                })
-            : RedirectToAction("Index",
-                new
-                {
-                    message = "Не удалось удалить прокси."
-                });
+        if (!id.HasValue) return BadRequest("Id is null");
+        await _proxyManager.DeleteAsync(id.Value);
+        return Ok();
     }
 }

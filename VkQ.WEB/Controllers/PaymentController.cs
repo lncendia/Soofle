@@ -11,8 +11,8 @@ namespace VkQ.WEB.Controllers;
 [Authorize]
 public class PaymentController : Controller
 {
-    private readonly IPaymentService _paymentService;
-    public PaymentController(IPaymentService paymentService) => _paymentService = paymentService;
+    private readonly IPaymentManager _paymentService;
+    public PaymentController(IPaymentManager paymentService) => _paymentService = paymentService;
 
 
     [HttpPost]
@@ -27,7 +27,7 @@ public class PaymentController : Controller
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
         try
         {
-            var payment = await _paymentService.CreatePaymentAsync(userId, model.Amount);
+            var payment = await _paymentService.CreateAsync(userId, model.Amount);
             return Json(new PaymentViewModel(payment.Id, payment.PaymentSystemId, payment.Amount, payment.CreationDate,
                 payment.PayUrl));
         }
@@ -52,7 +52,7 @@ public class PaymentController : Controller
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
         try
         {
-            await _paymentService.ConfirmPaymentAsync(userId, id.Value);
+            await _paymentService.ConfirmAsync(userId, id.Value);
             return Ok();
         }
         catch (Exception ex)

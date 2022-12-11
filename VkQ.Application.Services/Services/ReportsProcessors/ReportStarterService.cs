@@ -15,9 +15,9 @@ public class ReportStarterService : IReportStarter
     private readonly IUnitOfWork _unitOfWork;
     private readonly IReportProcessorService _processorService;
     private readonly IReportInitializerService _initializerService;
-    private readonly IProxySetter _proxySetter;
+    private readonly IProxyGetter _proxySetter;
 
-    public ReportStarterService(IUnitOfWork unitOfWork, IProxySetter proxySetter,
+    public ReportStarterService(IUnitOfWork unitOfWork, IProxyGetter proxySetter,
         IReportInitializerService initializerService, IReportProcessorService processorService)
     {
         _unitOfWork = unitOfWork;
@@ -97,6 +97,6 @@ public class ReportStarterService : IReportStarter
         var user = await _unitOfWork.UserRepository.Value.GetAsync(userId);
         if (user == null) throw new UserNotFoundException();
         if (user.Vk == null) throw new VkIsNotActiveException();
-        if (!user.Vk.ProxyId.HasValue) await _proxySetter.SetProxyAsync(user);
+        if (!user.Vk.ProxyId.HasValue) await _proxySetter.GetAsync();
     }
 }
