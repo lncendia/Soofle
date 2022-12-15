@@ -6,9 +6,9 @@ namespace VkQ.WEB.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index(string message)
+    public IActionResult Index(string? message)
     {
-        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+        ViewData["Alert"] = message;
         return View();
     }
 

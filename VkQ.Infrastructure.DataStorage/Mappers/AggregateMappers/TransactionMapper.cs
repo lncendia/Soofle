@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
-internal class TransactionMapper : IAggregateMapper<Transaction, TransactionModel>
+internal class TransactionMapper : IAggregateMapperUnit<Transaction, TransactionModel>
 {
     private static readonly Type Type = typeof(Transaction);
 

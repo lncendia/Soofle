@@ -1,6 +1,4 @@
-using VkNet.AudioBypassService.Exceptions;
 using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
-using VkQ.Application.Abstractions.Users.DTOs;
 using VkQ.Application.Abstractions.Vk.DTOs;
 using VkQ.Application.Abstractions.Vk.Exceptions;
 using VkQ.Application.Abstractions.Vk.ServicesInterfaces;
@@ -29,19 +27,7 @@ public class VkLoginService : IVkLoginService
         }
     }
 
-    public async Task DeactivateAsync(VkLogoutDto info)
-    {
-        try
-        {
-            await VkApi.DeactivateAsync(info, _solver);
-        }
-        catch (Exception ex)
-        {
-            throw new ErrorActiveVkException(ex.Message, ex);
-        }
-    }
-
-    public async Task<string> ActivateAsync(VkLoginDto info, string code)
+    public async Task<string> ActivateTwoFactorAsync(VkLoginDto info, string code)
     {
         try
         {
@@ -50,6 +36,18 @@ public class VkLoginService : IVkLoginService
         catch (VkAuthException)
         {
             throw new InvalidCredentialsException();
+        }
+        catch (Exception ex)
+        {
+            throw new ErrorActiveVkException(ex.Message, ex);
+        }
+    }
+
+    public async Task DeactivateAsync(VkLogoutDto info)
+    {
+        try
+        {
+            await VkApi.DeactivateAsync(info, _solver);
         }
         catch (Exception ex)
         {

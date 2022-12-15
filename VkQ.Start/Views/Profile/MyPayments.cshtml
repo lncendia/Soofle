@@ -75,39 +75,3 @@ else
         </tbody>
     </table>
 </div>
-
-<nav>
-    <ul class="pagination">
-        @if (Model.Page != 1)
-        {
-            if (Model.Page > 2)
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-action="MyPayments" asp-route-page="1">1</a>
-                </li>
-            }
-            <li class="page-item">
-                <a class="page-link" asp-action="MyPayments" asp-route-page="@(Model.Page - 1)" aria-label="Предыдущая">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" asp-action="MyPayments" asp-route-page="@(Model.Page - 1)">@(Model.Page - 1)</a>
-            </li>
-        }
-        <li class="page-item active">
-            <a class="page-link disabled" asp-action="MyPayments" asp-route-page="@Model.Page">@Model.Page</a>
-        </li>
-        @if (Model.Page * 30 < Model.Count)
-        {
-            <li class="page-item">
-                <a class="page-link" asp-action="MyPayments" asp-route-page="@(Model.Page + 1)">@(Model.Page + 1)</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" asp-action="MyPayments" asp-route-page="@(Model.Page + 1)" aria-label="Следующая">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        }
-    </ul>
-</nav>

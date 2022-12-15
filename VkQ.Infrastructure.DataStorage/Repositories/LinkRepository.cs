@@ -16,14 +16,14 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class LinkRepository : ILinkRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateMapper<Link, LinkModel> _mapper;
-    private readonly IModelMapper<LinkModel, Link> _modelMapper;
+    private readonly IAggregateMapperUnit<Link, LinkModel> _mapper;
+    private readonly IModelMapperUnit<LinkModel, Link> _modelMapper;
     private readonly LinkVisitor _visitor = new();
     private readonly LinkSortingVisitor _sortingVisitor = new();
 
 
-    public LinkRepository(ApplicationDbContext context, IAggregateMapper<Link, LinkModel> mapper,
-        IModelMapper<LinkModel, Link> modelMapper)
+    public LinkRepository(ApplicationDbContext context, IAggregateMapperUnit<Link, LinkModel> mapper,
+        IModelMapperUnit<LinkModel, Link> modelMapper)
     {
         _context = context;
         _mapper = mapper;
@@ -72,7 +72,7 @@ internal class LinkRepository : ILinkRepository
         return query.CountAsync();
     }
 
-    public async Task<IList<Link>> FindAsync(ISpecification<Link, ILinkSpecificationVisitor>? specification = null,
+    public async Task<List<Link>> FindAsync(ISpecification<Link, ILinkSpecificationVisitor>? specification = null,
         IOrderBy<Link, ILinkSortingVisitor>? orderBy = null, int? skip = null, int? take = null)
     {
         var query = _context.Links.AsQueryable();

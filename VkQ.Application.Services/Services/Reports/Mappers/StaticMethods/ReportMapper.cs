@@ -1,4 +1,5 @@
-﻿using VkQ.Application.Abstractions.Reports.DTOs.Reports.Base.PublicationReportBaseDto;
+﻿using VkQ.Application.Abstractions.Elements.DTOs.Base.PublicationElementBaseDto;
+using VkQ.Application.Abstractions.ReportsQuery.DTOs.Base.PublicationReportBaseDto;
 using VkQ.Domain.Reposts.BaseReport.Entities.Publication;
 
 namespace VkQ.Application.Services.Services.Reports.Mappers.StaticMethods;
@@ -24,6 +25,7 @@ internal class ReportMapper
     public static void InitElementBuilder(PublicationReportElementBaseBuilder builder, PublicationReportElement element)
     {
         builder.WithAccepted(element.IsAccepted)
+            .WithVip(element.Vip)
             .WithParticipantId(element.ParticipantId)
             .WithLikeChatName(element.LikeChatName)
             .WithName(element.Name)

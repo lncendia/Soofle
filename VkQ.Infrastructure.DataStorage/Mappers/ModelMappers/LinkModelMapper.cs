@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.ModelMappers;
 
-internal class LinkModelMapper : IModelMapper<LinkModel, Link>
+internal class LinkModelMapper : IModelMapperUnit<LinkModel, Link>
 {
     private readonly ApplicationDbContext _context;
 

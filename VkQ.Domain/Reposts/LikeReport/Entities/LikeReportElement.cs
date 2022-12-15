@@ -6,8 +6,8 @@ namespace VkQ.Domain.Reposts.LikeReport.Entities;
 
 public class LikeReportElement : PublicationReportElement
 {
-    internal LikeReportElement(string name, string likeChatName, long vkId, Guid participantId,
-        LikeReportElement? parent) : base(name, likeChatName, vkId, participantId, parent)
+    internal LikeReportElement(string name, string likeChatName, long vkId, Guid participantId, bool vip,
+        LikeReportElement? parent) : base(name, likeChatName, vkId, participantId, vip, parent)
     {
     }
 

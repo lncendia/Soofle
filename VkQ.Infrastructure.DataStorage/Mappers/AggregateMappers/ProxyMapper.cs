@@ -5,7 +5,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
-internal class ProxyMapper : IAggregateMapper<Proxy, ProxyModel>
+internal class ProxyMapper : IAggregateMapperUnit<Proxy, ProxyModel>
 {
     public Proxy Map(ProxyModel model)
     {

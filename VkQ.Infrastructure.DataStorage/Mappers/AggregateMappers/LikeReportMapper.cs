@@ -8,7 +8,7 @@ using VkQ.Infrastructure.DataStorage.Models.Reports.LikeReport;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
-internal class LikeReportMapper : IAggregateMapper<LikeReport, LikeReportModel>
+internal class LikeReportMapper : IAggregateMapperUnit<LikeReport, LikeReportModel>
 {
     private static readonly Type LikeReportType = typeof(LikeReport);
     private static readonly Type LikeReportElementType = typeof(LikeReportElement);

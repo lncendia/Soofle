@@ -1,10 +1,11 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VkQ.Application.Abstractions.Links.Exceptions;
 using VkQ.Application.Abstractions.Links.ServicesInterfaces;
 using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
 using VkQ.Domain.Links.Exceptions;
-using VkQ.WEB.ViewModels.Profile;
+using VkQ.WEB.ViewModels.Links;
 
 namespace VkQ.WEB.Controllers;
 
@@ -33,7 +34,7 @@ public class LinkController : Controller
         try
         {
             var dto = await _linkManager.AddAsync(id, model.Email);
-            return Json(new { Id1 = id, Name1 = User.Identity!.Name, Id2 = dto.Id, Name2 = dto.User2Name });
+            return Json(new LinkAddViewModel(User.Identity!.Name!, dto.User2Name, dto.Id));
         }
         catch (Exception ex)
         {
@@ -42,6 +43,7 @@ public class LinkController : Controller
                 UserNotFoundException => "Пользователь с таким email не найден",
                 SameUsersException => "Нельзя добавить самого себя",
                 TooManyLinksForUserException => "Нельзя добавить больше 20 пользователей",
+                LinkAlreadyExistsException => "Пользователь уже добавлен",
                 _ => "Произошла ошибка при создании связи"
             };
             return BadRequest(text);
@@ -85,8 +87,9 @@ public class LinkController : Controller
         {
             var text = ex switch
             {
+                LinkNotFoundException => "Связь не найдена",
+                LinkAlreadyConfirmedException => "Связь уже подтверждена",
                 UserNotFoundException => "Пользователь с таким email не найден",
-                TooManyLinksForUserException => "Нельзя добавить больше 20 пользователей",
                 _ => "Произошла ошибка при создании связи"
             };
             return BadRequest(text);

@@ -25,7 +25,8 @@ internal static class ReportBuilders
                     new AndSpecification<Link, ILinkSpecificationVisitor>(new LinkByUserIdSpecification(user.Id),
                         new LinkByUserIdSpecification(id))));
 
-            if (await uow.LinkRepository.Value.CountAsync(spec) != coAuthors.Count) throw new LinkNotFoundException();
+            if (await uow.LinkRepository.Value.CountAsync(spec) != coAuthors.Count)
+                throw new LinkBetweenUsersNotFoundException();
         }
 
         var reportsCountSpec = new LogByCreationDateSpecification(DateTimeOffset.Now, DateTimeOffset.Now.AddDays(-1));

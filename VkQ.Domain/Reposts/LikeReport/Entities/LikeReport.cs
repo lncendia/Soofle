@@ -46,16 +46,16 @@ public class LikeReport : PublicationReport
         var p = participants.FirstOrDefault(x => x.UserId != UserId && !LinkedUsers.Contains(x.UserId));
         if (p != null) throw new ParticipantNotLinkedToReportException(p.Id);
 
-        var childElements = participants.Where(x => x.ParentParticipantId.HasValue).GroupBy(x => x.ParentParticipantId)
-            .ToList();
-        foreach (var participant in participants.Where(x => !x.ParentParticipantId.HasValue))
+        var groupedElements = participants.GroupBy(x => x.ParentParticipantId).ToList();
+        foreach (var participant in groupedElements.First(x => x.Key == null))
         {
-            var item = new LikeReportElement(participant.Name, likeChatName, participant.VkId, participant.Id, null);
+            var item = new LikeReportElement(participant.Name, likeChatName, participant.VkId, participant.Id,
+                participant.Vip, null);
             elements.Add(item);
-            var children = childElements.FirstOrDefault(x => x.Key == participant.Id);
+            var children = groupedElements.FirstOrDefault(x => x.Key == participant.Id);
             if (children == null) continue;
             elements.AddRange(children.Select(x =>
-                new LikeReportElement(x.Name, likeChatName, x.VkId, x.Id, item)));
+                new LikeReportElement(x.Name, likeChatName, x.VkId, x.Id, x.Vip, item)));
         }
     }
 

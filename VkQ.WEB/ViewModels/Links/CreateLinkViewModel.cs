@@ -4,9 +4,9 @@ namespace VkQ.WEB.ViewModels.Links;
 
 public class CreateLinkViewModel
 {
-    [Required(ErrorMessage = "Не указана сумма платежа")]
-    [Display(Name = "Сумма оплаты")]
-    [Range(1, 10000, ErrorMessage = "Сумма должна быть больше 0 и меньше 10000 рублей")]
-    [DataType(DataType.Currency)]
-    public decimal Amount { get; set; }
+    [Required(ErrorMessage = "Поле не должно быть пустым")]
+    [DataType(DataType.EmailAddress)]
+    [Display(Name = "Введите новый электронный адрес")]
+    [StringLength(50, ErrorMessage = "Не больше 50 символов")]
+    public string Email { get; set; } = null!;
 }

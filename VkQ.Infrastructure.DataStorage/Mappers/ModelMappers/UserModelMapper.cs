@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.ModelMappers;
 
-internal class UserModelMapper : IModelMapper<UserModel, User>
+internal class UserModelMapper : IModelMapperUnit<UserModel, User>
 {
     private readonly ApplicationDbContext _context;
 

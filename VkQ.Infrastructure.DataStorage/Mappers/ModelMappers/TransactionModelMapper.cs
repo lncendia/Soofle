@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.ModelMappers;
 
-internal class TransactionModelMapper : IModelMapper<TransactionModel, Transaction>
+internal class TransactionModelMapper : IModelMapperUnit<TransactionModel, Transaction>
 {
     private readonly ApplicationDbContext _context;
 

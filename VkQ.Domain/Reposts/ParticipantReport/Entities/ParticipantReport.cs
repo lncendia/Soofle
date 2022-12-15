@@ -6,7 +6,6 @@ using VkQ.Domain.Reposts.BaseReport.Exceptions.Base;
 using VkQ.Domain.Reposts.ParticipantReport.DTOs;
 using VkQ.Domain.Reposts.ParticipantReport.Enums;
 using VkQ.Domain.Reposts.ParticipantReport.Events;
-using VkQ.Domain.Reposts.ParticipantReport.Exceptions;
 using VkQ.Domain.Users.Entities;
 
 namespace VkQ.Domain.Reposts.ParticipantReport.Entities;
@@ -54,16 +53,14 @@ public class ParticipantReport : Report
 
         var p = participants.FirstOrDefault(x => x.UserId != UserId);
         if (p != null) throw new ParticipantNotLinkedToReportException(p.Id);
+        var grouperElements = participants.GroupBy(x => x.ParentParticipantId).ToList();
 
-        var childElements = participants.Where(x => x.ParentParticipantId.HasValue).GroupBy(x => x.ParentParticipantId)
-            .ToList();
-
-        foreach (var participant in participants.Where(x => !x.ParentParticipantId.HasValue))
+        foreach (var participant in grouperElements.First(x => x.Key == null))
         {
             var item = new ParticipantReportElement(participant.Name, participant.VkId, participant.Id,
                 participant.Type, null);
             ReportElementsList.Add(item);
-            var children = childElements.FirstOrDefault(x => x.Key == participant.Id);
+            var children = grouperElements.FirstOrDefault(x => x.Key == participant.Id);
             if (children == null) continue;
             ReportElementsList.AddRange(children.Select(x =>
                 new ParticipantReportElement(x.Name, x.VkId, x.Id, x.Type, item)));

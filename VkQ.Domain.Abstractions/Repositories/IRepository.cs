@@ -15,7 +15,6 @@ public interface IRepository<T, out TX, out TM> where T : AggregateRoot
     Task DeleteAsync(ISpecification<T, TX> specification);
     Task<int> CountAsync(ISpecification<T, TX>? specification);
 
-    Task<IList<T>> FindAsync(ISpecification<T, TX>? specification = null, IOrderBy<T, TM>? orderBy = null,
-        int? skip = null,
-        int? take = null);
+    Task<List<T>> FindAsync(ISpecification<T, TX>? specification = null, IOrderBy<T, TM>? orderBy = null,
+        int? skip = null, int? take = null);
 }

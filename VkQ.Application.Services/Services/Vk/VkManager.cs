@@ -40,13 +40,26 @@ public class VkManager : IVkManager
         await Task.WhenAll(tasks);
     }
 
-    public async Task ActivateVkAsync(Guid userId, string? code)
+    public async Task ActivateVkAsync(Guid userId)
     {
         var user = await _unitOfWork.UserRepository.Value.GetAsync(userId);
         if (user == null) throw new UserNotFoundException();
         var proxy = await GetProxyAsync(user);
         user.SetVkProxy(proxy);
         var token = await _vkLoginService.ActivateAsync(new VkLoginDto(user.Vk!.Login, user.Vk.Password,
+            new VkProxyDto(proxy.Host, proxy.Port, proxy.Login, proxy.Password)));
+        user.ActivateVk(token);
+        await _unitOfWork.UserRepository.Value.UpdateAsync(user);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task ActivateTwoFactorAsync(Guid userId, string code)
+    {
+        var user = await _unitOfWork.UserRepository.Value.GetAsync(userId);
+        if (user == null) throw new UserNotFoundException();
+        var proxy = await GetProxyAsync(user);
+        user.SetVkProxy(proxy);
+        var token = await _vkLoginService.ActivateTwoFactorAsync(new VkLoginDto(user.Vk!.Login, user.Vk.Password,
             new VkProxyDto(proxy.Host, proxy.Port, proxy.Login, proxy.Password)), code);
         user.ActivateVk(token);
         await _unitOfWork.UserRepository.Value.UpdateAsync(user);

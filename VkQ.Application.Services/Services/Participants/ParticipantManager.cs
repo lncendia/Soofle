@@ -1,7 +1,6 @@
 ﻿using VkQ.Application.Abstractions.Participants.DTOs;
 using VkQ.Application.Abstractions.Participants.Exceptions;
 using VkQ.Application.Abstractions.Participants.ServicesInterfaces;
-using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Participants.Entities;
 using VkQ.Domain.Participants.Specification;
@@ -13,26 +12,26 @@ namespace VkQ.Application.Services.Services.Participants;
 public class ParticipantManager : IParticipantManager
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IParticipantMapper _participantMapper;
 
-    public ParticipantManager(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+    public ParticipantManager(IUnitOfWork unitOfWork, IParticipantMapper participantMapper)
+    {
+        _unitOfWork = unitOfWork;
+        _participantMapper = participantMapper;
+    }
 
     public async Task<List<ParticipantDto>> FindAsync(Guid userId, SearchQuery query)
     {
         ISpecification<Participant, IParticipantSpecificationVisitor> participantsSpec =
             new ParticipantsByUserIdSpecification(userId);
-        var participants = await _unitOfWork.ParticipantRepository.Value.FindAsync(participantsSpec);
+        var allParticipants = await _unitOfWork.ParticipantRepository.Value.FindAsync(participantsSpec);
+        var participants = allParticipants.GroupBy(x => x.ParentParticipantId).ToList();
 
-        var parentParticipants = participants.Where(x => !x.ParentParticipantId.HasValue).ToList();
-        var skip = (query.Page - 1) * 100;
-        if (parentParticipants.Count <= skip) return new List<ParticipantDto>();
-        var childParticipants = participants.Where(x => x.ParentParticipantId.HasValue)
-            .GroupBy(x => x.ParentParticipantId).ToList();
+        var list = new List<Participant>();
 
-        var list = new List<ParticipantDto>();
-
-        foreach (var parentParticipant in parentParticipants)
+        foreach (var parentParticipant in participants.First(x => x.Key == null).Skip((query.Page - 1) * 100).Take(100))
         {
-            var children = childParticipants.FirstOrDefault(x => x.Key == parentParticipant.Id)?.ToList();
+            var children = participants.FirstOrDefault(x => x.Key == parentParticipant.Id)?.ToList();
             if (query.HasChildren.HasValue)
             {
                 if (query.HasChildren.Value && children == null) continue;
@@ -40,14 +39,13 @@ public class ParticipantManager : IParticipantManager
             }
 
             var valid = IsValid(parentParticipant, query);
-            var validChildren = children?.Where(x => IsValid(x, query)).Select(x => Map(x, null)).ToList();
-            if (valid || validChildren?.Any() == true)
-            {
-                list.Add(Map(parentParticipant, validChildren));
-            }
+            var validChildren = children?.Where(x => IsValid(x, query));
+            if (!valid && validChildren?.Any() != true) continue;
+            list.Add(parentParticipant);
+            list.AddRange(validChildren ?? new List<Participant>());
         }
 
-        return list.Skip(skip).Take(100).ToList();
+        return _participantMapper.Map(list);
     }
 
     private static bool IsValid(Participant participant, SearchQuery query)
@@ -63,10 +61,6 @@ public class ParticipantManager : IParticipantManager
 
         return true;
     }
-
-    private static ParticipantDto Map(Participant participant, IEnumerable<ParticipantDto>? children) =>
-        new(participant.Id, participant.Name, participant.Notes, participant.Type, participant.VkId, participant.Vip,
-            children);
 
     public async Task EditAsync(Guid userId, Guid participantId, Guid? parentId, string? note, bool vip)
     {

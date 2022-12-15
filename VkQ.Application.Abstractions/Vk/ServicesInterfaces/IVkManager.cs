@@ -3,5 +3,6 @@
 public interface IVkManager
 {
     public Task SetVkAsync(Guid userId, string username, string password);
-    public Task ActivateVkAsync(Guid userId, string? code);
+    public Task ActivateVkAsync(Guid userId);
+    public Task ActivateTwoFactorAsync(Guid userId, string code);
 }

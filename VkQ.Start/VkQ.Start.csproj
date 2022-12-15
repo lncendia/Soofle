@@ -7,12 +7,45 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\VkQ.Application.Services\VkQ.Application.Services.csproj" />
+      <ProjectReference Include="..\VkQ.Domain.Services\VkQ.Domain.Services.csproj" />
+      <ProjectReference Include="..\VkQ.Infrastructure.AntiCaptcha\VkQ.Infrastructure.AntiCaptcha.csproj" />
+      <ProjectReference Include="..\VkQ.Infrastructure.ApplicationDataStorage\VkQ.Infrastructure.ApplicationDataStorage.csproj" />
+      <ProjectReference Include="..\VkQ.Infrastructure.BackgroundTasks\VkQ.Infrastructure.BackgroundTasks.csproj" />
       <ProjectReference Include="..\VkQ.Infrastructure.DataStorage\VkQ.Infrastructure.DataStorage.csproj" />
+      <ProjectReference Include="..\VkQ.Infrastructure.Mailing\VkQ.Infrastructure.Mailing.csproj" />
+      <ProjectReference Include="..\VkQ.Infrastructure.PaymentSystem\VkQ.Infrastructure.PaymentSystem.csproj" />
+      <ProjectReference Include="..\VkQ.Infrastructure.Publications\VkQ.Infrastructure.Publications.csproj" />
+      <ProjectReference Include="..\VkQ.Infrastructure.VkAuthentication\VkQ.Infrastructure.VkAuthentication.csproj" />
       <ProjectReference Include="..\VkQ.WEB\VkQ.WEB.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Views\Rate\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Users\ChangePassword.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Users\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Users\Index.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Views\Users\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Views\Users\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Views\Users\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Views\Users\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AspNet.Security.OAuth.Vkontakte" Version="6.0.14" />
+      <PackageReference Include="AspNet.Security.OAuth.Yandex" Version="6.0.14" />
     </ItemGroup>
 
 </Project>

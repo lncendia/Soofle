@@ -19,4 +19,9 @@ internal class ParticipantVisitor : BaseVisitor<ParticipantModel, IParticipantSp
     }
 
     public void Visit(ParticipantsByUserIdSpecification specification) => Expr = x => x.UserId == specification.UserId;
+    public void Visit(ParticipantsByNameSpecification specification) => Expr = x => x.Name.Contains(specification.Name);
+
+    public void Visit(ParticipantsByTypeSpecification specification) => Expr = x => x.Type == specification.Type;
+
+    public void Visit(VipParticipantsSpecification specification) => Expr = x => x.Vip;
 }

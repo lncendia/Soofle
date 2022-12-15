@@ -11,4 +11,8 @@
       <ProjectReference Include="..\VkQ.Application.Abstractions\VkQ.Application.Abstractions.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Controllers\UsersController.cs" />
+    </ItemGroup>
+
 </Project>

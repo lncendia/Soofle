@@ -16,14 +16,14 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class ReportLogRepository : IReportLogRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateMapper<ReportLog, ReportLogModel> _mapper;
-    private readonly IModelMapper<ReportLogModel, ReportLog> _modelMapper;
+    private readonly IAggregateMapperUnit<ReportLog, ReportLogModel> _mapper;
+    private readonly IModelMapperUnit<ReportLogModel, ReportLog> _modelMapper;
     private readonly ReportLogVisitor _visitor = new();
     private readonly ReportLogSortingVisitor _sortingVisitor = new();
 
 
-    public ReportLogRepository(ApplicationDbContext context, IAggregateMapper<ReportLog, ReportLogModel> mapper,
-        IModelMapper<ReportLogModel, ReportLog> modelMapper)
+    public ReportLogRepository(ApplicationDbContext context, IAggregateMapperUnit<ReportLog, ReportLogModel> mapper,
+        IModelMapperUnit<ReportLogModel, ReportLog> modelMapper)
     {
         _context = context;
         _mapper = mapper;
@@ -72,7 +72,8 @@ internal class ReportLogRepository : IReportLogRepository
         return query.CountAsync();
     }
 
-    public async Task<IList<ReportLog>> FindAsync(ISpecification<ReportLog, IReportLogSpecificationVisitor>? specification = null,
+    public async Task<List<ReportLog>> FindAsync(
+        ISpecification<ReportLog, IReportLogSpecificationVisitor>? specification = null,
         IOrderBy<ReportLog, IReportLogSortingVisitor>? orderBy = null, int? skip = null, int? take = null)
     {
         var query = _context.ReportLogs.AsQueryable();

@@ -16,14 +16,14 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateMapper<User, UserModel> _mapper;
-    private readonly IModelMapper<UserModel, User> _modelMapper;
+    private readonly IAggregateMapperUnit<User, UserModel> _mapper;
+    private readonly IModelMapperUnit<UserModel, User> _modelMapper;
     private readonly UserVisitor _visitor = new();
     private readonly UserSortingVisitor _sortingVisitor = new();
 
 
-    public UserRepository(ApplicationDbContext context, IAggregateMapper<User, UserModel> mapper,
-        IModelMapper<UserModel, User> modelMapper)
+    public UserRepository(ApplicationDbContext context, IAggregateMapperUnit<User, UserModel> mapper,
+        IModelMapperUnit<UserModel, User> modelMapper)
     {
         _context = context;
         _mapper = mapper;
@@ -72,7 +72,7 @@ internal class UserRepository : IUserRepository
         return query.CountAsync();
     }
 
-    public async Task<IList<User>> FindAsync(ISpecification<User, IUserSpecificationVisitor>? specification = null,
+    public async Task<List<User>> FindAsync(ISpecification<User, IUserSpecificationVisitor>? specification = null,
         IOrderBy<User, IUserSortingVisitor>? orderBy = null, int? skip = null, int? take = null)
     {
         var query = _context.Users.AsQueryable();

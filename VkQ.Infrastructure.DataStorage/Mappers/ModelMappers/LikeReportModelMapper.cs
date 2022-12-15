@@ -7,7 +7,7 @@ using VkQ.Infrastructure.DataStorage.Models.Reports.LikeReport;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.ModelMappers;
 
-internal class LikeReportModelMapper : IModelMapper<LikeReportModel, LikeReport>
+internal class LikeReportModelMapper : IModelMapperUnit<LikeReportModel, LikeReport>
 {
     private readonly ApplicationDbContext _context;
 

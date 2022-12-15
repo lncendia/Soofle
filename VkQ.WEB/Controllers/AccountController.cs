@@ -26,7 +26,7 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Register(string? message)
     {
-        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+        ViewData["Alert"] = message;
         return View();
     }
 
@@ -134,7 +134,7 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Login(string message, string returnUrl = "/")
     {
-        if (!string.IsNullOrEmpty(message)) ViewData["Alert"] = message;
+        ViewData["Alert"] = message;
         return View(new LoginViewModel { ReturnUrl = returnUrl });
     }
 

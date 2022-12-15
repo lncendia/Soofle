@@ -16,15 +16,15 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class ParticipantReportRepository : IParticipantReportRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateMapper<ParticipantReport, ParticipantReportModel> _mapper;
-    private readonly IModelMapper<ParticipantReportModel, ParticipantReport> _modelMapper;
+    private readonly IAggregateMapperUnit<ParticipantReport, ParticipantReportModel> _mapper;
+    private readonly IModelMapperUnit<ParticipantReportModel, ParticipantReport> _modelMapper;
     private readonly ParticipantReportVisitor _visitor = new();
     private readonly ParticipantReportSortingVisitor _sortingVisitor = new();
 
 
     public ParticipantReportRepository(ApplicationDbContext context,
-        IAggregateMapper<ParticipantReport, ParticipantReportModel> mapper,
-        IModelMapper<ParticipantReportModel, ParticipantReport> modelMapper)
+        IAggregateMapperUnit<ParticipantReport, ParticipantReportModel> mapper,
+        IModelMapperUnit<ParticipantReportModel, ParticipantReport> modelMapper)
     {
         _context = context;
         _mapper = mapper;
@@ -77,7 +77,7 @@ internal class ParticipantReportRepository : IParticipantReportRepository
         return query.CountAsync();
     }
 
-    public async Task<IList<ParticipantReport>> FindAsync(
+    public async Task<List<ParticipantReport>> FindAsync(
         ISpecification<ParticipantReport, IParticipantReportSpecificationVisitor>? specification = null,
         IOrderBy<ParticipantReport, IParticipantReportSortingVisitor>? orderBy = null, int? skip = null,
         int? take = null)

@@ -16,14 +16,14 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class ProxyRepository : IProxyRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateMapper<Proxy, ProxyModel> _mapper;
-    private readonly IModelMapper<ProxyModel, Proxy> _modelMapper;
+    private readonly IAggregateMapperUnit<Proxy, ProxyModel> _mapper;
+    private readonly IModelMapperUnit<ProxyModel, Proxy> _modelMapper;
     private readonly ProxyVisitor _visitor = new();
     private readonly ProxySortingVisitor _sortingVisitor = new();
 
 
-    public ProxyRepository(ApplicationDbContext context, IAggregateMapper<Proxy, ProxyModel> mapper,
-        IModelMapper<ProxyModel, Proxy> modelMapper)
+    public ProxyRepository(ApplicationDbContext context, IAggregateMapperUnit<Proxy, ProxyModel> mapper,
+        IModelMapperUnit<ProxyModel, Proxy> modelMapper)
     {
         _context = context;
         _mapper = mapper;
@@ -72,7 +72,7 @@ internal class ProxyRepository : IProxyRepository
         return query.CountAsync();
     }
 
-    public async Task<IList<Proxy>> FindAsync(ISpecification<Proxy, IProxySpecificationVisitor>? specification = null,
+    public async Task<List<Proxy>> FindAsync(ISpecification<Proxy, IProxySpecificationVisitor>? specification = null,
         IOrderBy<Proxy, IProxySortingVisitor>? orderBy = null, int? skip = null, int? take = null)
     {
         var query = _context.Proxies.AsQueryable();

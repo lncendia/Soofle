@@ -6,5 +6,6 @@ public interface IVkLoginService
 {
     Task DeactivateAsync(VkLogoutDto info);
 
-    Task<string> ActivateAsync(VkLoginDto info, string? code);
+    Task<string> ActivateAsync(VkLoginDto info);
+    Task<string> ActivateTwoFactorAsync(VkLoginDto info, string code);
 }

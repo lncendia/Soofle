@@ -7,7 +7,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
-internal class UserMapper : IAggregateMapper<User, UserModel>
+internal class UserMapper : IAggregateMapperUnit<User, UserModel>
 {
 
     private static readonly FieldInfo UserSubscription =

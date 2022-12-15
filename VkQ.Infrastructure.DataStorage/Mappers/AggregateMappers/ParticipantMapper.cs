@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
-internal class ParticipantMapper : IAggregateMapper<Participant, ParticipantModel>
+internal class ParticipantMapper : IAggregateMapperUnit<Participant, ParticipantModel>
 {
     private static readonly FieldInfo OwnerId =
         typeof(Participant).GetField("<ParentParticipantId>k__BackingField",

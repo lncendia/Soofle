@@ -5,13 +5,13 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
-internal class LinkMapper : IAggregateMapper<Link, LinkModel>
+internal class LinkMapper : IAggregateMapperUnit<Link, LinkModel>
 {
     public Link Map(LinkModel model)
     {
-        var link = new Link(model.User1Id, 0, model.User2Id);
+        var link = new Link(model.User1Id, new List<Link>(), model.User2Id);
         IdFields.AggregateId.SetValue(link, model.Id);
-        if (model.IsAccepted) link.Confirm(0);
+        if (model.IsAccepted) link.Confirm();
         return link;
     }
 }

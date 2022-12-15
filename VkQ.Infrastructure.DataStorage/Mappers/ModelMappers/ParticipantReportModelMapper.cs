@@ -7,7 +7,7 @@ using VkQ.Infrastructure.DataStorage.Models.Reports.ParticipantReport;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.ModelMappers;
 
-internal class ParticipantReportModelMapper : IModelMapper<ParticipantReportModel, ParticipantReport>
+internal class ParticipantReportModelMapper : IModelMapperUnit<ParticipantReportModel, ParticipantReport>
 {
     private readonly ApplicationDbContext _context;
 

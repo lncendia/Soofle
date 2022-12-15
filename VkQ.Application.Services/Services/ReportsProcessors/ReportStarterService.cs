@@ -1,9 +1,10 @@
 ﻿using VkQ.Application.Abstractions.Proxies.Exceptions;
 using VkQ.Application.Abstractions.Proxies.ServicesInterfaces;
-using VkQ.Application.Abstractions.Reports.Exceptions;
 using VkQ.Application.Abstractions.Reports.ServicesInterfaces;
+using VkQ.Application.Abstractions.ReportsManagement.ServicesInterfaces.ReportProcessing;
 using VkQ.Application.Abstractions.ReportsProcessors.Exceptions;
 using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
+using VkQ.Application.Abstractions.ReportsQuery.Exceptions;
 using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Reposts.BaseReport.Exceptions.Base;

@@ -7,7 +7,7 @@ using VkQ.Infrastructure.DataStorage.Models.Reports.ParticipantReport;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
-internal class ParticipantReportMapper : IAggregateMapper<ParticipantReport, ParticipantReportModel>
+internal class ParticipantReportMapper : IAggregateMapperUnit<ParticipantReport, ParticipantReportModel>
 {
     private static readonly Type ParticipantReportType = typeof(ParticipantReportElement);
     private static readonly Type ParticipantReportElementType = typeof(ParticipantReportElement);

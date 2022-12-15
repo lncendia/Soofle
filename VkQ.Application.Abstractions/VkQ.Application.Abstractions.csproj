@@ -16,7 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Reports\DTOs" />
+      <Folder Include="Elements\DTOs\Reports" />
+      <Folder Include="Elements\Exceptions" />
       <Folder Include="Users\Exceptions" />
     </ItemGroup>
 

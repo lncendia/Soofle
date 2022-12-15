@@ -1,7 +1,8 @@
-﻿using VkQ.Application.Abstractions.Reports.DTOs.ReportCreate;
-using VkQ.Application.Abstractions.Reports.Exceptions;
-using VkQ.Application.Abstractions.Reports.ServicesInterfaces;
-using VkQ.Application.Abstractions.Reports.ServicesInterfaces.BackgroundScheduler;
+﻿using VkQ.Application.Abstractions.Reports.ServicesInterfaces;
+using VkQ.Application.Abstractions.ReportsManagement.DTOs;
+using VkQ.Application.Abstractions.ReportsManagement.ServicesInterfaces.BackgroundScheduler;
+using VkQ.Application.Abstractions.ReportsManagement.ServicesInterfaces.ReportProcessing;
+using VkQ.Application.Abstractions.ReportsQuery.Exceptions;
 using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
 using VkQ.Domain.Abstractions.Services;
 using VkQ.Domain.Abstractions.UnitOfWorks;

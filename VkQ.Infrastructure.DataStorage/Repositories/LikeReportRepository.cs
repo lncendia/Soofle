@@ -16,14 +16,14 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class LikeReportRepository : ILikeReportRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateMapper<LikeReport, LikeReportModel> _mapper;
-    private readonly IModelMapper<LikeReportModel, LikeReport> _modelMapper;
+    private readonly IAggregateMapperUnit<LikeReport, LikeReportModel> _mapper;
+    private readonly IModelMapperUnit<LikeReportModel, LikeReport> _modelMapper;
     private readonly LikeReportVisitor _visitor = new();
     private readonly LikeReportSortingVisitor _sortingVisitor = new();
 
 
-    public LikeReportRepository(ApplicationDbContext context, IAggregateMapper<LikeReport, LikeReportModel> mapper,
-        IModelMapper<LikeReportModel, LikeReport> modelMapper)
+    public LikeReportRepository(ApplicationDbContext context, IAggregateMapperUnit<LikeReport, LikeReportModel> mapper,
+        IModelMapperUnit<LikeReportModel, LikeReport> modelMapper)
     {
         _context = context;
         _mapper = mapper;
@@ -74,7 +74,7 @@ internal class LikeReportRepository : ILikeReportRepository
         return query.CountAsync();
     }
 
-    public async Task<IList<LikeReport>> FindAsync(
+    public async Task<List<LikeReport>> FindAsync(
         ISpecification<LikeReport, ILikeReportSpecificationVisitor>? specification = null,
         IOrderBy<LikeReport, ILikeReportSortingVisitor>? orderBy = null, int? skip = null, int? take = null)
     {

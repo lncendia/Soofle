@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.ModelMappers;
 
-internal class ReportLogModelMapper : IModelMapper<ReportLogModel, ReportLog>
+internal class ReportLogModelMapper : IModelMapperUnit<ReportLogModel, ReportLog>
 {
     private readonly ApplicationDbContext _context;
 

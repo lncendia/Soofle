@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
 using VkQ.Application.Abstractions.Users.ServicesInterfaces.Manage;
 using VkQ.Domain.Users.Exceptions;
-using VkQ.WEB.ViewModels.Profile;
+using VkQ.WEB.ViewModels.Settings;
 using VkQ.WEB.ViewModels.Users;
-using ChangePasswordViewModel = VkQ.WEB.ViewModels.Profile.ChangePasswordViewModel;
+using ChangePasswordViewModel = VkQ.WEB.ViewModels.Settings.ChangePasswordViewModel;
 
 namespace VkQ.WEB.Controllers;
 
@@ -88,7 +88,8 @@ public class SettingsController : Controller
 
         try
         {
-            await _userService.ChangePasswordAsync(User.Identity!.Name!, model.OldPassword,
+            var email = User.FindFirstValue(ClaimTypes.Email)!;
+            await _userService.ChangePasswordAsync(email, model.OldPassword,
                 model.Password);
             return RedirectToAction("ChangePassword", new { message = "Пароль успешно изменен." });
         }

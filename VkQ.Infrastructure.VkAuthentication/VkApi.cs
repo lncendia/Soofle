@@ -1,14 +1,10 @@
 using System.Net;
-using LikeBotVK.Infrastructure.VkAuthentication.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
-using VkNet.AudioBypassService.Extensions;
 using VkNet.Model;
 using VkNet.Utils.AntiCaptcha;
-using VkQ.Application.Abstractions.DTO.Proxy;
-using VkQ.Application.Abstractions.Proxies.DTOs;
-using VkQ.Application.Abstractions.Users.DTOs;
 using VkQ.Application.Abstractions.Vk.DTOs;
 using VkQ.Infrastructure.VkAuthentication.AntiCaptcha;
+using VkQ.Infrastructure.VkAuthentication.Exceptions;
 
 namespace VkQ.Infrastructure.VkAuthentication;
 
@@ -35,14 +31,14 @@ public static class VkApi
         return api;
     }
 
-    private static HttpClient GetHttpClientWithProxy(ProxyDto proxy)
+    private static HttpClient GetHttpClientWithProxy(VkProxyDto proxy)
     {
         var httpClientHandler = new HttpClientHandler
         {
-            Proxy = new WebProxy(proxy.ProxyHost, proxy.ProxyPort)
+            Proxy = new WebProxy(proxy.Host, proxy.Port)
             {
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(proxy.ProxyLogin, proxy.ProxyPassword)
+                Credentials = new NetworkCredential(proxy.Login, proxy.Password)
             }
         };
         return new HttpClient(httpClientHandler);

@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
-internal class ReportLogMapper : IAggregateMapper<ReportLog, ReportLogModel>
+internal class ReportLogMapper : IAggregateMapperUnit<ReportLog, ReportLogModel>
 {
     public ReportLog Map(ReportLogModel model)
     {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using VkQ.Application.Abstractions.Reports.ServicesInterfaces.BackgroundScheduler;
+using VkQ.Application.Abstractions.ReportsManagement.ServicesInterfaces.BackgroundScheduler;
 using VkQ.Infrastructure.ApplicationDataStorage.Models;
 
 namespace VkQ.Infrastructure.ApplicationDataStorage;

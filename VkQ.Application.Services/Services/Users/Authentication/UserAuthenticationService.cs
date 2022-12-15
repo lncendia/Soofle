@@ -7,7 +7,7 @@ using VkQ.Application.Abstractions.Users.ServicesInterfaces.UsersAuthentication;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Users.Entities;
 
-namespace VkQ.Application.Services.Services.Authentication;
+namespace VkQ.Application.Services.Services.Users.Authentication;
 
 public class UserAuthenticationService : IUserAuthenticationService
 {

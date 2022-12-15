@@ -6,7 +6,7 @@ using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.ModelMappers;
 
-internal class ProxyModelMapper : IModelMapper<ProxyModel, Proxy>
+internal class ProxyModelMapper : IModelMapperUnit<ProxyModel, Proxy>
 {
     private readonly ApplicationDbContext _context;
 

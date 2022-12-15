@@ -16,14 +16,14 @@ namespace VkQ.Infrastructure.DataStorage.Repositories;
 internal class TransactionRepository : ITransactionRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly IAggregateMapper<Transaction, TransactionModel> _mapper;
-    private readonly IModelMapper<TransactionModel, Transaction> _modelMapper;
+    private readonly IAggregateMapperUnit<Transaction, TransactionModel> _mapper;
+    private readonly IModelMapperUnit<TransactionModel, Transaction> _modelMapper;
     private readonly TransactionVisitor _visitor = new();
     private readonly TransactionSortingVisitor _sortingVisitor = new();
 
 
-    public TransactionRepository(ApplicationDbContext context, IAggregateMapper<Transaction, TransactionModel> mapper,
-        IModelMapper<TransactionModel, Transaction> modelMapper)
+    public TransactionRepository(ApplicationDbContext context, IAggregateMapperUnit<Transaction, TransactionModel> mapper,
+        IModelMapperUnit<TransactionModel, Transaction> modelMapper)
     {
         _context = context;
         _mapper = mapper;
@@ -72,7 +72,7 @@ internal class TransactionRepository : ITransactionRepository
         return query.CountAsync();
     }
 
-    public async Task<IList<Transaction>> FindAsync(
+    public async Task<List<Transaction>> FindAsync(
         ISpecification<Transaction, ITransactionSpecificationVisitor>? specification = null,
         IOrderBy<Transaction, ITransactionSortingVisitor>? orderBy = null, int? skip = null, int? take = null)
     {
