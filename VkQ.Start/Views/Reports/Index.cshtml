@@ -1,0 +1,165 @@
+﻿@using VkQ.Domain.ReportLogs.Enums
+@{
+    ViewData["title"] = "Отчеты";
+}
+
+<div>
+    <ul class="nav justify-content-center">
+        <li class="nav-item">
+            <a class="nav-link disabled" asp-action="SelectChat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-task" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5H2zM3 3H2v1h1V3z"/>
+                    <path d="M5 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM5.5 7a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 4a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9z"/>
+                    <path fill-rule="evenodd" d="M1.5 7a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5V7zM2 7h1v1H2V7zm0 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5H2zm1 .5H2v1h1v-1z"/>
+                </svg>
+                Список отчетов
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="StartParticipantReport" asp-route-id="@Model.Id">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus" viewBox="0 0 16 16">
+                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                    <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                </svg>
+                Анализ участников
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="StartLikeReport" asp-route-id="@Model.Id">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                </svg>
+                Проверка лайкинга
+            </a>
+        </li>
+    </ul>
+</div>
+
+<form id="deleteSelected" asp-action="DeleteReports" method="Post">
+    <input class="btn btn-primary" type="submit" value="Удалить выбранные">
+</form>
+
+<div class="table-responsive">
+    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+        <thead class="align-middle">
+        <tr>
+            <th scope="col">
+                <input type="checkbox" class="form-check-input" name="selection_all" value="1">
+            </th>
+            <th scope="col">№</th>
+            <th scope="col">Дата создания</th>
+            <th scope="col">Тип</th>
+            <th scope="col">Чаты активности</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Действия</th>
+        </tr>
+        </thead>
+        <tbody class="align-middle">
+        @for (int i = 0; i < Model.Reports.Count; i++)
+        {
+            var report = Model.Reports[i];
+            <tr>
+                <th>
+                    <input type="checkbox" form="deleteSelected" class="form-check-input" name="ids" value="@Model.Reports[i].Id">
+                </th>
+                <th scope="row">@(i + 1)</th>
+                <td class="main">
+                    @switch (report.Type)
+                    {
+                        case ReportType.Likes:
+                            <a asp-action="LikeReport" asp-route-id="@report.Id"></a>
+                            break;
+                        case ReportType.Comments:
+                            <a asp-action="CommentReport" asp-route-id="@report.Id"></a>
+                            break;
+                        case ReportType.Thieves:
+                            <a asp-action="ThievesReport" asp-route-id="@report.Id"></a>
+                            break;
+                        case ReportType.Participants:
+                            <a asp-action="ParticipantsReport" asp-route-id="@report.Id">@TimeZoneInfo.ConvertTimeFromUtc(report.CreationDate, timeZone).ToString("f", new CultureInfo("Ru"))</a>
+                            break;
+                        case ReportType.TagInfo:
+                            <a asp-action="TagInfoReport" asp-route-id="@report.Id">@TimeZoneInfo.ConvertTimeFromUtc(report.CreationDate, timeZone).ToString("f", new CultureInfo("Ru"))</a>
+                            break;
+                    }
+                </td>
+                <td class="main">
+                    @switch (report.Type)
+                    {
+                        case ReportType.Likes:
+                            <span class="badge bg-danger">Лайки</span>
+                            <span class="badge bg-danger">#@report.Tag</span>
+                            break;
+                        case ReportType.Comments:
+                            <span class="badge bg-success">Комментарии</span>
+                            <span class="badge bg-success">#@report.Tag</span>
+                            break;
+                        case ReportType.Thieves:
+                            <span class="badge bg-warning">Поиск воров</span>
+                            <span class="badge bg-warning">#@report.Tag</span>
+                            break;
+                        case ReportType.Participants:
+                            <span class="badge bg-primary">Участники</span>
+                            break;
+                        case ReportType.TagInfo:
+                            <span class="badge bg-info">Анализ тега</span>
+                            <span class="badge bg-info">#@report.Tag</span>
+                            break;
+                    }
+                </td>
+                <td class="main">
+                    <ul class="list-group">
+                        @foreach (Instagram inst in report.Instagrams)
+                        {
+                            <li class="list-group-item bg-transparent border-0">@inst.LikeChat</li>
+                        }
+                    </ul>
+
+                </td>
+                <td class="child">
+                    @if (report.IsCompleted)
+                    {
+                        if (report.IsSucceeded)
+                        {
+                            <span class="badge bg-success">Успешно</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Ошибка</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning">В процессе</span>
+                    }
+                </td>
+                <td class="child">
+                    @if (report.User == Model.User && report.IsCompleted)
+                    {
+                        <a class="action" asp-action="RestartReport" asp-route-id="@report.Id">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                            </svg>
+                        </a>
+                    }
+                    @if (report.User == Model.User)
+                    {
+                        <a class="action" asp-action="DeleteReport" asp-route-id="@report.Id">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    <script src="~/js/autoSubmit.js"></script>
+    <script src="~/js/getReports.js"></script>
+}

@@ -1,4 +1,5 @@
-﻿using VkQ.Domain.Reposts.BaseReport.Entities.Base;
+﻿using VkQ.Application.Abstractions.ReportsQuery.DTOs.Base.ReportBaseDto;
+using VkQ.Domain.Reposts.BaseReport.Entities.Base;
 
 namespace VkQ.Application.Abstractions.ReportsQuery.ServicesInterfaces;
 

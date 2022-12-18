@@ -4,8 +4,8 @@ public abstract class ReportBaseDto
 {
     protected ReportBaseDto(ReportBaseBuilder builder)
     {
-        Id = builder.Id ?? throw new ArgumentNullException(nameof(builder.Id));
-        CreationDate = builder.CreationDate ?? throw new ArgumentNullException(nameof(builder.CreationDate));
+        Id = builder.Id ?? throw new ArgumentException("builder not formed", nameof(builder));
+        CreationDate = builder.CreationDate ?? throw new ArgumentException("builder not formed", nameof(builder));
         StartDate = builder.StartDate;
         EndDate = builder.EndDate;
         IsStarted = builder.IsStarted;

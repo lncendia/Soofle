@@ -1,6 +1,6 @@
 ﻿using VkQ.Application.Abstractions.ReportsProcessors.DTOs;
+using VkQ.Application.Abstractions.ReportsProcessors.Exceptions;
 using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
-using VkQ.Domain.Abstractions.Exceptions;
 using VkQ.Domain.Abstractions.UnitOfWorks;
 using VkQ.Domain.Participants.Entities;
 using VkQ.Domain.Participants.Specification;
@@ -29,7 +29,7 @@ internal static class ReportInitializer
     }
 
     ///<exception cref="LinkedUserNotFoundException">User in coauthors list not found</exception>
-    public static async Task<List<ParticipantsDto>> GetParticipantsAsync(LikeReport report, IUnitOfWork unitOfWork)
+    public static async Task<IEnumerable<ChatParticipants>> GetParticipantsAsync(LikeReport report, IUnitOfWork unitOfWork)
     {
         ISpecification<User, IUserSpecificationVisitor> userSpec = new UserByIdSpecification(report.UserId);
 
@@ -48,16 +48,8 @@ internal static class ReportInitializer
         var participants = unitOfWork.ParticipantRepository.Value.FindAsync(participantSpec);
         var chats = unitOfWork.UserRepository.Value.FindAsync(userSpec);
         await Task.WhenAll(participants, chats);
-
-        try
-        {
-            return participants.Result.GroupBy(x => x.UserId)
-                .Select(x => new ParticipantsDto(x.ToList(), chats.Result.First(y => y.Id == x.Key).Name))
-                .ToList();
-        }
-        catch (InvalidOperationException)
-        {
-            throw new LinkedUserNotFoundException();
-        }
+        return participants.Result.GroupBy(x => x.UserId)
+            .Select(x => new ChatParticipants(x.ToList(),
+                chats.Result.FirstOrDefault(y => y.Id == x.Key)?.Name ?? throw new LinkedUserNotFoundException(x.Key)));
     }
 }

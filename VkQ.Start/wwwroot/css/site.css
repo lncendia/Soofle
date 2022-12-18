@@ -124,6 +124,7 @@ a.action2:hover {
 
 td.main {
     min-width: 200px;
+    font-size: 12px;
 }
 td.child{
     min-width: 90px;

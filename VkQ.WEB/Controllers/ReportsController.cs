@@ -1,8 +1,12 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VkQ.Application.Abstractions.ReportsQuery.DTOs;
+using VkQ.Application.Abstractions.ReportsQuery.Exceptions;
 using VkQ.Application.Abstractions.ReportsQuery.ServicesInterfaces;
+using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
 using VkQ.WEB.ViewModels.Reports;
+using IReportMapper = VkQ.WEB.Mappers.Abstractions.IReportMapper;
 
 namespace VkQ.WEB.Controllers;
 
@@ -10,10 +14,12 @@ namespace VkQ.WEB.Controllers;
 public class ReportsController : Controller
 {
     private readonly IReportManager _reportManager;
+    private readonly IReportMapper _reportMapper;
 
-    public ReportsController(IReportManager reportManager)
+    public ReportsController(IReportManager reportManager, IReportMapper reportMapper)
     {
         _reportManager = reportManager;
+        _reportMapper = reportMapper;
     }
 
     [HttpGet]
@@ -23,51 +29,72 @@ public class ReportsController : Controller
         return View();
     }
 
-    public async Task<ActionResult> GetReports(int page = 1)
+    [HttpGet]
+    public async Task<ActionResult> GetReports(ReportsSearchQueryViewModel search)
     {
+        if (!ModelState.IsValid) search = new ReportsSearchQueryViewModel();
         var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
-        var reports = await _reportManager.FindAsync()
+        try
+        {
+            var reports = await _reportManager.FindAsync(id,
+                new SearchQuery(search.Page, search.ReportType, search.Hashtag, search.From, search.To));
+            return Json(reports.Select(Map));
+        }
+        catch (Exception e)
+        {
+            var message = e switch
+            {
+                UserNotFoundException => "Пользователь не найден",
+                _ => "Произошла ошибка"
+            };
+            return RedirectToAction("Index", new { message });
+        }
+    }
+
+    private static ReportShortViewModel Map(ReportDto dto) =>
+        new(dto.Id, dto.Hashtag, dto.Type, dto.CreationDate, dto.StartDate, dto.EndDate, dto.IsCompleted,
+            dto.IsSucceeded);
+
+
+    [HttpGet]
+    public async Task<IActionResult> LikeReport(Guid? id)
+    {
+        if (!id.HasValue) return RedirectToAction("Index", new { message = "Отчёт не найден" });
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        try
+        {
+            var report = await _reportManager.GetLikeReportAsync(userId, id.Value);
+            return View(_reportMapper.LikeReportMapper.Value.Map(report));
+        }
+        catch (Exception e)
+        {
+            var message = e switch
+            {
+                ReportNotFoundException => "Отчет не найден",
+                _ => "Произошла ошибка"
+            };
+            return RedirectToAction("Index", new { message });
+        }
     }
 
     [HttpGet]
-    public async Task<IActionResult> LikeReport(MediaReportViewModel model)
+    public async Task<IActionResult> ParticipantsReport(Guid? id)
     {
-        return View(model);
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> ParticipantsReport(ParticipantReportViewModel model)
-    {
-          
-        return View(model);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> StartParticipantReport()
-    {
-        
-    }
-    
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> StartLikeReport(StartLikeOrCommentReportViewModel model)
-    {
-           
-    }
-        
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RestartReport(Guid? id)
-    {
-        
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteReport(Guid? id)
-    {
-        
+        if (!id.HasValue) return RedirectToAction("Index", new { message = "Отчёт не найден" });
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        try
+        {
+            var report = await _reportManager.GetParticipantReportAsync(userId, id.Value);
+            return View(_reportMapper.ParticipantReportMapper.Value.Map(report));
+        }
+        catch (Exception e)
+        {
+            var message = e switch
+            {
+                ReportNotFoundException => "Отчет не найден",
+                _ => "Произошла ошибка"
+            };
+            return RedirectToAction("Index", new { message });
+        }
     }
 }

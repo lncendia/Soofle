@@ -1,4 +1,5 @@
-﻿using VkQ.Domain.Participants.Entities;
+﻿using VkQ.Domain.Links.Entities;
+using VkQ.Domain.Participants.Entities;
 using VkQ.Domain.ReportLogs.Enums;
 using VkQ.Domain.Reposts.BaseReport.DTOs;
 using VkQ.Domain.Reposts.BaseReport.Entities.Publication;
@@ -15,7 +16,7 @@ namespace VkQ.Domain.Reposts.LikeReport.Entities;
 public class LikeReport : PublicationReport
 {
     public LikeReport(User user, string hashtag, DateTimeOffset? startDate = null,
-        IReadOnlyCollection<Guid>? coAuthors = null) : base(user, hashtag, startDate, coAuthors)
+        IReadOnlyCollection<Link>? coAuthors = null) : base(user, hashtag, startDate, coAuthors)
     {
         AddDomainEvent(new ReportCreatedEvent(UserId, Id, ReportType.Likes, CreationDate, Hashtag));
     }
@@ -26,7 +27,7 @@ public class LikeReport : PublicationReport
     ///<exception cref="ReportAlreadyStartedException">Report already started</exception>
     ///<exception cref="ReportAlreadyCompletedException">Report already completed</exception>
     /// <exception cref="ParticipantNotLinkedToReportException"></exception>
-    public void Start(IEnumerable<ParticipantsDto> participants, IEnumerable<PublicationDto> publications)
+    public void Start(IEnumerable<ChatParticipants> participants, IEnumerable<PublicationDto> publications)
     {
         if (IsCompleted) throw new ReportAlreadyCompletedException(Id);
         if (IsStarted) throw new ReportAlreadyStartedException(Id);

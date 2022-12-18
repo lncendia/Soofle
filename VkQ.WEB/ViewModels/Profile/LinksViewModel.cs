@@ -12,20 +12,20 @@ public class LinksViewModel
     public List<LinkViewModel> Links { get; }
     public Guid CurrentUserId { get; }
     public string Scheme { get; }
+}
 
-    public class LinkViewModel
+public class LinkViewModel
+{
+    public LinkViewModel(Guid id, string user1, string user2, bool isConfirmed)
     {
-        public LinkViewModel(Guid id, string user1, string user2, bool isConfirmed)
-        {
-            IsConfirmed = isConfirmed;
-            Id = id;
-            User1 = user1;
-            User2 = user2;
-        }
-
-        public Guid Id { get; }
-        public string User1 { get; }
-        public string User2 { get; }
-        public bool IsConfirmed { get; }
+        IsConfirmed = isConfirmed;
+        Id = id;
+        User1 = user1;
+        User2 = user2;
     }
+
+    public Guid Id { get; }
+    public string User1 { get; }
+    public string User2 { get; }
+    public bool IsConfirmed { get; }
 }

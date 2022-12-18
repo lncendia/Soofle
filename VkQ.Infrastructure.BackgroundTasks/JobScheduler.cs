@@ -1,5 +1,4 @@
-﻿using VkQ.Application.Abstractions.Reports.ServicesInterfaces;
-using VkQ.Application.Abstractions.ReportsManagement.ServicesInterfaces.BackgroundScheduler;
+﻿using VkQ.Application.Abstractions.ReportsManagement.ServicesInterfaces.BackgroundScheduler;
 using VkQ.Application.Abstractions.ReportsManagement.ServicesInterfaces.ReportProcessing;
 
 namespace VkQ.Infrastructure.BackgroundTasks;

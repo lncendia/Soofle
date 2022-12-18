@@ -1,5 +1,4 @@
-﻿using VkQ.Application.Abstractions.Elements.DTOs.Base.ElementBaseDto;
-using VkQ.Application.Abstractions.Elements.DTOs.Base.PublicationElementBaseDto;
+﻿using VkQ.Application.Abstractions.ReportsQuery.DTOs.Base.ReportBaseDto;
 
 namespace VkQ.Application.Abstractions.ReportsQuery.DTOs.Base.PublicationReportBaseDto;
 

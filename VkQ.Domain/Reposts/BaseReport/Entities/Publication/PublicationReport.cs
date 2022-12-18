@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using VkQ.Domain.Links.Entities;
 using VkQ.Domain.Reposts.BaseReport.DTOs;
 using VkQ.Domain.Reposts.BaseReport.Entities.Base;
 using VkQ.Domain.Reposts.BaseReport.Exceptions.Base;
@@ -10,13 +11,19 @@ namespace VkQ.Domain.Reposts.BaseReport.Entities.Publication;
 public abstract class PublicationReport : Report
 {
     protected PublicationReport(User user, string hashtag, DateTimeOffset? searchStartDate = null,
-        IReadOnlyCollection<Guid>? coAuthors = null) : base(user)
+        IReadOnlyCollection<Link>? coAuthors = null) : base(user)
     {
         Hashtag = hashtag;
         SearchStartDate = searchStartDate;
         if (coAuthors == null) return;
         if (coAuthors.Count > 3) throw new TooManyLinksException();
-        _linkedUsersList.AddRange(coAuthors);
+        foreach (var l in coAuthors)
+        {
+            if (!l.IsConfirmed) throw new ArgumentException(null, nameof(coAuthors));
+            if (l.User1Id == user.Id) _linkedUsersList.Add(l.User2Id);
+            else if (l.User2Id == user.Id) _linkedUsersList.Add(l.User1Id);
+            else throw new ArgumentException(null, nameof(coAuthors));
+        }
     }
 
     private readonly List<Guid> _linkedUsersList = new();

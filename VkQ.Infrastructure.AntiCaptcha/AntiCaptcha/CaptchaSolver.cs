@@ -3,7 +3,6 @@ using CaptchaSharp.Enums;
 using CaptchaSharp.Models;
 using CaptchaSharp.Services;
 using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
-using VkQ.Domain.Abstractions.Services;
 
 namespace VkQ.Infrastructure.AntiCaptcha.AntiCaptcha;
 

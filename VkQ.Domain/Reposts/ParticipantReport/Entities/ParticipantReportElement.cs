@@ -7,13 +7,14 @@ namespace VkQ.Domain.Reposts.ParticipantReport.Entities;
 public class ParticipantReportElement : ReportElement
 {
     internal ParticipantReportElement(string name, long vkId, Guid? participantId, ParticipantType participantType,
-        ParticipantReportElement? parent) : base(name, vkId, parent)
+        ParticipantReportElement? parent) : base(name, vkId)
     {
         ParticipantType = participantType;
+        Parent = parent;
         ParticipantId = participantId;
     }
 
-    public new ParticipantReportElement? Parent => base.Parent as ParticipantReportElement;
+    public ParticipantReportElement? Parent { get; }
     public Guid? ParticipantId { get; }
     public string? NewName { get; private set; }
     public ElementType? Type { get; private set; }

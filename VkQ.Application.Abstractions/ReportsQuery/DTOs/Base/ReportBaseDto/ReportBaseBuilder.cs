@@ -10,7 +10,6 @@ public abstract class ReportBaseBuilder
     public bool IsCompleted;
     public bool IsSucceeded;
     public string? Message;
-    public IEnumerable<ReportElementBaseDto>? ReportElementsList;
 
     public ReportBaseBuilder WithId(Guid id)
     {

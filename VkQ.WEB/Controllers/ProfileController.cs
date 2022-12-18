@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VkQ.Application.Abstractions.Users.DTOs;
+using VkQ.Application.Abstractions.Users.Exceptions.UsersAuthentication;
 using VkQ.Application.Abstractions.Users.ServicesInterfaces.Manage;
 using VkQ.WEB.ViewModels.Profile;
 
@@ -18,18 +20,34 @@ public class ProfileController : Controller
     {
         var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
         var email = User.FindFirstValue(ClaimTypes.Email)!;
-        var profile = await _profileService.GetAsync(id);
+        try
+        {
+            var profile = await _profileService.GetAsync(id);
+            return View(Map(profile, email, id));
+        }
+        catch (Exception e)
+        {
+            var message = e switch
+            {
+                UserNotFoundException => "Пользователь не найден",
+                _ => "Произошла ошибка"
+            };
+            return RedirectToAction("Index", "Home", new { message });
+        }
+    }
+
+    private ProfileViewModel Map(ProfileDto profile, string email, Guid id)
+    {
         var linksEnumerable = profile.Links.Select(dto =>
-            new LinksViewModel.LinkViewModel(dto.Id, dto.User1, dto.User2, dto.IsConfirmed));
+            new LinkViewModel(dto.Id, dto.User1, dto.User2, dto.IsConfirmed));
         var linksViewModel = new LinksViewModel(id, HttpContext.Request.Scheme, linksEnumerable);
 
         var paymentsEnumerable = profile.Payments.Select(x =>
-            new PaymentsViewModel.PaymentViewModel(x.Id, x.Amount, x.CreationDate, x.CompletionDate, x.IsSuccessful,
-                x.PayUrl));
+            new PaymentViewModel(x.Id, x.Amount, x.CreationDate, x.CompletionDate, x.IsSuccessful, x.PayUrl));
         var paymentsViewModel =
             new PaymentsViewModel(paymentsEnumerable, profile.SubscriptionStart, profile.SubscriptionEnd);
         var model = new ProfileViewModel(email, User.Identity!.Name!, linksViewModel, paymentsViewModel,
             profile.ParticipantsCount, profile.ReportsCount, profile.ReportsThisMonthCount);
-        return View(model);
+        return model;
     }
 }

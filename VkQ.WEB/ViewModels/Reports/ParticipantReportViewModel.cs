@@ -1,15 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using VkQ.Domain.Reposts.BaseReport.Entities.Base;
-using VkQ.Domain.Reposts.ParticipantReport.Entities;
+﻿using VkQ.WEB.ViewModels.Reports.Base;
 
 namespace VkQ.WEB.ViewModels.Reports;
 
-public class ParticipantReportViewModel
+public class ParticipantReportViewModel : ReportViewModel
 {
-    public List<ParticipantReport> ParticipantReports{ get; set; }
-    public Report Report { get; set; }
+    public ParticipantReportViewModel(Guid id, DateTimeOffset creationDate, DateTimeOffset? startDate,
+        DateTimeOffset? endDate, bool isStarted, bool isCompleted, bool isSucceeded, string? message, long vkId) : base(
+        id, creationDate, startDate, endDate, isStarted, isCompleted, isSucceeded, message)
+    {
+        VkId = vkId;
+    }
 
-    [Required(ErrorMessage = "Поле не должно быть пустым")] public int Id { get; set; }
-    [StringLength(50)] public string Username { get; set; }
-    [Required(ErrorMessage = "Поле не должно быть пустым")] public ParticipantStatus Status { get; set; } = ParticipantStatus.All;
+    public long VkId { get; }
 }

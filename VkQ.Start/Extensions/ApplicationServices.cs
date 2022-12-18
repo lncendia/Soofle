@@ -2,21 +2,19 @@
 using VkQ.Application.Abstractions.Participants.ServicesInterfaces;
 using VkQ.Application.Abstractions.Payments.ServicesInterfaces;
 using VkQ.Application.Abstractions.Proxies.ServicesInterfaces;
-using VkQ.Application.Abstractions.Reports.ServicesInterfaces;
 using VkQ.Application.Abstractions.ReportsManagement.ServicesInterfaces.ReportProcessing;
 using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
 using VkQ.Application.Abstractions.ReportsQuery.ServicesInterfaces;
 using VkQ.Application.Abstractions.Users.ServicesInterfaces.Manage;
-using VkQ.Application.Abstractions.Users.ServicesInterfaces.UsersAuthentication;
 using VkQ.Application.Abstractions.Vk.ServicesInterfaces;
 using VkQ.Application.Services.Services.Links;
 using VkQ.Application.Services.Services.Participants;
 using VkQ.Application.Services.Services.Payments;
 using VkQ.Application.Services.Services.Proxy;
-using VkQ.Application.Services.Services.Reports;
-using VkQ.Application.Services.Services.Reports.Mappers;
-using VkQ.Application.Services.Services.ReportsProcessors;
+using VkQ.Application.Services.Services.ReportsManagement;
 using VkQ.Application.Services.Services.ReportsProcessors.Initializers;
+using VkQ.Application.Services.Services.ReportsQuery;
+using VkQ.Application.Services.Services.ReportsQuery.Mappers;
 using VkQ.Application.Services.Services.Users.Manage;
 using VkQ.Application.Services.Services.Vk;
 

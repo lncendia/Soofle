@@ -23,8 +23,9 @@
         <th scope="col">
             <select class="form-select auto-submit" asp-for="Vip">
                 <option selected="selected" value>Все</option>
-                <option value="true">VIP</option>
-                <option value="false">Нет</option>
+                <option value="Rename">Переименованы</option>
+                <option value="Leave">Удалены</option>
+                <option value="New">Новые</option>
             </select>
         </th>
     </form>
@@ -32,3 +33,4 @@
 
 @section scripts {
     <script src="~/js/autoSubmit.js"></script>
+}
