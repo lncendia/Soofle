@@ -5,13 +5,12 @@ namespace VkQ.WEB.ViewModels.Reports;
 public class ReportShortViewModel
 {
     public ReportShortViewModel(Guid id, string? hashtag, ReportType type, DateTimeOffset creationDate,
-        DateTimeOffset? startDate, DateTimeOffset? endDate, bool isCompleted, bool isSucceeded)
+        DateTimeOffset? endDate, bool isCompleted, bool isSucceeded)
     {
         Id = id;
         Hashtag = hashtag;
         Type = type;
         CreationDate = creationDate;
-        StartDate = startDate;
         EndDate = endDate;
         IsCompleted = isCompleted;
         IsSucceeded = isSucceeded;
@@ -21,7 +20,6 @@ public class ReportShortViewModel
     public string? Hashtag { get; }
     public ReportType Type { get; }
     public DateTimeOffset CreationDate { get; }
-    public DateTimeOffset? StartDate { get; }
     public DateTimeOffset? EndDate { get; }
     public bool IsCompleted { get; }
     public bool IsSucceeded { get; }

@@ -8,13 +8,13 @@
             <input asp-for="Username" class="form-control auto-submit"/>
         </th>
         <th scope="col">
-            <option selected="selected" value>Все</option>
+            <option selected="selected" value = "">Все</option>
             <option value="@ParticipantType.User">Страницы</option>
             <option value="@ParticipantType.Group">Группы</option>
         </th>
         <th scope="col">
             <select class="form-select auto-submit" asp-for="HasChild">
-                <option selected="selected" value>Все</option>
+                <option selected="selected" value = "">Все</option>
                 <option value="true">Есть</option>
                 <option value="false">Нет</option>
             </select>
@@ -22,15 +22,14 @@
         <th scope="col"></th>
         <th scope="col">
             <select class="form-select auto-submit" asp-for="Vip">
-                <option selected="selected" value>Все</option>
-                <option value="Rename">Переименованы</option>
-                <option value="Leave">Удалены</option>
-                <option value="New">Новые</option>
+                <option selected="selected" value = "">Все</option>
+                <option value="true">VIP</option>
             </select>
         </th>
     </form>
 </tr>
 
 @section scripts {
-    <script src="~/js/autoSubmit.js"></script>
+    <script src="~/js/scroller.js"></script>
+    <script src="~/js/participants.js"></script>
 }

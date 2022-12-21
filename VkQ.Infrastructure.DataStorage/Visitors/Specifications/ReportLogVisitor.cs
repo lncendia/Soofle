@@ -24,4 +24,7 @@ internal class ReportLogVisitor : BaseVisitor<ReportLogModel, IReportLogSpecific
     public void Visit(LogByUserIdSpecification specification) => Expr = x => x.UserId == specification.Id;
 
     public void Visit(LogByReportIdSpecification specification) => Expr = x => x.ReportId == specification.Id;
+    public void Visit(LogByInfoSpecification specification) => Expr = x => x.AdditionalInfo == specification.Hashtag;
+
+    public void Visit(LogByReportTypeSpecification specification) => Expr = x => x.Type == specification.Type;
 }

@@ -9,9 +9,11 @@ namespace VkQ.Start.Extensions;
 
 internal static class PersistenceServices
 {
-    internal static void AddPersistenceServices(this IServiceCollection services, string connectionString,
-        string applicationConnectionString)
+    internal static void AddPersistenceServices(this IServiceCollection services)
     {
+        var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+        var connectionString = configuration!.GetConnectionString("Main") ?? throw new Exception();
+        var applicationConnectionString = configuration!.GetConnectionString("Application") ?? throw new Exception();
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
         services.AddDbContext<ApplicationContext>(options =>

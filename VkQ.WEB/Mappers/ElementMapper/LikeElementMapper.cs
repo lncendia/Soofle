@@ -8,10 +8,8 @@ public class LikeElementMapper : IElementMapperUnit<LikeElementDto, LikeElementV
 {
     public LikeElementViewModel Map(LikeElementDto element) => MapRecursion(element);
 
-    private static LikeElementViewModel MapRecursion(LikeElementDto dto)
-    {
-        return new LikeElementViewModel(dto.Name, dto.VkId, dto.LikeChatName, dto.ParticipantId, dto.IsAccepted,
-            dto.Vip, dto.Children.Select(MapRecursion),
+    private static LikeElementViewModel MapRecursion(LikeElementDto dto) =>
+        new(dto.Name, dto.VkId, dto.LikeChatName, dto.ParticipantId, dto.IsAccepted, dto.Vip,
+            dto.Children.Select(MapRecursion),
             dto.Likes.Select(x => new LikeViewModel(x.PublicationId, x.IsLiked, x.IsLoaded)));
-    }
 }

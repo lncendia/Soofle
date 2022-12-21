@@ -1,8 +1,8 @@
-﻿using VkQ.Application.Abstractions.ReportsQuery.DTOs.Base.PublicationReportBaseDto;
+﻿using VkQ.Application.Abstractions.ReportsQuery.DTOs.PublicationReportDto;
 
 namespace VkQ.Application.Abstractions.ReportsQuery.DTOs.LikeReportDto;
 
-public class LikeReportBuilder : PublicationReportBaseBuilder
+public class LikeReportBuilder : PublicationReportBuilder
 {
     private LikeReportBuilder()
     {

@@ -9,7 +9,7 @@ public class UserByIdSpecification : ISpecification<User, IUserSpecificationVisi
     public Guid Id { get; }
     public UserByIdSpecification(Guid id) => Id = id;
 
-    public bool IsSatisfiedBy(User item) => item.Id == Id;
+    public bool IsSatisfiedBy(User item) => Id == item.Id;
 
     public void Accept(IUserSpecificationVisitor visitor) => visitor.Visit(this);
 }

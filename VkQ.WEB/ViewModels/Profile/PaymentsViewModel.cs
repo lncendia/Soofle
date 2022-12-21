@@ -5,14 +5,14 @@ public class PaymentsViewModel
     public PaymentsViewModel(IEnumerable<PaymentViewModel> payments, DateTimeOffset? subscriptionStart,
         DateTimeOffset? subscriptionEnd)
     {
-        Payments = payments.ToList();
+        Payments = payments;
         SubscriptionStart = subscriptionStart;
         SubscriptionEnd = subscriptionEnd;
     }
 
     public DateTimeOffset? SubscriptionStart { get; }
     public DateTimeOffset? SubscriptionEnd { get; }
-    public List<PaymentViewModel> Payments { get; }
+    public IEnumerable<PaymentViewModel> Payments { get; }
 }
 
 public class PaymentViewModel

@@ -7,7 +7,7 @@
         <thead class="align-middle">
         <tr>
             <th scope="col">№</th>
-            <th scope="col">Логин</th>
+            <th scope="col">Участник</th>
             <th scope="col">Тип</th>
             <th scope="col">Привязанные аккаунты</th>
             <th scope="col">Заметка</th>
@@ -15,74 +15,6 @@
         </tr>
         @await Html.PartialAsync("SearchParticipants")
         </thead>
-        <tbody id="participants" class="align-middle">
-        @*     <tr id="@participant.Id"> *@
-        @*         <th scope="row">@(i + 1)</th> *@
-        @*         <td class="child"> *@
-        @*             <a asp-action="EditParticipant" asp-route-id="@participant.Id">@participant.Username</a> *@
-        @*         </td> *@
-        @*         <td class="child"> *@
-        @*             Тип *@
-        @*         </td> *@
-        @* *@
-        @*         <td class="main" style="max-width: 300px"> *@
-        @*             @if (participant.ChildParticipants.Any()) *@
-        @*             { *@
-        @*                 <div class="table-responsive article1"> *@
-        @*                     <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle"> *@
-        @*                         <thead class="align-middle"> *@
-        @*                         <tr> *@
-        @*                             <th scope="col">Логин</th> *@
-        @*                             <th scope="col">Тип</th> *@
-        @*                             <th scope="col">Заметка</th> *@
-        @*                             <th scope="col">VIP</th> *@
-        @*                         </tr> *@
-        @*                         </thead> *@
-        @*                         <tbody class="align-middle"> *@
-        @*                         @foreach (var childParticipant in participant.ChildParticipants) *@
-        @*                         { *@
-        @*                             <tr id="@childParticipant.Id"> *@
-        @*                                 <td class="child"> *@
-        @*                                     <a asp-action="Participant" asp-route-id="@childParticipant.Id">@childParticipant.Username</a> *@
-        @*                                 </td> *@
-        @*                                 <td class="main" style="max-width: 170px"> *@
-        @*                                     <div class="text-break">@childParticipant.Note</div> *@
-        @*                                 </td> *@
-        @*                                 <td> *@
-        @*                                     @if (childParticipant.Vip) *@
-        @*                                     { *@
-        @*                                         <span class="badge bg-success">Да</span> *@
-        @*                                     } *@
-        @*                                     else *@
-        @*                                     { *@
-        @*                                         <span class="badge bg-danger">Нет</span> *@
-        @*                                     } *@
-        @*                                 </td> *@
-        @*                             </tr> *@
-        @*                         } *@
-        @*                         </tbody> *@
-        @*                     </table> *@
-        @*                 </div> *@
-        @*             } *@
-        @*         </td> *@
-        @*         <td class="main" style="max-width: 170px"> *@
-        @*             <div class="text-break">@participant.Note</div> *@
-        @*         </td> *@
-        @*         <td class="child"> *@
-        @*             @if (participant.Vip) *@
-        @*             { *@
-        @*                 <span class="badge bg-success">Да</span> *@
-        @*             } *@
-        @*             else *@
-        @*             { *@
-        @*                 <span class="badge bg-danger">Нет</span> *@
-        @*             } *@
-        @*         </td> *@
-        @*     </tr> *@
-        @* } *@
-        </tbody>
+        <tbody class="align-middle elements"></tbody>
     </table>
 </div>
-
-@section scripts {
-    <script src="~/js/autoSubmit.js"></script>

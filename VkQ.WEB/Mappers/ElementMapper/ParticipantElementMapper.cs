@@ -8,8 +8,6 @@ public class ParticipantElementMapper : IElementMapperUnit<ParticipantElementDto
 {
     public ParticipantElementViewModel Map(ParticipantElementDto element) => MapRecursion(element);
 
-    private static ParticipantElementViewModel MapRecursion(ParticipantElementDto dto)
-    {
-        return new ParticipantElementViewModel(dto.Name, dto.VkId, dto.NewName, dto.Type);
-    }
+    private static ParticipantElementViewModel MapRecursion(ParticipantElementDto dto) =>
+        new(dto.Name, dto.VkId, dto.NewName, dto.Type, dto.Children.Select(MapRecursion));
 }

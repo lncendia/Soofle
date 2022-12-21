@@ -10,4 +10,6 @@ public class ParticipantReportElementModel : ReportElementModel
     public Guid? ParticipantId { get; set; }
     public ElementType? Type { get; set; }
     public ParticipantType ParticipantType { get; set; }
+    public Guid? OwnerId { get; set; }
+    public ParticipantReportElementModel? Owner { get; set; }
 }

@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.Extensions.DependencyInjection;
+using VkNet.AudioBypassService.Extensions;
 using VkNet.Model;
 using VkNet.Utils.AntiCaptcha;
 using VkQ.Application.Abstractions.Vk.DTOs;

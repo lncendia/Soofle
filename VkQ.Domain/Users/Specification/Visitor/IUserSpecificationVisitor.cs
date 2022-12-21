@@ -7,4 +7,5 @@ public interface IUserSpecificationVisitor : ISpecificationVisitor<IUserSpecific
 {
     void Visit(UserByEmailSpecification specification);
     void Visit(UserByIdSpecification specification);
+    void Visit(UserByIdsSpecification specification);
 }

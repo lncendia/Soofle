@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using VkQ.Domain.Reposts.ParticipantReport.Entities;
 using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
-using VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers.StaticMethods;
+using VkQ.Infrastructure.DataStorage.Mappers.StaticMethods;
 using VkQ.Infrastructure.DataStorage.Models.Reports.ParticipantReport;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
@@ -18,19 +18,30 @@ internal class ParticipantReportMapper : IAggregateMapperUnit<ParticipantReport,
     public ParticipantReport Map(ParticipantReportModel model)
     {
         var report = (ParticipantReport)FormatterServices.GetUninitializedObject(ParticipantReportType);
-        var elements = model.ReportElementsList.Where(x => x.OwnerId == null).Cast<ParticipantReportElementModel>()
-            .Select(x => GetParticipantElement(x, model.ReportElementsList.Cast<ParticipantReportElementModel>()));
+        var elementsGrouping = model.ReportElementsList.Cast<ParticipantReportElementModel>().GroupBy(x => x.Owner);
+        var elements = new List<ParticipantReportElement>();
+        foreach (var group in elementsGrouping)
+        {
+            ParticipantReportElement? parent = null;
+            if (group.Key != null)
+            {
+                parent = GetParticipantElement(group.Key, null);
+                elements.Add(parent);
+            }
+
+            elements.AddRange(group.Select(x => GetParticipantElement(x, parent)));
+        }
+
         ReportInitializer.InitReport(report, elements, model);
         return report;
     }
 
     private static ParticipantReportElement GetParticipantElement(ParticipantReportElementModel model,
-        IEnumerable<ParticipantReportElementModel>? allElements)
+        ParticipantReportElement? owner)
     {
         object?[] args =
         {
-            model.Name, model.VkId, model.ParticipantId, model.ParticipantType,
-            allElements?.Where(x => x.OwnerId == model.Id).Select(x => GetParticipantElement(x, null)).ToList()
+            model.Name, model.VkId, model.ParticipantId, model.ParticipantType, owner
         };
         var element = (ParticipantReportElement)ElementConstructor.Invoke(args);
 

@@ -1,4 +1,4 @@
-﻿using VkQ.Application.Abstractions.Elements.DTOs.Base.ElementDto;
+﻿using VkQ.Application.Abstractions.Elements.DTOs.ElementDto;
 using VkQ.WEB.ViewModels.Elements.Base;
 
 namespace VkQ.WEB.Mappers.Abstractions;

@@ -24,4 +24,6 @@ internal class ParticipantVisitor : BaseVisitor<ParticipantModel, IParticipantSp
     public void Visit(ParticipantsByTypeSpecification specification) => Expr = x => x.Type == specification.Type;
 
     public void Visit(VipParticipantsSpecification specification) => Expr = x => x.Vip;
+
+    public void Visit(ParentParticipantsSpecification specification) => Expr = x => !x.ParentParticipantId.HasValue;
 }

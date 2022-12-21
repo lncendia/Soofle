@@ -1,6 +1,8 @@
 ﻿@model VkQ.WEB.ViewModels.Participants.EditParticipantViewModel
 @{
     ViewData["Title"] = Model.Username;
+    var items = ViewBag["Participants"] as List<(Guid Id, string Name)>;
+    var selectedListItems = items?.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 }
 <div class="row">
     <div class="col-lg-6">
@@ -22,20 +24,23 @@
                         <label asp-for="Vip" class="form-check-label" for="vip"></label>
                     </div>
                     <div class="col-12">
+                        <label asp-for="ParentId"></label>
+                        <textarea asp-for="ParentId" class="form-control"></textarea>
+                        <span asp-validation-for="ParentId" class="text-danger"></span>
                         <div class="row">
                             <div class="col-11">
                                 <label asp-for="ParentId"></label>
                             </div>
                             <div class="col-1 text-end">
-                                <a class="text-danger" href="#" onclick="$('.js-example-basic-single').val('0').trigger('change'); return false">
+                                <a class="text-danger" href="#" onclick="$('#select').val('0').trigger('change'); return false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                                     </svg>
                                 </a>
                             </div>
                         </div>
-                        <select class="js-example-basic-single form-select" asp-for="ParentId" asp-items="new List<SelectListItem>(Model.Participants.Select(participant => new SelectListItem(participant.Username, participant.Id.ToString())))">
-                            <option value selected>Не выбрано</option>
+                        <select id="select" class="form-select" asp-for="ParentId" asp-items="selectedListItems">
+                            <option value="" selected>Не выбрано</option>
                         </select>
                         <span asp-validation-for="ParentId" class="text-danger"></span>
                         @if (Model.ParentId.HasValue)
@@ -59,8 +64,8 @@
 {
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" integrity="sha256-9yRP/2EFlblE92vzCA10469Ctd0jT48HnmmMw5rJZrA=" crossorigin="anonymous"></script>
     <script>
-$(document).ready(function() {
-    $('.js-example-basic-single').select2();
-});
-      </script>
+        $(document).ready(function() {
+            $('#select').select2();
+        });
+    </script>
 }

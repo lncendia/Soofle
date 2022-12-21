@@ -9,4 +9,5 @@ public interface IParticipantSpecificationVisitor : ISpecificationVisitor<IParti
     void Visit(ParticipantsByNameSpecification specification);
     void Visit(ParticipantsByTypeSpecification specification);
     void Visit(VipParticipantsSpecification specification);
+    void Visit(ParentParticipantsSpecification specification);
 }

@@ -19,4 +19,6 @@ internal class UserVisitor : BaseVisitor<UserModel, IUserSpecificationVisitor, U
 
     public void Visit(UserByEmailSpecification specification) => Expr = x => x.Email == specification.Email;
     public void Visit(UserByIdSpecification specification) => Expr = x => x.Id == specification.Id;
+
+    public void Visit(UserByIdsSpecification specification) => Expr = x => specification.Ids.Contains(x.Id);
 }

@@ -1,28 +1,27 @@
 ﻿using VkQ.Domain.Links.Entities;
 using VkQ.Domain.Participants.Entities;
 using VkQ.Domain.ReportLogs.Enums;
-using VkQ.Domain.Reposts.BaseReport.DTOs;
-using VkQ.Domain.Reposts.BaseReport.Entities.Publication;
 using VkQ.Domain.Reposts.BaseReport.Events;
-using VkQ.Domain.Reposts.BaseReport.Exceptions.Base;
-using VkQ.Domain.Reposts.BaseReport.Exceptions.Publication;
+using VkQ.Domain.Reposts.BaseReport.Exceptions;
 using VkQ.Domain.Reposts.LikeReport.DTOs;
 using VkQ.Domain.Reposts.LikeReport.Exceptions;
 using VkQ.Domain.Reposts.LikeReport.ValueObjects;
+using VkQ.Domain.Reposts.PublicationReport.DTOs;
+using VkQ.Domain.Reposts.PublicationReport.Exceptions;
 using VkQ.Domain.Users.Entities;
 
 namespace VkQ.Domain.Reposts.LikeReport.Entities;
 
-public class LikeReport : PublicationReport
+public class LikeReport : PublicationReport.Entities.PublicationReport
 {
     public LikeReport(User user, string hashtag, DateTimeOffset? startDate = null,
         IReadOnlyCollection<Link>? coAuthors = null) : base(user, hashtag, startDate, coAuthors)
     {
-        AddDomainEvent(new ReportCreatedEvent(UserId, Id, ReportType.Likes, CreationDate, Hashtag));
+        AddDomainEvent(new ReportCreatedEvent(LinkedUsers.Concat(new[] { UserId }), Id, ReportType.Likes, CreationDate,
+            Hashtag));
     }
 
     public List<LikeReportElement> Elements => ReportElementsList.Cast<LikeReportElement>().ToList();
-    public int Process { get; private set; } //todo: store
 
     ///<exception cref="ReportAlreadyStartedException">Report already started</exception>
     ///<exception cref="ReportAlreadyCompletedException">Report already completed</exception>

@@ -8,10 +8,8 @@ public class LikeReportMapper : IReportMapperUnit<LikeReportDto, LikeReportViewM
 {
     public LikeReportViewModel Map(LikeReportDto report)
     {
-        var publications = report.Publications.Select(x => new PublicationViewModel(x.Id, x.ItemId, x.OwnerId))
-            .ToList();
         return new LikeReportViewModel(report.Id, report.CreationDate, report.StartDate, report.EndDate,
-            report.IsStarted, report.IsCompleted, report.IsSucceeded, report.Message, report.LinkedUsers,
-            report.Hashtag, report.SearchStartDate, publications);
+            report.IsStarted, report.IsCompleted, report.IsSucceeded, report.Message, report.ElementsCount,
+            report.Hashtag, report.SearchStartDate);
     }
 }

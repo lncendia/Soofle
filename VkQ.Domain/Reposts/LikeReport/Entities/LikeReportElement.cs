@@ -1,6 +1,6 @@
-﻿using VkQ.Domain.Reposts.BaseReport.Entities.Publication;
-using VkQ.Domain.Reposts.LikeReport.Exceptions;
+﻿using VkQ.Domain.Reposts.LikeReport.Exceptions;
 using VkQ.Domain.Reposts.LikeReport.ValueObjects;
+using VkQ.Domain.Reposts.PublicationReport.Entities;
 
 namespace VkQ.Domain.Reposts.LikeReport.Entities;
 

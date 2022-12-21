@@ -6,10 +6,10 @@ public class LinksViewModel
     {
         CurrentUserId = currentUserId;
         Scheme = scheme;
-        Links = links.ToList();
+        Links = links;
     }
 
-    public List<LinkViewModel> Links { get; }
+    public IEnumerable<LinkViewModel> Links { get; }
     public Guid CurrentUserId { get; }
     public string Scheme { get; }
 }

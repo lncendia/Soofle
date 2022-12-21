@@ -1,4 +1,4 @@
-﻿namespace VkQ.Domain.Abstractions.Exceptions;
+﻿namespace VkQ.Domain.Reposts.BaseReport.Exceptions;
 
 public class TooManyReportsException : Exception
 {

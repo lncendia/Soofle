@@ -17,11 +17,23 @@ namespace VkQ.Start.Extensions;
 
 internal static class InfrastructureServices
 {
-    internal static void AddInfrastructureServices(this IServiceCollection services, string hangfireConnectionString)
+    internal static void AddInfrastructureServices(this IServiceCollection services)
     {
-        services.AddScoped<IPaymentCreatorService, PaymentService>();
-        services.AddScoped<IEmailService, EmailService>();
-        services.AddScoped<ICaptchaSolver, CaptchaSolver>();
+        var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+        var hangfireConnectionString = configuration!.GetConnectionString("Hangfire") ?? throw new Exception();
+        var captchaToken = configuration!.GetValue<string>("AntiCaptchaToken") ?? throw new Exception();
+        var qiwiToken = configuration!.GetSection("Payments").GetValue<string>("QiwiToken") ?? throw new Exception();
+        var smtpSection = configuration!.GetSection("SMTP");
+        var smtpData = new
+        {
+            Login = smtpSection["Login"] ?? throw new Exception(),
+            Password = smtpSection["Password"] ?? throw new Exception(),
+            Host = smtpSection["Host"] ?? throw new Exception()
+        };
+        services.AddScoped<IPaymentCreatorService, PaymentService>(_=> new PaymentService(qiwiToken));
+        services.AddScoped<IEmailService, EmailService>(_ =>
+            new EmailService(smtpData.Login, smtpData.Password, smtpData.Host, 80));
+        services.AddScoped<ICaptchaSolver, CaptchaSolver>(_=>new CaptchaSolver(captchaToken));
         services.AddScoped<IJobScheduler, JobScheduler>();
         services.AddScoped<IPublicationGetterService, GetPublicationsService>();
         services.AddScoped<IPublicationInfoService, GetInfoService>();
@@ -42,7 +54,6 @@ internal static class InfrastructureServices
 
             globalConfiguration.UseSerializerSettings(new JsonSerializerSettings
                 { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-            // RecurringJob.AddOrUpdate<ISubscribeDeleter>("subscribesChecker", x => x.DeleteAsync(), Cron.Daily);
             // RecurringJob.AddOrUpdate<IWorkDeleter>("worksChecker", x => x.DeleteAsync(), Cron.Daily);
         });
         services.AddHangfireServer(options => options.WorkerCount = Environment.ProcessorCount * 15);

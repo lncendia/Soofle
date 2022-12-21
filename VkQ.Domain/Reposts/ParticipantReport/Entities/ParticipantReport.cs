@@ -1,8 +1,8 @@
 ﻿using VkQ.Domain.Participants.Entities;
 using VkQ.Domain.ReportLogs.Enums;
-using VkQ.Domain.Reposts.BaseReport.Entities.Base;
+using VkQ.Domain.Reposts.BaseReport.Entities;
 using VkQ.Domain.Reposts.BaseReport.Events;
-using VkQ.Domain.Reposts.BaseReport.Exceptions.Base;
+using VkQ.Domain.Reposts.BaseReport.Exceptions;
 using VkQ.Domain.Reposts.ParticipantReport.DTOs;
 using VkQ.Domain.Reposts.ParticipantReport.Enums;
 using VkQ.Domain.Reposts.ParticipantReport.Events;
@@ -15,7 +15,7 @@ public class ParticipantReport : Report
     public ParticipantReport(User user, long vkId) : base(user)
     {
         VkId = vkId;
-        AddDomainEvent(new ReportCreatedEvent(UserId, Id, ReportType.Participants, CreationDate, "-"));
+        AddDomainEvent(new ReportCreatedEvent(new[] { UserId }, Id, ReportType.Participants, CreationDate, "-"));
     }
 
     public long VkId { get; }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using VkQ.Application.Abstractions.Users.Entities;
 using VkQ.Application.Abstractions.Users.ServicesInterfaces.UsersAuthentication;
-using VkQ.Application.Services.Services.Users.Authentication;
+using VkQ.Application.Services.Users.Authentication;
 using VkQ.Infrastructure.ApplicationDataStorage;
 
 namespace VkQ.Start.Extensions;

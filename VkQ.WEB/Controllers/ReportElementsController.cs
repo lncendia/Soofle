@@ -40,7 +40,7 @@ public class ReportElementsController : Controller
             var elements = await _elementManager.GetLikeReportElementsAsync(userId, query.ReportId,
                 new PublicationElementSearchQuery(query.Page, query.Name, query.Succeeded, query.LikeChatName,
                     query.HasChildren, query.Vip));
-            return Json(elements.Select(x => _elementMapper.LikeElementMapper.Value.Map(x)));
+            return PartialView("LikeElementsList", elements.Select(x => _elementMapper.LikeElementMapper.Value.Map(x)));
         }
         catch (Exception e)
         {
@@ -61,9 +61,9 @@ public class ReportElementsController : Controller
         try
         {
             var elements = await _elementManager.GetParticipantReportElementsAsync(userId, query.ReportId,
-                new ParticipantElementSearchQuery(query.Page, query.Name, query.NewName, query.ElementType,
-                    query.HasChildren));
-            return Json(elements.Select(x => _elementMapper.ParticipantElementMapper.Value.Map(x)));
+                new ParticipantElementSearchQuery(query.Page, query.Name, query.ElementType, query.HasChildren));
+            return PartialView("ParticipantElementsList",
+                elements.Select(x => _elementMapper.ParticipantElementMapper.Value.Map(x)));
         }
         catch (Exception e)
         {

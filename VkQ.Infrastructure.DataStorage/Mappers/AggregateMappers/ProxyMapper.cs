@@ -1,6 +1,6 @@
 ﻿using VkQ.Domain.Proxies.Entities;
 using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
-using VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers.StaticMethods;
+using VkQ.Infrastructure.DataStorage.Mappers.StaticMethods;
 using VkQ.Infrastructure.DataStorage.Models;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;

@@ -1,8 +1,8 @@
-﻿using VkQ.Application.Abstractions.ReportsQuery.DTOs.Base.ReportBaseDto;
+﻿using VkQ.Application.Abstractions.ReportsQuery.DTOs.ReportDto;
 
 namespace VkQ.Application.Abstractions.ReportsQuery.DTOs.ParticipantReportDto;
 
-public class ParticipantReportDto : ReportBaseDto
+public class ParticipantReportDto : ReportDto.ReportDto
 {
     public ParticipantReportDto(ParticipantReportBuilder builder) : base(builder)
     {

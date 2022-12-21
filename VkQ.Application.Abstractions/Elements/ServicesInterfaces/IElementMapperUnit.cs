@@ -1,5 +1,5 @@
-﻿using VkQ.Application.Abstractions.Elements.DTOs.Base.ElementDto;
-using VkQ.Domain.Reposts.BaseReport.Entities.Base;
+﻿using VkQ.Application.Abstractions.Elements.DTOs.ElementDto;
+using VkQ.Domain.Reposts.BaseReport.Entities;
 
 namespace VkQ.Application.Abstractions.Elements.ServicesInterfaces;
 

@@ -1,5 +1,4 @@
-﻿using VkQ.Domain.Abstractions.Exceptions;
-using VkQ.Domain.Reposts.BaseReport.Entities.Base;
+﻿using VkQ.Domain.Reposts.BaseReport.Entities;
 
 namespace VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
 

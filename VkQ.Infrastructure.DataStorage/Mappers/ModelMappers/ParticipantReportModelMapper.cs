@@ -2,7 +2,7 @@
 using VkQ.Domain.Reposts.ParticipantReport.Entities;
 using VkQ.Infrastructure.DataStorage.Context;
 using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
-using VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers.StaticMethods;
+using VkQ.Infrastructure.DataStorage.Mappers.StaticMethods;
 using VkQ.Infrastructure.DataStorage.Models.Reports.ParticipantReport;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.ModelMappers;

@@ -38,7 +38,7 @@ public class ReportsController : Controller
         {
             var reports = await _reportManager.FindAsync(id,
                 new SearchQuery(search.Page, search.ReportType, search.Hashtag, search.From, search.To));
-            return Json(reports.Select(Map));
+            return PartialView("ReportsList", reports.Select(Map));
         }
         catch (Exception e)
         {
@@ -51,9 +51,8 @@ public class ReportsController : Controller
         }
     }
 
-    private static ReportShortViewModel Map(ReportDto dto) =>
-        new(dto.Id, dto.Hashtag, dto.Type, dto.CreationDate, dto.StartDate, dto.EndDate, dto.IsCompleted,
-            dto.IsSucceeded);
+    private static ReportShortViewModel Map(ReportShortDto dto) =>
+        new(dto.Id, dto.Hashtag, dto.Type, dto.CreationDate, dto.EndDate, dto.IsCompleted, dto.IsSucceeded);
 
 
     [HttpGet]
@@ -64,6 +63,7 @@ public class ReportsController : Controller
         try
         {
             var report = await _reportManager.GetLikeReportAsync(userId, id.Value);
+            ViewBag["Chats"] = report.LinkedUsers;
             return View(_reportMapper.LikeReportMapper.Value.Map(report));
         }
         catch (Exception e)

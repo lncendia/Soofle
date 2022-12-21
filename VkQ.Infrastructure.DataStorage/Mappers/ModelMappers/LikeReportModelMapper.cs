@@ -2,7 +2,7 @@
 using VkQ.Domain.Reposts.LikeReport.Entities;
 using VkQ.Infrastructure.DataStorage.Context;
 using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
-using VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers.StaticMethods;
+using VkQ.Infrastructure.DataStorage.Mappers.StaticMethods;
 using VkQ.Infrastructure.DataStorage.Models.Reports.LikeReport;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.ModelMappers;
@@ -48,7 +48,7 @@ internal class LikeReportModelMapper : IModelMapperUnit<LikeReportModel, LikeRep
         {
             Id = element.Id, Name = element.Name, IsAccepted = element.IsAccepted,
             ParticipantId = element.ParticipantId, VkId = element.VkId, LikeChatName = element.LikeChatName,
-            OwnerId = element.Parent?.Id, Likes = element.Likes.Select(x => new LikeModel
+            OwnerId = element.Parent?.Id, Vip = element.Vip, Likes = element.Likes.Select(x => new LikeModel
                 { PublicationId = x.PublicationId, IsLiked = x.IsLiked, IsLoaded = x.IsLoaded }).ToList()
         };
 

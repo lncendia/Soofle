@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using VkQ.Domain.Reposts.LikeReport.Entities;
 using VkQ.Domain.Reposts.LikeReport.ValueObjects;
 using VkQ.Infrastructure.DataStorage.Mappers.Abstractions;
-using VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers.StaticMethods;
+using VkQ.Infrastructure.DataStorage.Mappers.StaticMethods;
 using VkQ.Infrastructure.DataStorage.Models.Reports.LikeReport;
 
 namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
@@ -23,21 +23,30 @@ internal class LikeReportMapper : IAggregateMapperUnit<LikeReport, LikeReportMod
     public LikeReport Map(LikeReportModel model)
     {
         var report = (LikeReport)FormatterServices.GetUninitializedObject(LikeReportType);
-        var elements = model.ReportElementsList.Where(x => x.OwnerId == null).Cast<LikeReportElementModel>()
-            .Select(x => GetLikeElement(x, model.ReportElementsList.Cast<LikeReportElementModel>()));
+        var elementsGrouping = model.ReportElementsList.Cast<LikeReportElementModel>().GroupBy(x => x.Owner);
+        var elements = new List<LikeReportElement>();
+        foreach (var group in elementsGrouping)
+        {
+            LikeReportElement? parent = null;
+            if (group.Key != null)
+            {
+                parent = GetLikeElement((LikeReportElementModel)group.Key, null);
+                elements.Add(parent);
+            }
+            elements.AddRange(group.Select(x=>GetLikeElement(x, parent)));
+        }
+
         ReportInitializer.InitPublicationReport(report, elements, model);
         return report;
     }
 
-    private static LikeReportElement GetLikeElement(LikeReportElementModel model,
-        IEnumerable<LikeReportElementModel>? allElements)
+    private static LikeReportElement GetLikeElement(LikeReportElementModel model, LikeReportElement? owner)
     {
         object?[] args =
         {
-            model.Name, model.LikeChatName, model.VkId, model.ParticipantId,
-            allElements?.Where(x => x.OwnerId == model.Id).Select(x => GetLikeElement(x, null)).ToList()
+            model.Name, model.LikeChatName, model.VkId, model.ParticipantId, model.Vip, owner
         };
-        
+
         var element = ElementConstructor.Invoke(args);
         IdFields.EntityId.SetValue(element, model.Id);
         ElementLikes.SetValue(element, model.Likes.Select(GetLikeInfo).ToList());

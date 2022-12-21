@@ -1,0 +1,76 @@
+﻿@using VkQ.Domain.Reposts.ParticipantReport.Enums
+@model IEnumerable<VkQ.WEB.ViewModels.Elements.ParticipantElementViewModel>
+@{ var i = 0; }
+@foreach (var element in Model)
+{
+    <tr class="element">
+        <th scope="row">@(i++)</th>
+        <td class="main">
+            <span>@element.Name</span>
+            @if (element.NewName != null)
+            {
+                <span>@element.NewName</span>
+            }
+        </td>
+        <td class="main">
+            @if (element.Children.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+                        <thead class="align-middle">
+                        <tr>
+                            <th scope="col">Участник</th>
+                            <th scope="col">Статус</th>
+                        </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                        @foreach (var childElement in element.Children)
+                        {
+                            <tr>
+                                <td class="child">
+                                    <span> + element.name + </span>
+                                    if (element.newName !== null) html += "<span> + element.newName + </span>"
+                                </td>
+                                <td class="child">
+                                    @if (childElement.Type.HasValue)
+                                    {
+                                        switch (childElement.Type)
+                                        {
+                                            case ElementType.New:
+                                                <span class="badge bg-success">Добавлен в чат</span>
+                                                break;
+                                            case ElementType.Leave:
+                                                <span class="badge bg-danger">Покинул чат</span>
+                                                break;
+                                            case ElementType.Rename:
+                                                <span class="badge bg-primary">Сменил ник </span>
+                                                break;
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </td>
+        <td class="child">
+            @if (element.Type.HasValue)
+            {
+                switch (element.Type)
+                {
+                    case ElementType.New:
+                        <span class="badge bg-success">Добавлен в чат</span>
+                        break;
+                    case ElementType.Leave:
+                        <span class="badge bg-danger">Покинул чат</span>
+                        break;
+                    case ElementType.Rename:
+                        <span class="badge bg-primary">Сменил ник</span>
+                        break;
+                }
+            }
+        </td>
+    </tr>
+}

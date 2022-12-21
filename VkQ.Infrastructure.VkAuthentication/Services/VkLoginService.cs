@@ -1,3 +1,4 @@
+using VkNet.AudioBypassService.Exceptions;
 using VkQ.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
 using VkQ.Application.Abstractions.Vk.DTOs;
 using VkQ.Application.Abstractions.Vk.Exceptions;

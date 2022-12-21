@@ -13,8 +13,13 @@ namespace VkQ.WEB.Controllers;
 public class ParticipantsController : Controller
 {
     private readonly IParticipantManager _participantManager;
+    private readonly IUserParticipantsService _userParticipants;
 
-    public ParticipantsController(IParticipantManager participantManager) => _participantManager = participantManager;
+    public ParticipantsController(IParticipantManager participantManager, IUserParticipantsService userParticipants)
+    {
+        _participantManager = participantManager;
+        _userParticipants = userParticipants;
+    }
 
 
     [HttpGet]
@@ -34,7 +39,7 @@ public class ParticipantsController : Controller
         {
             var participants = await _participantManager.FindAsync(userId,
                 new SearchQuery(model.Page, model.Username, model.Type, model.Vip, model.HasChild));
-            return Json(participants.Select(Map));
+            return PartialView("ParticipantsList", participants.Select(Map));
         }
         catch (Exception e)
         {
@@ -61,6 +66,8 @@ public class ParticipantsController : Controller
         try
         {
             var participant = await _participantManager.GetAsync(userId, id.Value);
+            var participants = await _userParticipants.GetUserParticipantsAsync(userId);
+            ViewBag["Participants"] = participants;
             return View(new EditParticipantViewModel
             {
                 Id = participant.Id,

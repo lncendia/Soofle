@@ -1,4 +1,4 @@
-﻿using VkQ.Application.Abstractions.Elements.DTOs.Base.ElementDto;
+﻿using VkQ.Application.Abstractions.Elements.DTOs.ElementDto;
 using VkQ.Domain.Reposts.ParticipantReport.Enums;
 
 namespace VkQ.Application.Abstractions.Elements.DTOs.ParticipantElementDto;

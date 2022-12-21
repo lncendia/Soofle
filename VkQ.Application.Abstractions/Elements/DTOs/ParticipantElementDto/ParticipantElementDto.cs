@@ -1,16 +1,17 @@
-﻿using VkQ.Application.Abstractions.Elements.DTOs.Base.ElementDto;
-using VkQ.Domain.Reposts.ParticipantReport.Enums;
+﻿using VkQ.Domain.Reposts.ParticipantReport.Enums;
 
 namespace VkQ.Application.Abstractions.Elements.DTOs.ParticipantElementDto;
 
-public class ParticipantElementDto : ElementDto
+public class ParticipantElementDto : ElementDto.ElementDto
 {
     public ParticipantElementDto(ParticipantElementBuilder builder) : base(builder)
     {
         Type = builder.Type;
         NewName = builder.NewName;
+        if (builder.Children != null) Children.AddRange(builder.Children);
     }
 
     public string? NewName { get; }
     public ElementType? Type { get; }
+    public List<ParticipantElementDto> Children { get; } = new();
 }

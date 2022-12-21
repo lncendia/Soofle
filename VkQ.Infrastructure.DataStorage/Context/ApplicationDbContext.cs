@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VkQ.Domain.Transactions.Entities;
 using VkQ.Infrastructure.DataStorage.Models;
-using VkQ.Infrastructure.DataStorage.Models.Reports.Base.PublicationReport;
 using VkQ.Infrastructure.DataStorage.Models.Reports.LikeReport;
 using VkQ.Infrastructure.DataStorage.Models.Reports.ParticipantReport;
+using VkQ.Infrastructure.DataStorage.Models.Reports.PublicationReport;
 
 namespace VkQ.Infrastructure.DataStorage.Context;
 

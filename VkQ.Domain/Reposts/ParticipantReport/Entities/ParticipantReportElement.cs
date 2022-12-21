@@ -1,5 +1,5 @@
 ﻿using VkQ.Domain.Participants.Enums;
-using VkQ.Domain.Reposts.BaseReport.Entities.Base;
+using VkQ.Domain.Reposts.BaseReport.Entities;
 using VkQ.Domain.Reposts.ParticipantReport.Enums;
 
 namespace VkQ.Domain.Reposts.ParticipantReport.Entities;

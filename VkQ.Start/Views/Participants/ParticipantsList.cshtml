@@ -1,0 +1,67 @@
+﻿@model IEnumerable<VkQ.WEB.ViewModels.Participants.ParticipantViewModel>
+@{ var i = 0; }
+@foreach (var participant in Model)
+{
+    <tr id="@participant.Id" class="element">
+        <th scope="row">@(i++)</th>
+        <td class="child">
+            <a asp-action="EditParticipant" asp-route-id="@participant.Id">@participant.Name</a>
+        </td>
+        <td class="child">
+            Тип
+        </td>
+        <td class="main">
+            @if (participant.Children.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+                        <thead class="align-middle">
+                        <tr>
+                            <th scope="col">Участник</th>
+                            <th scope="col">Тип</th>
+                            <th scope="col">Заметка</th>
+                            <th scope="col">VIP</th>
+                        </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                        @foreach (var childParticipant in participant.Children)
+                        {
+                            <tr id="@childParticipant.Id">
+                                <td class="child">
+                                    <a asp-action="EditParticipant" asp-route-id="@childParticipant.Id">@childParticipant.Name</a>
+                                </td>
+                                <td class="main" style="max-width: 170px">
+                                    <div class="text-break">@childParticipant.Note</div>
+                                </td>
+                                <td>
+                                    @if (childParticipant.Vip)
+                                    {
+                                        <span class="badge bg-success">Да</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Нет</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </td>
+        <td class="main">
+            <div class="text-break">@participant.Note</div>
+        </td>
+        <td class="child">
+            @if (participant.Vip)
+            {
+                <span class="badge bg-success">Да</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Нет</span>
+            }
+        </td>
+    </tr>
+}

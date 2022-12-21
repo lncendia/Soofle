@@ -6,8 +6,14 @@ namespace VkQ.Domain.Participants.Entities;
 
 public class Participant : AggregateRoot
 {
-    public Participant(Guid userId, string name, long vkId, ParticipantType type)
+    public Participant(Guid userId, string name, long vkId, ParticipantType type,
+        IReadOnlyCollection<Participant> allUsersParticipants)
     {
+        if (allUsersParticipants.Any(x => x.UserId != userId))
+            throw new ArgumentException(null, nameof(allUsersParticipants));
+        if (allUsersParticipants.Count >= 1000) throw new TooManyParticipantsException();
+        var anotherParticipant = allUsersParticipants.FirstOrDefault(x => x.VkId == vkId);
+        if (anotherParticipant != null) throw new ParticipantAlreadyExistsException(anotherParticipant.VkId);
         UserId = userId;
         Name = name;
         VkId = vkId;
@@ -38,7 +44,7 @@ public class Participant : AggregateRoot
 
     public void SetNotes(string notes)
     {
-        throw new ArgumentException("Notes length must be less than 500");
+        if (notes.Length > 500) throw new ArgumentException("Notes length must be less than 500");
         Notes = notes;
     }
 

@@ -1,4 +1,4 @@
-﻿using VkQ.Application.Abstractions.Elements.DTOs.Base.PublicationElementDto;
+﻿using VkQ.Application.Abstractions.Elements.DTOs.PublicationElementDto;
 
 namespace VkQ.Application.Abstractions.Elements.DTOs.LikeElementDto;
 
