@@ -11,7 +11,14 @@ internal static class AuthenticationServices
 {
     internal static void AddAuthenticationServices(this IServiceCollection services)
     {
-        services.AddIdentity<UserData, RoleData>(options => { options.SignIn.RequireConfirmedAccount = true; })
+        services.AddIdentity<UserData, RoleData>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.User.AllowedUserNameCharacters =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ абвгдеёжзийкламнопрстуфхцчшьыъэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЬЫЪЭЮЯ";
+                options.User.RequireUniqueEmail = true;
+                options.ClaimsIdentity.UserIdClaimType = ClaimTypes.Sid;
+            })
             .AddEntityFrameworkStores<ApplicationContext>().AddDefaultTokenProviders();
 
         services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();

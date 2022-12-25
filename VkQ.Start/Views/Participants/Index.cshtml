@@ -16,5 +16,23 @@
         @await Html.PartialAsync("SearchParticipants")
         </thead>
         <tbody class="align-middle elements"></tbody>
+        <div class="spinner">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
     </table>
 </div>
+
+@section scripts {
+    <script src="~/lib/infinite-ajax-scroll/dist/infinite-ajax-scroll.min.js"></script>
+    <script src="~/js/scroller.js"></script>
+    <script src="~/js/participants.js"></script>
+}

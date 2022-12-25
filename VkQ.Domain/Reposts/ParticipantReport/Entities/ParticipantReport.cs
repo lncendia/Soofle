@@ -54,7 +54,6 @@ public class ParticipantReport : Report
         var p = participants.FirstOrDefault(x => x.UserId != UserId);
         if (p != null) throw new ParticipantNotLinkedToReportException(p.Id);
         var grouperElements = participants.GroupBy(x => x.ParentParticipantId).ToList();
-
         foreach (var participant in grouperElements.First(x => x.Key == null))
         {
             var item = new ParticipantReportElement(participant.Name, participant.VkId, participant.Id,

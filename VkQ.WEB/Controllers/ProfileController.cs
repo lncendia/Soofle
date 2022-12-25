@@ -18,7 +18,7 @@ public class ProfileController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var email = User.FindFirstValue(ClaimTypes.Email)!;
         try
         {

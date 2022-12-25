@@ -34,7 +34,7 @@ public class ParticipantsController : Controller
     public async Task<IActionResult> Participants(ParticipantsSearchQueryViewModel model)
     {
         if (!ModelState.IsValid) return BadRequest();
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             var participants = await _participantManager.FindAsync(userId,
@@ -62,7 +62,7 @@ public class ParticipantsController : Controller
     public async Task<IActionResult> EditParticipant(Guid? id)
     {
         if (!id.HasValue) return RedirectToAction("Index", new { message = "Участник не найден" });
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             var participant = await _participantManager.GetAsync(userId, id.Value);
@@ -94,7 +94,7 @@ public class ParticipantsController : Controller
     public async Task<IActionResult> EditParticipant(EditParticipantViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             await _participantManager.EditAsync(userId, model.Id, model.ParentId, model.Note, model.Vip);

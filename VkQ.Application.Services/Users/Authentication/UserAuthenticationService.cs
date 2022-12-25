@@ -25,21 +25,16 @@ public class UserAuthenticationService : IUserAuthenticationService
 
     public async Task CreateAsync(UserDto userDto, string confirmUrl)
     {
-        var user = await _userManager.FindByEmailAsync(userDto.Email);
-        if (user != null) throw new UserAlreadyExistException();
-        var userDomain = new User(userDto.Username, userDto.Email);
-        user = new UserData(userDto.Email, userDto.Username);
+        var user = new UserData(userDto.Email, userDto.Username);
         var result = await _userManager.CreateAsync(user, userDto.Password);
         if (result.Errors.Any()) throw new UserCreationException(result.Errors.First().Description);
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Sid, userDomain.Id.ToString()));
-        
+
         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var url = confirmUrl + $"?email={Uri.EscapeDataString(user.Email!)}&code={Uri.EscapeDataString(code)}";
         try
         {
             await _emailService.SendEmailAsync(user.Email!,
                 $"Подтвердите регистрацию, перейдя по <a href=\"{url}\">ссылке</a>.");
-            await AddAsync(userDomain);
         }
         catch (Exception ex)
         {
@@ -59,17 +54,18 @@ public class UserAuthenticationService : IUserAuthenticationService
         }
         else
         {
-            user = new UserData(info.Principal.FindFirstValue(ClaimTypes.Email)!,
+            user = new UserData(
                 info.Principal.FindFirstValue(ClaimTypes.GivenName) + ' ' +
-                info.Principal.FindFirstValue(ClaimTypes.Surname));
-
-            var userDomain = new User(user.UserName!, user.Email!);
-
+                info.Principal.FindFirstValue(ClaimTypes.Surname),
+                info.Principal.FindFirstValue(ClaimTypes.Email)!)
+            {
+                EmailConfirmed = true
+            };
             var result = await _userManager.CreateAsync(user);
             if (result.Errors.Any()) throw new UserCreationException(result.Errors.First().Description);
-            user.EmailConfirmed = true;
             await _userManager.AddLoginAsync(user, info);
-            await _userManager.UpdateAsync(user);
+            var userDomain = new User(user.UserName!, user.Email!);
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, userDomain.Id.ToString()));
 
             await AddAsync(userDomain);
         }
@@ -83,6 +79,9 @@ public class UserAuthenticationService : IUserAuthenticationService
         if (user is null) throw new UserNotFoundException();
         var result = await _userManager.ConfirmEmailAsync(user, code);
         if (!result.Succeeded) throw new InvalidCodeException();
+        var userDomain = new User(user.UserName!, user.Email!);
+        await AddAsync(userDomain);
+        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, userDomain.Id.ToString()));
         return user;
     }
 

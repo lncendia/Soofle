@@ -8,4 +8,5 @@ public class UserModel : IModel
     public DateTimeOffset? SubscriptionDate { get; set; }
     public DateTimeOffset? ExpirationDate { get; set; }
     public VkModel? Vk { get; set; }
+    public Guid? VkId { get; set; }
 }

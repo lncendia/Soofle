@@ -30,7 +30,7 @@ public class LinkController : Controller
             return BadRequest(firstError.ErrorMessage);
         }
 
-        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             var dto = await _linkManager.AddAsync(id, model.Email);
@@ -55,7 +55,7 @@ public class LinkController : Controller
     public async Task<IActionResult> DeleteLink(Guid? id)
     {
         if (!id.HasValue) return BadRequest("Id is null");
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             await _linkManager.DeleteAsync(userId, id.Value);
@@ -78,7 +78,7 @@ public class LinkController : Controller
     public async Task<IActionResult> AcceptLink(Guid? id)
     {
         if (!id.HasValue) return BadRequest("Id is null");
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             await _linkManager.AcceptAsync(userId, id.Value);

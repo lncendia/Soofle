@@ -33,7 +33,7 @@ public class ReportsController : Controller
     public async Task<ActionResult> GetReports(ReportsSearchQueryViewModel search)
     {
         if (!ModelState.IsValid) search = new ReportsSearchQueryViewModel();
-        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             var reports = await _reportManager.FindAsync(id,
@@ -59,7 +59,7 @@ public class ReportsController : Controller
     public async Task<IActionResult> LikeReport(Guid? id)
     {
         if (!id.HasValue) return RedirectToAction("Index", new { message = "Отчёт не найден" });
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             var report = await _reportManager.GetLikeReportAsync(userId, id.Value);
@@ -81,7 +81,7 @@ public class ReportsController : Controller
     public async Task<IActionResult> ParticipantsReport(Guid? id)
     {
         if (!id.HasValue) return RedirectToAction("Index", new { message = "Отчёт не найден" });
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             var report = await _reportManager.GetParticipantReportAsync(userId, id.Value);

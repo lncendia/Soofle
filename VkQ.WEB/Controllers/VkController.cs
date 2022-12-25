@@ -19,7 +19,7 @@ public class VkController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetVk(SetVkViewModel model)
     {
-        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             await _vkManager.SetVkAsync(id, model.Login, model.Password);
@@ -40,7 +40,7 @@ public class VkController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ActivateVk()
     {
-        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             await _vkManager.ActivateVkAsync(id);
@@ -66,7 +66,7 @@ public class VkController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> TwoFactorVk(TwoFactorViewModel model)
     {
-        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         try
         {

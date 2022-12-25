@@ -25,7 +25,7 @@ internal class ParticipantReportMapper : IAggregateMapperUnit<ParticipantReport,
             ParticipantReportElement? parent = null;
             if (group.Key != null)
             {
-                parent = GetParticipantElement(group.Key, null);
+                parent = GetParticipantElement((ParticipantReportElementModel)group.Key, null);
                 elements.Add(parent);
             }
 

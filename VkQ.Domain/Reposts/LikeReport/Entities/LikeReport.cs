@@ -47,6 +47,7 @@ public class LikeReport : PublicationReport.Entities.PublicationReport
         if (p != null) throw new ParticipantNotLinkedToReportException(p.Id);
 
         var groupedElements = participants.GroupBy(x => x.ParentParticipantId).ToList();
+        if (!groupedElements.Any()) return;
         foreach (var participant in groupedElements.First(x => x.Key == null))
         {
             var item = new LikeReportElement(participant.Name, likeChatName, participant.VkId, participant.Id,

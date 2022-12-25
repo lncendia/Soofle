@@ -24,7 +24,7 @@ public class PaymentController : Controller
             return BadRequest(firstError.ErrorMessage);
         }
 
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             var payment = await _paymentService.CreateAsync(userId, model.Amount);
@@ -49,7 +49,7 @@ public class PaymentController : Controller
     public async Task<IActionResult> CheckPayment(Guid? id)
     {
         if (!id.HasValue) return BadRequest("Id is null");
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             await _paymentService.ConfirmAsync(userId, id.Value);

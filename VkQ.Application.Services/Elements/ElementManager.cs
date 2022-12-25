@@ -30,6 +30,7 @@ public class ElementManager : IReportElementManager
         if (report.UserId != userId) throw new ReportNotFoundException();
         var elements = report.Elements.GroupBy(x => x.Parent).ToList();
         var result = new List<LikeReportElement>();
+        if (!elements.Any()) return new List<LikeElementDto>();
         foreach (var element in elements.First(x => x.Key == null).Skip((query.Page - 1) * 50).Take(50))
         {
             var children = elements.FirstOrDefault(x => x.Key == element)?.ToList();
@@ -89,6 +90,7 @@ public class ElementManager : IReportElementManager
         if (report.UserId != userId) throw new ReportNotFoundException();
         var elements = report.Participants.GroupBy(x => x.Parent).ToList();
         var result = new List<ParticipantReportElement>();
+        if (!elements.Any()) return new List<ParticipantElementDto>();
         foreach (var element in elements.First(x => x.Key == null).Skip((query.Page - 1) * 50).Take(50))
         {
             var children = elements.FirstOrDefault(x => x.Key == element)?.ToList();

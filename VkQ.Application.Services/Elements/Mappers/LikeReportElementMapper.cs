@@ -9,7 +9,7 @@ public class LikeReportElementMapper : IElementMapperUnit<LikeElementDto, LikeRe
     public List<LikeElementDto> Map(List<LikeReportElement> elements)
     {
         var groupedElements = elements.GroupBy(x => x.Parent).ToList();
-
+        if (!groupedElements.Any()) return new List<LikeElementDto>();
         return (from element in groupedElements.First(x => x.Key == null)
             let children = groupedElements.FirstOrDefault(x => x.Key == element)?.Select(x => Map(x, null))
             select Map(element, children)).ToList();

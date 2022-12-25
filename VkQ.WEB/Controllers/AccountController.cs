@@ -45,25 +45,16 @@ public class AccountController : Controller
         }
         catch (Exception ex)
         {
-            switch (ex)
+            var text = ex switch
             {
-                case UserAlreadyExistException:
-                    ModelState.AddModelError("", "Пользователь с таким логином уже существует");
-                    break;
-                case InvalidEmailException:
-                    ModelState.AddModelError("", "Неверный формат почты");
-                    break;
-                case InvalidNicknameException:
-                    ModelState.AddModelError("", "Неверный формат имени пользователя");
-                    break;
-                case EmailException:
-                    ModelState.AddModelError("", "Не удалось отправить сообщение вам на почту");
-                    break;
-                default:
-                    ModelState.AddModelError("", "Произошла ошибка при регистрации");
-                    break;
-            }
-
+                UserAlreadyExistException => "Пользователь с таким логином уже существует",
+                InvalidEmailException => "Неверный формат почты",
+                InvalidNicknameException => "Неверный формат имени пользователя",
+                EmailException => "Не удалось отправить сообщение вам на почту",
+                UserCreationException => ex.Message,
+                _ => "Произошла ошибка при регистрации"
+            };
+            ModelState.AddModelError("", text);
             return View(model);
         }
     }

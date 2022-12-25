@@ -9,13 +9,14 @@ public class ParticipantReportElementMapper : IElementMapperUnit<ParticipantElem
     public List<ParticipantElementDto> Map(List<ParticipantReportElement> elements)
     {
         var groupedElements = elements.GroupBy(x => x.Parent).ToList();
-
+        if (!groupedElements.Any()) return new List<ParticipantElementDto>();
         return (from element in groupedElements.First(x => x.Key == null)
             let children = groupedElements.FirstOrDefault(x => x.Key == element)?.Select(x => Map(x, null))
             select Map(element, children)).ToList();
     }
 
-    private static ParticipantElementDto Map(ParticipantReportElement element, IEnumerable<ParticipantElementDto>? children)
+    private static ParticipantElementDto Map(ParticipantReportElement element,
+        IEnumerable<ParticipantElementDto>? children)
     {
         var elementBuilder = ParticipantElementBuilder.ParticipantReportElementDto();
         elementBuilder

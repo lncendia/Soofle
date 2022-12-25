@@ -28,7 +28,7 @@ public class ParticipantManager : IParticipantManager
         var participants = allParticipants.GroupBy(x => x.ParentParticipantId).ToList();
 
         var list = new List<Participant>();
-
+        if (!participants.Any()) return new List<ParticipantDto>();
         foreach (var parentParticipant in participants.First(x => x.Key == null).Skip((query.Page - 1) * 100).Take(100))
         {
             var children = participants.FirstOrDefault(x => x.Key == parentParticipant.Id)?.ToList();

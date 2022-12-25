@@ -103,9 +103,9 @@
 
 <div>
     <div>
-        @Html.PartialAsync("ChangeEmail", new ChangeEmailViewModel { Email = Model.Email });
+        @await Html.PartialAsync("ChangeEmail", new ChangeEmailViewModel { Email = Model.Email })
     </div>
     <div>
-        @Html.PartialAsync("ChangePassword")
+        @await Html.PartialAsync("ChangePassword", new ChangePasswordViewModel())
     </div>
 </div>

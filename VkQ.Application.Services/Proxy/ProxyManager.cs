@@ -16,17 +16,14 @@ public class ProxyManager : IProxyManager
     public async Task<List<ProxyDto>> FindAsync(int page, string? host)
     {
         var spec = string.IsNullOrEmpty(host) ? null : new ProxyByHostSpecification(host);
-        var proxies = _unitOfWork.ProxyRepository.Value.FindAsync(spec, null, (page - 1) * 20, 20);
-        var count = _unitOfWork.ProxyRepository.Value.CountAsync(spec);
-        await Task.WhenAll(proxies, count);
-        return proxies.Result.Select(x => new ProxyDto(x.Id, x.Host, x.Port, x.Login, x.Password)).ToList();
+        var proxies = await _unitOfWork.ProxyRepository.Value.FindAsync(spec, null, (page - 1) * 20, 20);
+        return proxies.Select(x => new ProxyDto(x.Id, x.Host, x.Port, x.Login, x.Password)).ToList();
     }
 
     public async Task AddAsync(string proxyList)
     {
         var proxies = ParseProxyList(proxyList);
-        var tasks = proxies.Select(x => _unitOfWork.ProxyRepository.Value.AddAsync(x));
-        await Task.WhenAll(tasks);
+        foreach (var task in proxies) await _unitOfWork.ProxyRepository.Value.AddAsync(task);
         await _unitOfWork.SaveChangesAsync();
     }
 

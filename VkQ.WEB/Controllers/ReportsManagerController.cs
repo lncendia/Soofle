@@ -19,7 +19,7 @@ public class ReportsManagerController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> StartParticipantReport()
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         await _reportCreationService.CreateParticipantReportAsync(new ParticipantReportCreateDto(userId, 111));
         return Ok();
     }
@@ -35,7 +35,7 @@ public class ReportsManagerController : Controller
             return BadRequest(firstError.ErrorMessage);
         }
 
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         await _reportCreationService.CreateLikeReportAsync(
             new PublicationReportCreateDto(userId, model.Hashtag, model.SearchStartDate, model.CoAuthors));
         return Ok();

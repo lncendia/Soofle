@@ -8,8 +8,8 @@
     }
 
     Start() {
-        this.scroller = new InfiniteAjaxScroll(elements, {
-            item: '.element', next: this.Handler, spinner: '.spinner', delay: 600
+        this.scroller = new InfiniteAjaxScroll(this.elements, {
+            item: '.element', next: index => this.Handler(index), spinner: '.spinner', delay: 600
         });
     }
 
@@ -33,8 +33,8 @@
             return false;
         }
     }
-    
-    ResetData(){
+
+    ResetData() {
         let form = this.data[0];
         form.reset()
         form.dispatchEvent(new Event('change'))

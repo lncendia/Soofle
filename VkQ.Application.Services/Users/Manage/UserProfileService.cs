@@ -33,14 +33,13 @@ public class UserProfileService : IProfileService
     {
         var user = await _unitOfWork.UserRepository.Value.GetAsync(userId);
         if (user == null) throw new UserNotFoundException();
-        var links = GetLinksAsync(userId);
-        var payments = GetPaymentsAsync(userId);
-        var reportsCount = GetReportsCountAsync(userId);
-        var lastMonthReportsCount = GetLastMonthReportsCountAsync(userId);
-        var participantsCount = GetParticipantsCountAsync(userId);
-        await Task.WhenAll(links, payments, reportsCount, lastMonthReportsCount, participantsCount);
-        return new ProfileDto(links.Result, payments.Result, participantsCount.Result, reportsCount.Result,
-            lastMonthReportsCount.Result, user.Subscription?.SubscriptionDate, user.Subscription?.ExpirationDate);
+        var links = await GetLinksAsync(userId);
+        var payments = await GetPaymentsAsync(userId);
+        var reportsCount = await GetReportsCountAsync(userId);
+        var lastMonthReportsCount = await GetLastMonthReportsCountAsync(userId);
+        var participantsCount = await GetParticipantsCountAsync(userId);
+        return new ProfileDto(links, payments, participantsCount, reportsCount, lastMonthReportsCount,
+            user.Subscription?.SubscriptionDate, user.Subscription?.ExpirationDate);
     }
 
     private Task<int> GetLastMonthReportsCountAsync(Guid userId)

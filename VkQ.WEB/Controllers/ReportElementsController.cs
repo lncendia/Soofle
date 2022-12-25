@@ -34,7 +34,7 @@ public class ReportElementsController : Controller
     public async Task<IActionResult> LikeReportElements(PublicationElementsSearchQueryViewModel query)
     {
         if (!ModelState.IsValid) return BadRequest();
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             var elements = await _elementManager.GetLikeReportElementsAsync(userId, query.ReportId,
@@ -57,7 +57,7 @@ public class ReportElementsController : Controller
     public async Task<IActionResult> ParticipantsReportElements(ParticipantElementsSearchQueryViewModel query)
     {
         if (!ModelState.IsValid) return BadRequest();
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.Sid)!);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
             var elements = await _elementManager.GetParticipantReportElementsAsync(userId, query.ReportId,
