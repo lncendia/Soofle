@@ -1,28 +1,25 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using VkQ.Domain.Reposts.ParticipantReport.Enums
+﻿@using VkQ.Domain.Reposts.ParticipantReport.Enums
 @model VkQ.WEB.ViewModels.Elements.ParticipantElementsSearchQueryViewModel
 <tr>
     <th></th>
-    <form asp-action="ParticipantsReport" method="get" class="form-horizontal" id="filter">
-        <th scope="col">
-            <input asp-for="Name" class="form-control auto-submit"/>
-        </th>
-        <th scope="col">
-            <select class="form-select auto-submit" asp-for="HasChildren">
-                <option selected="selected" value = "">Все</option>
-                <option value="true">Есть</option>
-                <option value="false">Нет</option>
-            </select>
-        </th>
-        <th scope="col">
-            <select class="form-select auto-submit" asp-for="ElementType">
-                <option selected="selected" value = "">Все</option>
-                <option value="@ElementType.Rename">Сменил ник</option>
-                <option value="@ElementType.Leave">Покинул чат</option>
-                <option value="@ElementType.New">Добавлен в чат</option>
-            </select>
-        </th>
-    </form>
+    <th scope="col">
+        <input asp-for="Name" class="form-control"/>
+    </th>
+    <th scope="col">
+        <select class="form-select" asp-for="HasChildren">
+            <option selected="selected" value="">Все</option>
+            <option value="true">Есть</option>
+            <option value="false">Нет</option>
+        </select>
+    </th>
+    <th scope="col">
+        <select class="form-select" asp-for="ElementType">
+            <option selected="selected" value="">Все</option>
+            <option value="@ElementType.Rename">Сменил ник</option>
+            <option value="@ElementType.Leave">Покинул чат</option>
+            <option value="@ElementType.New">Добавлен в чат</option>
+        </select>
+    </th>
 </tr>
 
 @section scripts {

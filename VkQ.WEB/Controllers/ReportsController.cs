@@ -47,7 +47,7 @@ public class ReportsController : Controller
                 UserNotFoundException => "Пользователь не найден",
                 _ => "Произошла ошибка"
             };
-            return RedirectToAction("Index", new { message });
+            return BadRequest(message);
         }
     }
 

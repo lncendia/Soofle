@@ -1,38 +1,28 @@
 ﻿@model VkQ.WEB.ViewModels.Participants.ParticipantViewModel
 @{
-    ViewData["title"] = "Участники";
+    ViewData["Title"] = "Участники";
 }
 <div class="table-responsive">
-    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
-        <thead class="align-middle">
-        <tr>
-            <th scope="col">№</th>
-            <th scope="col">Участник</th>
-            <th scope="col">Тип</th>
-            <th scope="col">Привязанные аккаунты</th>
-            <th scope="col">Заметка</th>
-            <th scope="col">VIP</th>
-        </tr>
-        @await Html.PartialAsync("SearchParticipants")
-        </thead>
-        <tbody class="align-middle elements"></tbody>
-        <div class="spinner">
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
-        </div>
-    </table>
+    <form id="filter" asp-controller="Participants" asp-action="Participants" method="get">
+        <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+            <thead class="align-middle">
+            <tr>
+                <th scope="col">№</th>
+                <th scope="col">Участник</th>
+                <th scope="col">Тип</th>
+                <th scope="col">Привязанные аккаунты</th>
+                <th scope="col">Заметка</th>
+                <th scope="col">VIP</th>
+            </tr>
+            @await Html.PartialAsync("SearchParticipants")
+            </thead>
+            <tbody class="align-middle elements"></tbody>
+        </table>
+    </form>
 </div>
 
 @section scripts {
-    <script src="~/lib/infinite-ajax-scroll/dist/infinite-ajax-scroll.min.js"></script>
+    <script src="https://unpkg.com/@@webcreate/infinite-ajax-scroll@@^3/dist/infinite-ajax-scroll.min.js"></script>
     <script src="~/js/scroller.js"></script>
     <script src="~/js/participants.js"></script>
 }

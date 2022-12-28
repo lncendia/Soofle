@@ -1,0 +1,24 @@
+﻿@model VkQ.WEB.ViewModels.Vk.SetVkViewModel
+<div class="row">
+    <div class="col-lg-6">
+        <h3>Добавление аккаунта</h3>
+        <form asp-action="SetVk" method="post" class="form-horizontal">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <div class="mt-3">
+                    <label asp-for="Login"></label>
+                    <input asp-for="Login" class="form-control"/>
+                    <span asp-validation-for="Login" class="text-danger"></span>
+                </div>
+                <div class="mt-3">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control"/>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mt-3">
+                    <input class="btn shadow-none btn-outline-dark" type="submit" value="Изменить">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

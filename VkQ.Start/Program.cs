@@ -1,3 +1,4 @@
+using Hangfire;
 using VkQ.Start.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseHangfireDashboard("/tasks");
 
 app.MapControllerRoute(
     name: "default",

@@ -38,8 +38,10 @@ public class UserProfileService : IProfileService
         var reportsCount = await GetReportsCountAsync(userId);
         var lastMonthReportsCount = await GetLastMonthReportsCountAsync(userId);
         var participantsCount = await GetParticipantsCountAsync(userId);
-        return new ProfileDto(links, payments, participantsCount, reportsCount, lastMonthReportsCount,
-            user.Subscription?.SubscriptionDate, user.Subscription?.ExpirationDate);
+        var vk = user.HasVk ? null : new VkDto(user.Vk!.Login, user.Vk.Password, user.Vk.IsActive);
+        var stats = new StatsDto(participantsCount, reportsCount, lastMonthReportsCount);
+        return new ProfileDto(vk, user.ChatId, stats, links, payments, user.Subscription?.SubscriptionDate,
+            user.Subscription?.ExpirationDate);
     }
 
     private Task<int> GetLastMonthReportsCountAsync(Guid userId)
@@ -64,7 +66,7 @@ public class UserProfileService : IProfileService
     {
         var links = await _unitOfWork.LinkRepository.Value.FindAsync(new LinkByUserIdSpecification(userId));
         if (!links.Any()) return new List<LinkDto>();
-        var ids = links.SelectMany(l => new[] { l.User1Id, l.User2Id }).Distinct().ToList();
+        var ids = links.SelectMany(l => new[] {l.User1Id, l.User2Id}).Distinct().ToList();
         ISpecification<User, IUserSpecificationVisitor> spec = new UserByIdSpecification(ids.First());
         spec = ids.Skip(1).Aggregate(spec,
             (current, id) =>

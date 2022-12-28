@@ -9,7 +9,6 @@ namespace VkQ.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
 internal class UserMapper : IAggregateMapperUnit<User, UserModel>
 {
-
     private static readonly FieldInfo UserSubscription =
         typeof(User).GetField("<Subscription>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
@@ -17,7 +16,7 @@ internal class UserMapper : IAggregateMapperUnit<User, UserModel>
     {
         var user = new User(model.Name, model.Email);
         IdFields.AggregateId.SetValue(user, model.Id);
-
+        user.ChatId = model.ChatId;
         if (model.SubscriptionDate.HasValue)
             UserSubscription.SetValue(user, GetSubscription(model.SubscriptionDate.Value, model.ExpirationDate!.Value));
 

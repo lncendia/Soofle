@@ -1,8 +1,12 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VkQ.Application.Abstractions.Links.ServicesInterfaces;
 using VkQ.Application.Abstractions.ReportsManagement.DTOs;
 using VkQ.Application.Abstractions.ReportsManagement.ServicesInterfaces.ReportProcessing;
+using VkQ.Domain.Reposts.BaseReport.Exceptions;
+using VkQ.Domain.Reposts.ParticipantReport.Exceptions;
+using VkQ.Domain.Reposts.PublicationReport.Exceptions;
 using VkQ.WEB.ViewModels.ReportsManager;
 
 namespace VkQ.WEB.Controllers;
@@ -11,16 +15,43 @@ namespace VkQ.WEB.Controllers;
 public class ReportsManagerController : Controller
 {
     private readonly IReportCreationService _reportCreationService;
+    private readonly IUserLinksService _userLinksService;
 
-    public ReportsManagerController(IReportCreationService reportCreationService) =>
+    public ReportsManagerController(IReportCreationService reportCreationService, IUserLinksService userLinksService)
+    {
         _reportCreationService = reportCreationService;
+        _userLinksService = userLinksService;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var links = await _userLinksService.GetUserLinksAsync(userId);
+        ViewBag.Links = links;
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> StartParticipantReport()
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        await _reportCreationService.CreateParticipantReportAsync(new ParticipantReportCreateDto(userId, 111));
+        try
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            await _reportCreationService.CreateParticipantReportAsync(userId);
+        }
+        catch (Exception e)
+        {
+            var message = e switch
+            {
+                UserChatIdException => "Отчёт не найден",
+                UserSubscribeException => "Продлите подписку",
+                UserVkException => "ВК не активирован",
+                _ => "Произошла ошибка"
+            };
+            return BadRequest(message);
+        }
+
         return Ok();
     }
 
@@ -34,11 +65,25 @@ public class ReportsManagerController : Controller
             var firstError = ModelState.Values.SelectMany(v => v.Errors).First();
             return BadRequest(firstError.ErrorMessage);
         }
-
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        await _reportCreationService.CreateLikeReportAsync(
-            new PublicationReportCreateDto(userId, model.Hashtag, model.SearchStartDate, model.CoAuthors));
-        return Ok();
+        try
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            await _reportCreationService.CreateLikeReportAsync(
+                new PublicationReportCreateDto(userId, model.Hashtag, model.SearchStartDate, model.CoAuthors));
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            var message = e switch
+            {
+                UserSubscribeException => "Продлите подписку",
+                UserVkException => "ВК не активирован",
+                TooManyLinksException => "Кол-во связей не должно превышать 20 единиц",
+                ArgumentException => "Связь не активирована",
+                _ => "Произошла ошибка"
+            };
+            return BadRequest(message);
+        }
     }
 
     [HttpPost]

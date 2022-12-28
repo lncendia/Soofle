@@ -21,35 +21,18 @@
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Views\Rate\Index.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Users\ChangePassword.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Users\Edit.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Users\Index.cshtml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Views\Users\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Remove="Views\Users\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="Views\Users\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Remove="Views\Users\**" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="AspNet.Security.OAuth.Vkontakte" Version="7.0.0" />
       <PackageReference Include="AspNet.Security.OAuth.Yandex" Version="7.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Users\ChangePassword.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Users\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Users\Index.cshtml" />
     </ItemGroup>
 
 </Project>

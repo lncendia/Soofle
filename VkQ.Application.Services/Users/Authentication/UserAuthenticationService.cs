@@ -12,15 +12,17 @@ namespace VkQ.Application.Services.Users.Authentication;
 public class UserAuthenticationService : IUserAuthenticationService
 {
     private readonly UserManager<UserData> _userManager;
+    private readonly RoleManager<RoleData> _roleManager;
     private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
 
     public UserAuthenticationService(UserManager<UserData> userManager, IEmailService emailService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork, RoleManager<RoleData> roleManager)
     {
         _userManager = userManager;
         _emailService = emailService;
         _unitOfWork = unitOfWork;
+        _roleManager = roleManager;
     }
 
     public async Task CreateAsync(UserDto userDto, string confirmUrl)
@@ -69,7 +71,7 @@ public class UserAuthenticationService : IUserAuthenticationService
 
             await AddAsync(userDomain);
         }
-
+        
         return user;
     }
 

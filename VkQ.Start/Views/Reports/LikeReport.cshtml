@@ -1,6 +1,6 @@
 ﻿@model VkQ.WEB.ViewModels.Reports.LikeReportViewModel
 @{
-    ViewData["title"] = "Отчет";
+    ViewData["Title"] = "Отчет";
 }
 <div class="table-responsive">
     <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
@@ -46,21 +46,34 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
-        <thead class="align-middle">
-        <tr>
-            <th scope="col">№</th>
-            <th scope="col">Участник</th>
-            <th scope="col" rowspan="2">Публикации</th>
-            <th scope="col">Дочерние аккаунты</th>
-            <th scope="col">Проверка</th>
-            <th scope="col">Заметка</th>
-            <th scope="col">Чат активности</th>
-            <th scope="col">VIP</th>
-
-        </tr>
-        @await Html.PartialAsync("SearchLikeElement")
-        </thead>
-        <tbody class="align-middle elements"></tbody>
-    </table>
+    <form asp-action="LikeReport" method="get" class="form-horizontal" id="filter">
+        <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+            <thead class="align-middle">
+            <tr>
+                <th scope="col">№</th>
+                <th scope="col">Участник</th>
+                <th scope="col" rowspan="2">Публикации</th>
+                <th scope="col">Дочерние аккаунты</th>
+                <th scope="col">Проверка</th>
+                <th scope="col">Заметка</th>
+                <th scope="col">Чат активности</th>
+                <th scope="col">VIP</th>
+            </tr>
+            @await Html.PartialAsync("SearchLikeElement")
+            </thead>
+            <tbody class="align-middle elements"></tbody>
+        </table>
+    </form>
+    <div class="spinner">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
 </div>

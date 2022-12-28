@@ -6,16 +6,17 @@ using VkQ.Domain.Reposts.BaseReport.Exceptions;
 using VkQ.Domain.Reposts.ParticipantReport.DTOs;
 using VkQ.Domain.Reposts.ParticipantReport.Enums;
 using VkQ.Domain.Reposts.ParticipantReport.Events;
+using VkQ.Domain.Reposts.ParticipantReport.Exceptions;
 using VkQ.Domain.Users.Entities;
 
 namespace VkQ.Domain.Reposts.ParticipantReport.Entities;
 
 public class ParticipantReport : Report
 {
-    public ParticipantReport(User user, long vkId) : base(user)
+    public ParticipantReport(User user) : base(user)
     {
-        VkId = vkId;
-        AddDomainEvent(new ReportCreatedEvent(new[] { UserId }, Id, ReportType.Participants, CreationDate, "-"));
+        VkId = user.ChatId ?? throw new UserChatIdException();
+        AddDomainEvent(new ReportCreatedEvent(new[] {UserId}, Id, ReportType.Participants, CreationDate, "-"));
     }
 
     public long VkId { get; }

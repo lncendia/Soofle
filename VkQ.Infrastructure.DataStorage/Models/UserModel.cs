@@ -9,4 +9,5 @@ public class UserModel : IModel
     public DateTimeOffset? ExpirationDate { get; set; }
     public VkModel? Vk { get; set; }
     public Guid? VkId { get; set; }
+    public long? ChatId { get; set; }
 }

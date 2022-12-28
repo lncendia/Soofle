@@ -32,7 +32,7 @@ public class ProfileController : Controller
                 UserNotFoundException => "Пользователь не найден",
                 _ => "Произошла ошибка"
             };
-            return RedirectToAction("Index", "Home", new { message });
+            return RedirectToAction("Index", "Home", new {message});
         }
     }
 
@@ -46,8 +46,13 @@ public class ProfileController : Controller
             new PaymentViewModel(x.Id, x.Amount, x.CreationDate, x.CompletionDate, x.IsSuccessful, x.PayUrl));
         var paymentsViewModel =
             new PaymentsViewModel(paymentsEnumerable, profile.SubscriptionStart, profile.SubscriptionEnd);
-        var model = new ProfileViewModel(email, User.Identity!.Name!, linksViewModel, paymentsViewModel,
-            profile.ParticipantsCount, profile.ReportsCount, profile.ReportsThisMonthCount);
+        var stats = new StatsViewModel(profile.Stats.ParticipantsCount, profile.Stats.ReportsCount,
+            profile.Stats.ReportsThisMonthCount);
+        var vk = profile.Vk == null
+            ? null
+            : new VkViewModel(profile.Vk.Login, profile.Vk.Password, profile.Vk.IsActive);
+        var model = new ProfileViewModel(email, User.Identity!.Name!, linksViewModel, paymentsViewModel, stats,
+            profile.ChatId, vk);
         return model;
     }
 }

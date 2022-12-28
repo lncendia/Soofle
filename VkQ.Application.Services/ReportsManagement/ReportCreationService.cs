@@ -46,11 +46,11 @@ public class ReportCreationService : IReportCreationService
         await _jobStorage.StoreJobIdAsync(report.Id, key);
     }
 
-    public async Task CreateParticipantReportAsync(ParticipantReportCreateDto dto, DateTime? startAt = null)
+    public async Task CreateParticipantReportAsync(Guid userId, DateTime? startAt = null)
     {
-        var user = await _unitOfWork.UserRepository.Value.GetAsync(dto.UserId);
+        var user = await _unitOfWork.UserRepository.Value.GetAsync(userId);
         if (user == null) throw new UserNotFoundException();
-        var report = new ParticipantReport(user, dto.VkId);
+        var report = new ParticipantReport(user);
         await _unitOfWork.ParticipantReportRepository.Value.AddAsync(report);
         await _unitOfWork.SaveChangesAsync();
         var key = await _jobScheduler.StartParticipantReportAsync(report.Id);

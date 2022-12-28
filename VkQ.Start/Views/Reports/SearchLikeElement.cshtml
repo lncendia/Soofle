@@ -4,40 +4,38 @@
     var selectedListItems = items?.Select(x => new SelectListItem(x, x));
 }
 <tr>
-    <form asp-action="LikeReport" method="get" class="form-horizontal" id="filter">
-        <th scope="col">
-            <input asp-for="Name" class="form-control auto-submit"/>
+    <th scope="col">
+            <input asp-for="Name" class="form-control"/>
         </th>
         <th scope="col"><th>
         <th scope="col">
-            <select class="form-select auto-submit" asp-for="HasChildren">
+            <select class="form-select" asp-for="HasChildren">
                 <option selected="selected" value = "">Все</option>
                 <option value="true">Есть</option>
                 <option value="false">Нет</option>
             </select>
         </th>
         <th scope="col">
-            <select class="form-select auto-submit" asp-for="Succeeded">
+            <select class="form-select" asp-for="Succeeded">
                 <option selected="selected" value = "">Все</option>
                 <option value="true">Да</option>
                 <option value="false">Нет</option>
             </select>
         </th>
         <th scope="col">
-            @* <input asp-for="Note" class="form-control auto-submit"/> *@
+            @* <input asp-for="Note" class="form-control"/> *@
         </th>
         <th scope="col">
-            <select class="form-select auto-submit" asp-for="LikeChatName" asp-items="selectedListItems">
+            <select class="form-select" asp-for="LikeChatName" asp-items="selectedListItems">
                 <option selected="selected" value = "">Все</option>
             </select>
         </th>
         <th scope="col">
-            <select class="form-select auto-submit" asp-for="Vip">
+            <select class="form-select" asp-for="Vip">
                 <option selected="selected" value = "">Все</option>
                 <option value="true">VIP</option>
             </select>
         </th>
-    </form>
 </tr>
 
 @section scripts {

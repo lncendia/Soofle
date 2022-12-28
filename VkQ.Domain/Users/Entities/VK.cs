@@ -28,5 +28,5 @@ public class Vk : Entity
         AccessToken = null;
     }
 
-    public bool IsActive() => !string.IsNullOrEmpty(AccessToken);
+    public bool IsActive => !string.IsNullOrEmpty(AccessToken);
 }

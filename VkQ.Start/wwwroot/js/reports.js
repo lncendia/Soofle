@@ -1,4 +1,4 @@
-﻿let scroller = new Scroller('/Reports/GetReports', '.elements', '#dataForm')
+﻿let scroller = new Scroller('/Reports/GetReports', '.elements', '#filter')
 scroller.Start();
 
 $('#clearFilter').click(function () {

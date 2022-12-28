@@ -21,6 +21,7 @@ public class User : AggregateRoot
 
     public Vk? Vk { get; private set; }
     public Subscription? Subscription { get; private set; }
+    public long? ChatId { get; set; }
 
     private string _email;
 
@@ -59,11 +60,11 @@ public class User : AggregateRoot
     public void AddSubscription(TimeSpan timeSpan)
     {
         if (timeSpan.Ticks <= 0) throw new InvalidOperationException("Time span must be positive");
-        var offset = Subscription is { IsExpired: false } ? Subscription.ExpirationDate : DateTimeOffset.Now;
+        var offset = Subscription is {IsExpired: false} ? Subscription.ExpirationDate : DateTimeOffset.Now;
         Subscription = new Subscription(offset.Add(timeSpan));
     }
 
-    public bool IsSubscribed => Subscription is { IsExpired: false };
+    public bool IsSubscribed => Subscription is {IsExpired: false};
 
     /// <exception cref="VkIsNotSetException"></exception>
     public void SetVkProxy(Proxy proxy)

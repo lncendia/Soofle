@@ -39,6 +39,7 @@ public class ParticipantsController : Controller
         {
             var participants = await _participantManager.FindAsync(userId,
                 new SearchQuery(model.Page, model.Username, model.Type, model.Vip, model.HasChild));
+            if (!participants.Any()) return BadRequest("Участники не найдены");
             return PartialView("ParticipantsList", participants.Select(Map));
         }
         catch (Exception e)
@@ -61,7 +62,7 @@ public class ParticipantsController : Controller
     [HttpGet]
     public async Task<IActionResult> EditParticipant(Guid? id)
     {
-        if (!id.HasValue) return RedirectToAction("Index", new { message = "Участник не найден" });
+        if (!id.HasValue) return RedirectToAction("Index", new {message = "Участник не найден"});
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
@@ -85,7 +86,7 @@ public class ParticipantsController : Controller
                 ParticipantNotFoundException => "Участник не найден",
                 _ => "Произошла ошибка"
             };
-            return RedirectToAction("Index", new { message });
+            return RedirectToAction("Index", new {message});
         }
     }
 
@@ -98,7 +99,7 @@ public class ParticipantsController : Controller
         try
         {
             await _participantManager.EditAsync(userId, model.Id, model.ParentId, model.Note, model.Vip);
-            return RedirectToAction("Index", new { message = "Участник успешно изменен" });
+            return RedirectToAction("Index", new {message = "Участник успешно изменен"});
         }
         catch (Exception e)
         {
@@ -107,7 +108,7 @@ public class ParticipantsController : Controller
                 ParticipantNotFoundException => "Участник не найден",
                 _ => "Произошла ошибка"
             };
-            return RedirectToAction("Index", new { message });
+            return RedirectToAction("Index", new {message});
         }
     }
 }

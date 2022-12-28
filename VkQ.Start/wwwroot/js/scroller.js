@@ -4,7 +4,7 @@
         this.elements = $(elements);
         this.query = new URLSearchParams();
         this.data = $(form);
-        this.data.on('change', this.ChangeData);
+        this.data.change(async () => (await this.ChangeData()));
     }
 
     Start() {
@@ -16,7 +16,7 @@
     async ChangeData() {
         this.scroller.pause();
         this.elements.empty();
-        this.query = GetFormData();
+        this.query = GetFormData(this.data);
         this.scroller.pageIndex = -1;
         this.scroller.resume();
         await this.scroller.next();
@@ -29,7 +29,7 @@
             this.elements.append(data)
             return true;
         } catch (e) {
-            console.log(e);
+            console.log(e.message);
             return false;
         }
     }
@@ -47,11 +47,10 @@ async function GetList(uri, query) {
     throw new Error(await data.text());
 }
 
-
 function GetFormData(data) {
-    let d = new FormData(data);
     let url = new URLSearchParams();
-    d.forEach((value, key) => {
+    let formData = new FormData(data[0])
+    formData.forEach((value, key) => {
         url.set(key, value);
     })
     return url;

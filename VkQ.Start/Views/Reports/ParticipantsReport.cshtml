@@ -1,6 +1,6 @@
 ﻿@model VkQ.WEB.ViewModels.Reports.ParticipantReportViewModel
 @{
-    ViewData["title"] = "Отчет";
+    ViewData["Title"] = "Отчет";
 }
 <div class="table-responsive">
     <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
@@ -52,16 +52,30 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
-        <thead class="align-middle">
-        <tr>
-            <th scope="col">№</th>
-            <th scope="col">Участник</th>
-            <th scope="col">Дочерние аккаунты</th>
-            <th scope="col">Статус</th>
-        </tr>
-        @await Html.PartialAsync("SearchParticipantElement")
-        </thead>
-        <tbody class="align-middle elements"></tbody>
-    </table>
+    <form asp-action="ParticipantsReport" method="get" class="form-horizontal" id="filter">
+        <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+            <thead class="align-middle">
+            <tr>
+                <th scope="col">№</th>
+                <th scope="col">Участник</th>
+                <th scope="col">Дочерние аккаунты</th>
+                <th scope="col">Статус</th>
+            </tr>
+            @await Html.PartialAsync("SearchParticipantElement")
+            </thead>
+            <tbody class="align-middle elements"></tbody>
+        </table>
+    </form>
+    <div class="spinner">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
 </div>

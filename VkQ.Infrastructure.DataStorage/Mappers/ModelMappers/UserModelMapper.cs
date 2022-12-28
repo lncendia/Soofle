@@ -20,6 +20,7 @@ internal class UserModelMapper : IModelMapperUnit<UserModel, User>
         user.Email = model.Email;
         user.SubscriptionDate = model.Subscription?.SubscriptionDate;
         user.ExpirationDate = model.Subscription?.ExpirationDate;
+        user.ChatId = model.ChatId;
         if (model.Vk == null) user.Vk = null;
         else
         {
