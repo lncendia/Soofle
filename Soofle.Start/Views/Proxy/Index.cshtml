@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewData["Title"] = "Прокси";
+}
+<div id="message"></div>
+@await Html.PartialAsync("AddProxy")
+<div class="table-responsive">
+    <form asp-action="Proxies" method="get" class="form-horizontal" id="filter">
+        <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+            <thead class="align-middle">
+            <tr>
+                <th scope="col">Адресс</th>
+                <th scope="col">Порт</th>
+                <th scope="col">Логин</th>
+                <th scope="col">Пароль</th>
+                <th scope="col">Действия</th>
+            </tr>
+            @await Html.PartialAsync("SearchProxies")
+            </thead>
+            <tbody class="align-middle elements"></tbody>
+        </table>
+    </form>
+    <div class="spinner">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="https://unpkg.com/@@webcreate/infinite-ajax-scroll@@^3/dist/infinite-ajax-scroll.min.js"></script>
+    <script src="~/js/scroller.js"></script>
+    <script src="~/js/sender.js"></script>
+    <script src="~/js/proxies.js"></script>
+}

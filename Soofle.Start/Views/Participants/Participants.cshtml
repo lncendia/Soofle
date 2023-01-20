@@ -1,0 +1,85 @@
+﻿@using Soofle.Domain.Participants.Enums
+@model IEnumerable<Soofle.WEB.ViewModels.Participants.ParticipantViewModel>
+@foreach (var participant in Model)
+{
+    <tr class="element">
+        <td class="child">
+            <a asp-action="Edit" asp-route-id="@participant.Id">@participant.Name</a>
+        </td>
+        <td class="child">
+            @switch (participant.Type)
+            {
+                case ParticipantType.Group:
+                    <span class="badge bg-info">Группа</span>
+                    break;
+                case ParticipantType.User:
+                    <span class="badge bg-success">Пользователь</span>
+                    break;
+            }
+        </td>
+        <td class="main">
+            @if (participant.Children.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+                        <thead class="align-middle">
+                        <tr>
+                            <th scope="col">Участник</th>
+                            <th scope="col">Тип</th>
+                            <th scope="col">Заметка</th>
+                            <th scope="col">VIP</th>
+                        </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                        @foreach (var childParticipant in participant.Children)
+                        {
+                            <tr id="@childParticipant.Id">
+                                <td class="child">
+                                    <a asp-action="Edit" asp-route-id="@childParticipant.Id">@childParticipant.Name</a>
+                                </td>
+                                <td class="child">
+                                    @switch (childParticipant.Type)
+                                    {
+                                        case ParticipantType.Group:
+                                            <span class="badge bg-info">Группа</span>
+                                            break;
+                                        case ParticipantType.User:
+                                            <span class="badge bg-success">Пользователь</span>
+                                            break;
+                                    }
+                                </td>
+                                <td class="main" style="max-width: 170px">
+                                    <div class="text-break">@childParticipant.Note</div>
+                                </td>
+                                <td class="child">
+                                    @if (childParticipant.Vip)
+                                    {
+                                        <span class="badge bg-success">Да</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Нет</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </td>
+        <td class="main">
+            <div class="text-break">@participant.Note</div>
+        </td>
+        <td class="child">
+            @if (participant.Vip)
+            {
+                <span class="badge bg-success">Да</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Нет</span>
+            }
+        </td>
+    </tr>
+}

@@ -1,0 +1,97 @@
+﻿@using Soofle.Domain.Participants.Enums@using Soofle.Domain.Reposts.ParticipantReport.Enums
+@model IEnumerable<Soofle.WEB.ViewModels.Elements.ParticipantElementViewModel>
+@foreach (var element in Model.OrderByDescending(x => x.Type))
+{
+    <tr class="element">
+        <td class="child">
+            <span>@element.Name</span>
+            @if (element.NewName != null)
+            {
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                </svg>
+                <span>@element.NewName</span>
+            }
+        </td>
+        <td class="child">
+            @switch (element.ParticipantType)
+            {
+                case ParticipantType.Group:
+                    <span class="badge  bg-info">Группа</span>
+                    break;
+                case ParticipantType.User:
+                    <span class="badge bg-success">Пользователь</span>
+                    break;
+            }
+        </td>
+        <td class="main">
+            @if (element.Children.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+                        <thead class="align-middle">
+                        <tr>
+                            <th scope="col">Участник</th>
+                            <th scope="col">Статус</th>
+                        </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                        @foreach (var childElement in element.Children)
+                        {
+                            <tr>
+                                <td class="child">
+                                    <span>@childElement.Name</span>
+                                    @if (childElement.NewName != null)
+                                    {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                                        </svg>
+                                        <span>@childElement.NewName</span>
+                                    }
+                                </td>
+                                <td class="child">
+                                    @if (childElement.Type.HasValue)
+                                    {
+                                        switch (childElement.Type)
+                                        {
+                                            case ElementType.New:
+                                                <span class="badge bg-success">Добавлен в чат</span>
+                                                break;
+                                            case ElementType.Leave:
+                                                <span class="badge bg-danger">Покинул чат</span>
+                                                break;
+                                            case ElementType.Rename:
+                                                <span class="badge bg-primary">Сменил ник</span>
+                                                break;
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </td>
+        <td class="child">
+            @if (element.Type.HasValue)
+            {
+                switch (element.Type)
+                {
+                    case ElementType.New:
+                        <span class="badge bg-success">Добавлен в чат</span>
+                        break;
+                    case ElementType.Leave:
+                        <span class="badge bg-danger">Покинул чат</span>
+                        break;
+                    case ElementType.Rename:
+                        <span class="badge bg-primary">Сменил ник</span>
+                        break;
+                    case ElementType.Stay:
+                        <span class="badge bg-info">Без изменений</span>
+                        break;
+                }
+            }
+        </td>
+    </tr>
+}

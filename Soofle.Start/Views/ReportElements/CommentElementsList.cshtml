@@ -1,0 +1,161 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Soofle.Start.Views.ReportElements
+@using Soofle.WEB.ViewModels.Elements
+@model Soofle.WEB.ViewModels.Elements.CommentElementsViewModel
+@foreach (var element in Model.Elements)
+{
+    <tr class="element">
+        <td class="child">
+            <a asp-controller="Participants" asp-action="Edit" asp-route-id="@element.ParticipantId">@element.Name</a>
+        </td>
+        <td class="main">
+            <div>
+                <a class="text-decoration-none" data-bs-toggle="collapse" href="#values@(element.ParticipantId)" role="button" onclick="Load(this)" aria-expanded="false">
+                    @{
+                        var commented = element.Comments.Count(comment => comment.IsConfirmed);
+                        var notCommented = element.Comments.Count - commented;
+                    }
+                    <span>Пройдено: @commented<br>Не пройдено: @notCommented</span>
+                </a>
+            </div>
+            <div class="collapse" id="values@(element.ParticipantId)"></div>
+        </td>
+
+        <td class="main">
+            @if (element.Children.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover table-bordered table-striped table-condensed text-center align-middle">
+                        <thead class="align-middle">
+                        <tr>
+                            <th scope="col">Участник</th>
+                            <th scope="col">Публикации</th>
+                            <th scope="col">Проверка</th>
+                            <th scope="col">Заметка</th>
+                            <th scope="col">VIP</th>
+                        </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                        @foreach (var childElement in element.Children)
+                        {
+                            <tr>
+                                <td class="child">
+                                    <a asp-controller="Participants" asp-action="Edit" asp-route-id="@childElement.ParticipantId">@childElement.Name</a>
+                                </td>
+                                <td class="main">
+                                    <div>
+                                        <a class="text-decoration-none" data-bs-toggle="collapse" href="#values@(childElement.ParticipantId)" onclick="Load(this)" role="button" aria-expanded="false">
+                                            @{
+                                                commented = childElement.Comments.Count(comment => comment.IsConfirmed);
+                                                notCommented = childElement.Comments.Count - commented;
+                                            }
+                                            <span>Пройдено: @commented<br>Не пройдено: @notCommented</span>
+                                        </a>
+                                    </div>
+                                    <div class="collapse" id="values@(childElement.ParticipantId)"></div>
+                                </td>
+                                <td class="child">
+                                    @if (childElement.IsAccepted)
+                                    {
+                                        <span class="badge bg-danger">Нет</span>
+                                        <span class="badge bg-success">Да</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Нет</span>
+                                    }
+                                </td>
+                                <td class="main">
+                                    <div class="text-break">@childElement.Note</div>
+                                </td>
+                                <td class="child">
+                                    @if (childElement.Vip)
+                                    {
+                                        <span class="badge bg-success">Да</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Нет</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </td>
+        <td class="child">
+            @if (element.IsAccepted)
+            {
+                <span class="badge bg-success">Да</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Нет</span>
+            }
+        </td>
+        <td class="main">
+            <div class="text-break">@element.Note</div>
+        </td>
+        <td class="child">
+            <span class="badge bg-success">@element.LikeChatName</span>
+        </td>
+        <td class="child">
+            @if (element.Vip)
+            {
+                <span class="badge bg-success">Да</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Нет</span>
+            }
+        </td>
+    </tr>
+}
+
+
+@{
+    void RenderScript(CommentElementViewModel element)
+    {
+        <text>
+            element = {
+            id: '@element.ParticipantId',
+            publications: [
+            @foreach (var comment in element.Comments)
+            {
+                var publication = Model.Publications.First(x => x.Id == comment.PublicationId);
+                <text>{itemId:'@(publication.ItemId)', ownerId:'@(publication.OwnerId)', text:'@(comment.Text)', type: '@if (!publication.IsLoaded)
+                           {
+                               <text>@PublicationElementType.NotLoaded</text>
+                           }
+                           else if (publication.OwnerId == element.VkId)
+                           {
+                               <text>@PublicationElementType.Owner</text>
+                           }
+                           else if (comment.IsConfirmed)
+                           {
+                               <text>@PublicationElementType.Confirmed</text>
+                           }
+                           else
+                           {
+                               <text>@PublicationElementType.NotConfirmed</text>
+                           }'},</text>
+            }
+            ]
+            };
+            elements.push(element);
+        </text>
+    }
+}
+
+<script>
+        @foreach (var element in Model.Elements)
+        {
+            RenderScript(element);
+            @foreach (var child in element.Children)
+            {
+                RenderScript(child);
+            }
+        }
+</script>
