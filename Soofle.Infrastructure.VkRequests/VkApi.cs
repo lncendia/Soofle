@@ -15,7 +15,7 @@ internal static class VkApi
         Soofle.Application.Abstractions.VkRequests.ServicesInterfaces.ICaptchaSolver captchaSolver)
     {
         var services = new ServiceCollection();
-        services.AddScoped<ICaptchaSolver, CaptchaSolver>(_ => new CaptchaSolver(captchaSolver));
+        services.AddScoped<ICaptchaSolver, CaptchaSolverAdapter>(_ => new CaptchaSolverAdapter(captchaSolver));
         services.AddSingleton(_ => GetHttpClientWithProxy(info));
 
         var api = new VkNet.VkApi(services);

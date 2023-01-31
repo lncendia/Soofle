@@ -32,7 +32,7 @@ internal class UserRepository : IUserRepository
 
     public async Task<User?> GetAsync(Guid id)
     {
-        var model = await _context.Users.Include(x => x.Vk).FirstOrDefaultAsync(x => x.Id == id);
+        var model = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         return model == null ? null : _mapper.Map(model);
     }
 
@@ -77,7 +77,7 @@ internal class UserRepository : IUserRepository
     public async Task<List<User>> FindAsync(ISpecification<User, IUserSpecificationVisitor>? specification = null,
         IOrderBy<User, IUserSortingVisitor>? orderBy = null, int? skip = null, int? take = null)
     {
-        var query = _context.Users.Include(x => x.Vk).AsQueryable();
+        var query = _context.Users.AsQueryable();
         if (specification != null)
         {
             specification.Accept(_visitor);

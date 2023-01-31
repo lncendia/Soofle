@@ -6,6 +6,7 @@
     <tr class="element">
         <td class="child">
             <a asp-controller="Participants" asp-action="Edit" asp-route-id="@element.ParticipantId">@element.Name</a>
+            <a href="">(@element.VkId)</a>
         </td>
         <td class="main">
             <div>
@@ -40,6 +41,7 @@
                             <tr>
                                 <td class="child">
                                     <a asp-controller="Participants" asp-action="Edit" asp-route-id="@childElement.ParticipantId">@childElement.Name</a>
+                                    <div>(@childElement.VkId)</div>
                                 </td>
                                 <td class="main">
                                     <div>

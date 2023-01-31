@@ -10,9 +10,8 @@ namespace Soofle.Start.Extensions;
 
 internal static class PersistenceServices
 {
-    internal static void AddPersistenceServices(this IServiceCollection services)
+    internal static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
         var connectionString = configuration!.GetConnectionString("Main") ??
                                throw new ConfigurationException("ConnectionStrings:Main");
         var applicationConnectionString = configuration!.GetConnectionString("Application") ??

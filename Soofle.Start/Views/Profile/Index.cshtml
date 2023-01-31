@@ -1,7 +1,6 @@
 ﻿@using Soofle.WEB.ViewModels.Links
 @using Soofle.WEB.ViewModels.Payments
 @using Soofle.WEB.ViewModels.Settings
-@using Soofle.WEB.ViewModels.Vk
 @model Soofle.WEB.ViewModels.Profile.ProfileViewModel
 @{
     ViewData["Title"] = "Профиль";
@@ -20,17 +19,15 @@
             <div class="col-4">
                 @if (Model.Vk != null)
                 {
-                    <h6>Вк: @Model.Vk!.Login</h6>
-                    <h6>Пароль: @Model.Vk!.Password</h6>
-                    <h6>Активирован: @(Model.Vk!.IsActive ? "Да" : "Нет")</h6>
+                    <h6>Вк: @Model.Vk</h6>
                 }
-            </div>
-            <div class="col-4">
                 @if (Model.LikeChat.HasValue)
                 {
                     <h6 class="d-inline-block" style="margin-bottom: 0.5rem;">Цель: </h6>
                     <a href="https://vk.com/id@(Model.LikeChat.Value)">Перейти</a>
                 }
+            </div>
+            <div class="col-4">
                 @if (Model.Stats.SubscriptionStart.HasValue)
                 {
                     <h6>Подписан с: @Model.Stats.SubscriptionStart.Value.ToOffset(TimeSpan.FromHours(3)).ToString("d")</h6>
@@ -45,26 +42,18 @@
         <h3>Действия</h3>
         <div class="card card-body">
             <p>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample" aria-expanded="false" aria-controls="multiCollapseExample">Смена имени</button>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1">Смена почты</button>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Смена пароля</button>
+                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample" aria-expanded="false" aria-controls="multiCollapseExample">Смена имени</button>
+                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1">Смена почты</button>
+                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Смена пароля</button>
             </p>
-            <div class="row">
-                <div class="col-12">
-                    <div class="collapse multi-collapse" id="multiCollapseExample">
-                        @await Html.PartialAsync("ChangeName", new ChangeNameViewModel { Name = Model.Name })
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="collapse multi-collapse" id="multiCollapseExample1">
-                        @await Html.PartialAsync("ChangeEmail", new ChangeEmailViewModel { Email = Model.Email })
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="collapse multi-collapse" id="multiCollapseExample2">
-                        @await Html.PartialAsync("ChangePassword", new ChangePasswordViewModel())
-                    </div>
-                </div>
+            <div class="collapse multi-collapse" id="multiCollapseExample">
+                @await Html.PartialAsync("ChangeName", new ChangeNameViewModel { Name = Model.Name })
+            </div>
+            <div class="collapse multi-collapse" id="multiCollapseExample1">
+                @await Html.PartialAsync("ChangeEmail", new ChangeEmailViewModel { Email = Model.Email })
+            </div>
+            <div class="collapse multi-collapse" id="multiCollapseExample2">
+                @await Html.PartialAsync("ChangePassword", new ChangePasswordViewModel())
             </div>
         </div>
     </div>
@@ -72,26 +61,11 @@
         <h3>Шпион</h3>
         <div class="card card-body">
             <p>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample3" aria-expanded="false" aria-controls="multiCollapseExample3">Смена Vk</button>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample4" aria-expanded="false" aria-controls="multiCollapseExample4">Активация Vk</button>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample5" aria-expanded="false" aria-controls="multiCollapseExample5">Смена цели</button>
+                <a class="btn menu-button btn-primary" asp-controller="Vk" asp-action="Login">Смена Vk</a>
+                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample5" aria-expanded="false" aria-controls="multiCollapseExample5">Смена цели</button>
             </p>
-            <div class="row">
-                <div class="col-12">
-                    <div class="collapse multi-collapse" id="multiCollapseExample3">
-                        @await Html.PartialAsync("ChangeVk", new SetVkViewModel { Login = Model.Vk?.Login! })
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="collapse multi-collapse" id="multiCollapseExample4">
-                        @await Html.PartialAsync("ActivateVk", new TwoFactorViewModel())
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="collapse multi-collapse" id="multiCollapseExample5">
-                        @await Html.PartialAsync("ChangeTarget", new ChangeTargetViewModel { Target = Model.LikeChat })
-                    </div>
-                </div>
+            <div class="collapse multi-collapse" id="multiCollapseExample5">
+                @await Html.PartialAsync("ChangeTarget", new ChangeTargetViewModel { Target = Model.LikeChat })
             </div>
         </div>
     </div>

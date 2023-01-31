@@ -1,4 +1,5 @@
-﻿using Soofle.Application.Abstractions.Proxies.Exceptions;
+﻿using Microsoft.Extensions.Logging;
+using Soofle.Application.Abstractions.Proxies.Exceptions;
 using Soofle.Application.Abstractions.Proxies.ServicesInterfaces;
 using Soofle.Application.Abstractions.ReportsManagement.ServicesInterfaces;
 using Soofle.Application.Abstractions.ReportsProcessors.Exceptions;
@@ -18,14 +19,17 @@ public class ReportStarterService : IReportStarter
     private readonly IReportProcessorService _processorService;
     private readonly IReportInitializerService _initializerService;
     private readonly IProxyGetter _proxySetter;
+    private readonly ILogger<ReportStarterService> _logger;
 
     public ReportStarterService(IUnitOfWork unitOfWork, IProxyGetter proxySetter,
-        IReportInitializerService initializerService, IReportProcessorService processorService)
+        IReportInitializerService initializerService, IReportProcessorService processorService,
+        ILogger<ReportStarterService> logger)
     {
         _unitOfWork = unitOfWork;
         _proxySetter = proxySetter;
         _initializerService = initializerService;
         _processorService = processorService;
+        _logger = logger;
     }
 
     public async Task StartLikeReportAsync(Guid id, CancellationToken token)
@@ -34,6 +38,7 @@ public class ReportStarterService : IReportStarter
         if (report == null) throw new ReportNotFoundException();
         try
         {
+            await CheckProxyAsync(report.UserId);
             if (!report.IsStarted)
                 await _initializerService.LikeReportInitializer.Value.InitializeReportAsync(report, token);
             await _processorService.LikeReportProcessor.Value.ProcessReportAsync(report, token);
@@ -54,6 +59,7 @@ public class ReportStarterService : IReportStarter
         if (report == null) throw new ReportNotFoundException();
         try
         {
+            await CheckProxyAsync(report.UserId);
             if (!report.IsStarted)
                 await _initializerService.CommentReportInitializer.Value.InitializeReportAsync(report, token);
             await _processorService.CommentReportProcessor.Value.ProcessReportAsync(report, token);
@@ -61,6 +67,7 @@ public class ReportStarterService : IReportStarter
         }
         catch (Exception e)
         {
+            _logger.LogWarning(e, "The report ended with an error. Id {ReportId}", report.Id);
             report.Finish(HandleException(e));
         }
 
@@ -93,16 +100,17 @@ public class ReportStarterService : IReportStarter
     {
         return ex switch
         {
-            ReportAlreadyCompletedException => "Отчёт уже является сформированным.",
-            VkRequestException => $"Ошибка VK: {ex.Message}.",
-            UnableFindProxyException => "Не удалось найти подходящий прокси сервер.",
-            ReportNotStartedException => "Отчёт не инициализован.",
-            VkIsNotActiveException => "Ваш VK аккаунт не авторизован.",
-            ProxyIsNotSetException => "У вас не установлен прокси.",
-            TooManyRequestErrorsException => $"Не удается получить информацию. {ex.Message}.",
-            UserNotFoundException => "Создатель отчёта не найден.",
-            PublicationsListEmptyException => "Публикации по хештегу не найдены.",
-            HttpRequestException => "Возникла ошибка с подключением на сервере.",
+            ReportAlreadyCompletedException => "Отчёт уже является сформированным",
+            VkRequestException => $"Ошибка VK: {ex.Message}",
+            UnableFindProxyException => "Не удалось найти подходящий прокси сервер",
+            ReportNotStartedException => "Отчёт не инициализован",
+            VkIsNotActiveException => "Ваш VK аккаунт не авторизован",
+            ProxyIsNotSetException => "У вас не установлен прокси",
+            TooManyRequestErrorsException => $"Не удается получить информацию. {ex.Message}",
+            UserNotFoundException => "Создатель отчёта не найден",
+            ElementsListEmptyException => "Участники не найдены",
+            PublicationsListEmptyException => "Публикации по хештегу не найдены",
+            HttpRequestException => "Возникла ошибка с подключением на сервере",
             _ => throw ex
         };
     }
@@ -112,6 +120,11 @@ public class ReportStarterService : IReportStarter
         var user = await _unitOfWork.UserRepository.Value.GetAsync(userId);
         if (user == null) throw new UserNotFoundException();
         if (user.Vk == null) throw new VkIsNotActiveException();
-        if (!user.Vk.ProxyId.HasValue) user.SetVkProxy(await _proxySetter.GetAsync());
+        if (!user.ProxyId.HasValue)
+        {
+            user.SetProxy(await _proxySetter.GetAsync());
+            await _unitOfWork.UserRepository.Value.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }

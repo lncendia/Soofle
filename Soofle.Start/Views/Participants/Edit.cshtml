@@ -1,13 +1,15 @@
-﻿
-@model Soofle.WEB.ViewModels.Participants.EditParticipantViewModel
+﻿@model Soofle.WEB.ViewModels.Participants.EditParticipantViewModel
 @{
     ViewData["Title"] = Model.Username;
     var items = ViewBag.Participants as List<(Guid Id, string Name)>;
+    var vk = (string)ViewBag.Link;
     var selectedListItems = items?.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 }
 <div id="message"></div>
 <div class="col-lg-6">
-    <h3>Редактирование участника @Model.Username</h3>
+    <h3>
+        Редактирование участника <a href="@vk">@Model.Username</a>
+    </h3>
     <form id="edit" asp-action="Edit" method="post" class="form-horizontal">
         <div asp-validation-summary="ModelOnly"></div>
         <input type="hidden" asp-for="Id">
@@ -50,5 +52,5 @@
 
 @section styles
 {
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 }

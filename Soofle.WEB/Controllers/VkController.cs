@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Soofle.Application.Abstractions.Proxies.Exceptions;
+using Soofle.Application.Abstractions.Users.Entities;
 using Soofle.Application.Abstractions.Users.Exceptions;
-using Soofle.Application.Abstractions.Vk.Exceptions;
-using Soofle.Application.Abstractions.Vk.ServicesInterfaces;
-using Soofle.WEB.ViewModels.Vk;
+using Soofle.Application.Abstractions.Users.ServicesInterfaces;
 using Soofle.Domain.Users.Exceptions;
 
 namespace Soofle.WEB.Controllers;
@@ -14,55 +14,42 @@ namespace Soofle.WEB.Controllers;
 public class VkController : Controller
 {
     private readonly IVkManager _vkManager;
+    private readonly SignInManager<UserData> _manager;
 
-    public VkController(IVkManager vkManager) => _vkManager = vkManager;
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Change(SetVkViewModel model)
+    public VkController(IVkManager vkManager, SignInManager<UserData> manager)
     {
-        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        try
-        {
-            await _vkManager.SetAsync(id, model.Login, model.Password);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            var text = ex switch
-            {
-                UserNotFoundException => "Пользователь не найден",
-                UnableFindProxyException => "Не удалось найти подходящий прокси",
-                _ => "Произошла ошибка при добавлении Vk"
-            };
-            return BadRequest(text);
-        }
+        _vkManager = vkManager;
+        _manager = manager;
     }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Activate(TwoFactorViewModel model)
+
+    public IActionResult Login()
     {
-        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var redirectUrl = Url.Action("ExternalLoginCallback", "Vk");
+        var properties = _manager.ConfigureExternalAuthenticationProperties("Vk", redirectUrl);
+        return new ChallengeResult("Vk", properties);
+    }
+
+    public async Task<IActionResult> ExternalLoginCallback()
+    {
+        var info = await _manager.GetExternalLoginInfoAsync();
+        if (info == null) return RedirectToAction(nameof(Login));
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try
         {
-            if (string.IsNullOrEmpty(model.Code)) await _vkManager.ActivateAsync(id);
-            else await _vkManager.ActivateTwoFactorAsync(id, model.Code);
-            return Ok();
+            await _vkManager.SetAsync(userId, info);
+            await HttpContext.SignOutAsync(info.AuthenticationProperties);
+            return RedirectToAction("Index", "Profile");
         }
         catch (Exception ex)
         {
             var text = ex switch
             {
                 UserNotFoundException => "Пользователь не найден",
-                InvalidCredentialsException => "Неверный логин или пароль",
-                TwoFactorRequiredException => "Укажите код двухфакторной авторизации",
-                UnableFindProxyException => "Не удалось найти подходящий прокси",
-                VkIsNotSetException => "Не установлен Vk",
-                ErrorActiveVkException=>"Ошибка при отправке запроса",
-                _ => "Произошла ошибка при активации Vk"
+                InvalidEmailException => "Неверный формат почты",
+                _ => "Произошла ошибка при входе"
             };
-            return BadRequest(text);
+            return RedirectToAction("Index", "Home", new { message = text });
         }
     }
 }

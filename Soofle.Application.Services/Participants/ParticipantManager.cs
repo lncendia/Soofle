@@ -68,8 +68,12 @@ public class ParticipantManager : IParticipantManager
         if (query.Vip.HasValue && participant.Vip != query.Vip.Value)
             return false;
 
-        if (!string.IsNullOrEmpty(query.NameNormalized) && !participant.Name.ToUpper().Contains(query.NameNormalized))
-            return false;
+        if (!string.IsNullOrEmpty(query.NameNormalized))
+        {
+            var b1 = participant.Name.ToUpper().Contains(query.NameNormalized);
+            var b2 = participant.VkId.ToString().Contains(query.NameNormalized);
+            if (!(b1 || b2)) return false;
+        }
 
         return true;
     }

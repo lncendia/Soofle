@@ -55,7 +55,7 @@ public class GetParticipantsService : IParticipantsService
     {
         string name;
         ParticipantType type;
-        if (subscription.Type == GroupType.Page)
+        if (subscription.Type == GroupType.Page || subscription.Type == GroupType.Group || subscription.Type == GroupType.Event)
         {
             name = subscription.Name;
             type = ParticipantType.Group;

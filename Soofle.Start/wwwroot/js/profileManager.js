@@ -1,7 +1,5 @@
 ﻿let sender = new AsyncSender('#message');
 $(document).ready(() => {
-    sender.Add('#setVk', "Vk успешно добавлен")
-    sender.Add('#activateVk', "Vk успешно активирован")
     sender.Add('#changeName', "Имя успешно изменено")
     sender.Add('#changeEmail', "Запрос отправлен вам на почту")
     sender.Add('#changePassword', "Пароль успешно изменен")
@@ -88,7 +86,7 @@ async function AcceptLink(el) {
         elReplace.className = 'badge bg-success'
         elReplace.innerHTML = 'Активна'
         stats.replaceWith(elReplace)
-    }
+    } else ShowMessage(await res.text())
 }
 
 

@@ -10,10 +10,9 @@ namespace Soofle.Start.Extensions;
 
 internal static class HangfireServices
 {
-    internal static void AddHangfireServices(this IServiceCollection services)
+    internal static void AddHangfireServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
-        var hangfireConnectionString = configuration!.GetConnectionString("Hangfire") ??
+        var hangfireConnectionString = configuration.GetConnectionString("Hangfire") ??
                                        throw new ConfigurationException("ConnectionStrings:Hangfire");
         services.AddScoped<IJobScheduler, JobScheduler>();
         services.AddScoped<IReportsRemovingService, ReportsRemovingService>();

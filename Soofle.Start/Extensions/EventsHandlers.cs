@@ -10,11 +10,16 @@ namespace Soofle.Start.Extensions;
 
 internal static class EventsHandlers
 {
-    internal static void AddEventsHandlers(this IServiceCollection services)
+    internal static void AddEventsHandlers(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddMediatR(typeof(Program).Assembly);
+        var amount = configuration.GetValue<decimal>("Payments:SubscribeCost");
         services.AddTransient<INotificationHandler<TransactionAcceptedEvent>, TransactionAcceptedDomainEventHandler>(
-            x => new TransactionAcceptedDomainEventHandler(x.GetRequiredService<IUnitOfWork>(), 10));
+            x =>
+            {
+                var uow = x.GetRequiredService<IUnitOfWork>();
+                return new TransactionAcceptedDomainEventHandler(uow, amount);
+            });
         services
             .AddTransient<INotificationHandler<ParticipantReportFinishedEvent>,
                 ParticipantReportFinishedDomainEventHandler>();

@@ -30,15 +30,16 @@ public class UserProfileService : IProfileService
     {
         var user = await _unitOfWork.UserRepository.Value.GetAsync(userId);
         if (user == null) throw new UserNotFoundException();
-        var links = await GetLinksAsync(userId);
-        var payments = await GetPaymentsAsync(userId);
+        return new ProfileDto(user.Vk?.Name, user.Target?.Id, user.Subscription?.SubscriptionDate,
+            user.Subscription?.ExpirationDate);
+    }
+
+    public async Task<StatsDto> GetStatisticAsync(Guid userId)
+    {
         var reportsCount = await GetReportsCountAsync(userId);
         var lastMonthReportsCount = await GetLastMonthReportsCountAsync(userId);
         var participantsCount = await GetParticipantsCountAsync(userId);
-        var vk = user.HasVk ? new VkDto(user.Vk!.Login, user.Vk.Password, user.Vk.IsActive) : null;
-        var stats = new StatsDto(participantsCount, reportsCount, lastMonthReportsCount);
-        return new ProfileDto(vk, user.ChatId, stats, links, payments, user.Subscription?.SubscriptionDate,
-            user.Subscription?.ExpirationDate);
+        return new StatsDto(participantsCount, reportsCount, lastMonthReportsCount);
     }
 
     private Task<int> GetLastMonthReportsCountAsync(Guid userId)
@@ -55,7 +56,7 @@ public class UserProfileService : IProfileService
         _unitOfWork.ParticipantRepository.Value.CountAsync(new ParticipantsByUserIdSpecification(userId));
 
 
-    private async Task<List<LinkDto>> GetLinksAsync(Guid userId)
+    public async Task<List<LinkDto>> GetLinksAsync(Guid userId)
     {
         var links = await _unitOfWork.LinkRepository.Value.FindAsync(new LinkByUserIdSpecification(userId));
         if (!links.Any()) return new List<LinkDto>();
@@ -74,7 +75,7 @@ public class UserProfileService : IProfileService
         }).ToList();
     }
 
-    private async Task<List<PaymentDto>> GetPaymentsAsync(Guid userId)
+    public async Task<List<PaymentDto>> GetPaymentsAsync(Guid userId)
     {
         var payments = await _unitOfWork.TransactionRepository.Value.FindAsync(
             new TransactionByUserIdSpecification(userId),

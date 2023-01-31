@@ -5,6 +5,7 @@
     <tr class="element">
         <td class="child">
             <a asp-action="Edit" asp-route-id="@participant.Id">@participant.Name</a>
+            <div>(@participant.VkId)</div>
         </td>
         <td class="child">
             @switch (participant.Type)

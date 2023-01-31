@@ -12,9 +12,9 @@ internal static class RequestInfoBuilder
     {
         var user = await unitOfWork.UserRepository.Value.GetAsync(report.UserId);
         if (user == null) throw new UserNotFoundException();
-        if (!user.HasVk || !user.Vk!.IsActive) throw new VkIsNotActiveException();
-        if (!user.Vk.ProxyId.HasValue) throw new ProxyIsNotSetException();
-        var proxy = await unitOfWork.ProxyRepository.Value.GetAsync(user.Vk.ProxyId.Value);
-        return new RequestInfo(user.Vk.AccessToken!, proxy!.Host, proxy.Port, proxy.Login, proxy.Password);
+        if (!user.HasVk) throw new VkIsNotActiveException();
+        if (!user.ProxyId.HasValue) throw new ProxyIsNotSetException();
+        var proxy = await unitOfWork.ProxyRepository.Value.GetAsync(user.ProxyId.Value);
+        return new RequestInfo(user.Vk!.AccessToken, proxy!.Host, proxy.Port, proxy.Login, proxy.Password);
     }
 }

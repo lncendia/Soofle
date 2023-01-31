@@ -17,10 +17,10 @@ public class User : AggregateRoot
         Email = email;
     }
 
-
     public Vk? Vk { get; private set; }
     public Subscription? Subscription { get; private set; }
-    public long? ChatId { get; set; }
+    public Target? Target { get; private set; }
+    public Guid? ProxyId { get; private set; }
 
     private string _email;
 
@@ -64,26 +64,17 @@ public class User : AggregateRoot
     }
 
     public bool IsSubscribed => Subscription is { IsExpired: false };
+    public void SetProxy(Proxy proxy) => ProxyId = proxy.Id;
 
-    /// <exception cref="VkIsNotSetException"></exception>
-    public void SetVkProxy(Proxy proxy)
-    {
-        if (Vk == null) throw new VkIsNotSetException();
-        Vk.SetProxy(proxy);
-    }
+    public void SetVk(string name, string token) => Vk = new Vk(name, token);
 
-    public void SetVk(string username, string password)
+    public void SetTarget(long id)
     {
-        if (Vk == null) Vk = new Vk(username, password, 1);
-        else Vk.UpdateData(username, password);
+        var dateComparison = DateTimeOffset.Now.AddDays(-1);
+        if (Target != null && Target.SetDate > dateComparison)
+            throw new TargetChangeException(Target.SetDate - dateComparison);
+        Target = new Target(id);
     }
 
     public bool HasVk => Vk != null;
-
-    /// <exception cref="VkIsNotSetException"></exception>
-    public void ActivateVk(string token)
-    {
-        if (Vk == null) throw new VkIsNotSetException();
-        Vk.UpdateToken(token);
-    }
 }

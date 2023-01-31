@@ -50,12 +50,17 @@ internal static class ReportInitializer
     private static readonly FieldInfo ReportProcess =
         PublicationReportType.GetField("<Process>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
+    private static readonly FieldInfo ReportAllParticipants =
+        PublicationReportType.GetField("<AllParticipants>k__BackingField",
+            BindingFlags.Instance | BindingFlags.NonPublic)!;
+
     private static readonly FieldInfo PublicationIsLoaded =
         typeof(Publication).GetField("<IsLoaded>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
     internal static void InitPublicationReport(PublicationReport report, IEnumerable<PublicationReportElement> elements,
         PublicationReportModel model)
     {
+        ReportAllParticipants.SetValue(report, model.AllParticipants);
         ReportLinkedUsersList.SetValue(report, model.LinkedUsers.Select(x => x.Id).ToList());
         ReportHashtag.SetValue(report, model.Hashtag);
         ReportSearchStartDate.SetValue(report, model.SearchStartDate);

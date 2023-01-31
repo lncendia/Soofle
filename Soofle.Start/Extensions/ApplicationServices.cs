@@ -8,7 +8,6 @@ using Soofle.Application.Abstractions.ReportsManagement.ServicesInterfaces;
 using Soofle.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
 using Soofle.Application.Abstractions.ReportsQuery.ServicesInterfaces;
 using Soofle.Application.Abstractions.Users.ServicesInterfaces;
-using Soofle.Application.Abstractions.Vk.ServicesInterfaces;
 using Soofle.Application.Services.Elements;
 using Soofle.Application.Services.Elements.Mappers;
 using Soofle.Application.Services.Links;
@@ -22,7 +21,6 @@ using Soofle.Application.Services.ReportsProcessors.Processors;
 using Soofle.Application.Services.ReportsQuery;
 using Soofle.Application.Services.ReportsQuery.Mappers;
 using Soofle.Application.Services.Users;
-using Soofle.Application.Services.Vk;
 
 namespace Soofle.Start.Extensions;
 

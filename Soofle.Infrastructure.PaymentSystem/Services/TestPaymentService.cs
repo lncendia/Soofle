@@ -16,7 +16,7 @@ public class TestPaymentService : IPaymentCreatorService
 {
     public Task<PaymentData> CreateAsync(Guid id, decimal cost)
     {
-        return Task.FromResult(new PaymentData("f", "f", 1));
+        return Task.FromResult(new PaymentData("f", "f"));
     }
 
     public Task<bool> CheckAsync(string billId)

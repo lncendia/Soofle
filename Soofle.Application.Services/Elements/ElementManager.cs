@@ -35,7 +35,8 @@ public class ElementManager : IReportElementManager
         {
             report = await _unitOfWork.LikeReportRepository.Value.GetAsync(reportId);
             if (report == null) throw new ReportNotFoundException();
-            _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
+            if (report.IsCompleted)
+                _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
         }
 
         if (report!.UserId != userId && !report.LinkedUsers.Contains(userId)) throw new ReportNotFoundException();
@@ -44,7 +45,7 @@ public class ElementManager : IReportElementManager
         var elements = report.Elements.GroupBy(x => x.Parent).ToList();
         var result = new List<LikeReportElement>();
         if (!elements.Any()) return new LikeReportElementsDto(new List<LikeElementDto>(), publications);
-        foreach (var element in elements.First(x => x.Key == null).OrderBy(x=>x.Name))
+        foreach (var element in elements.First(x => x.Key == null).OrderBy(x => x.Name))
         {
             var children = elements.FirstOrDefault(x => x.Key == element)?.ToList();
             if (query.HasChildren.HasValue)
@@ -54,7 +55,7 @@ public class ElementManager : IReportElementManager
             }
 
             var valid = IsPublicationElementValid(element, query);
-            var validChildren = children?.Where(x => IsPublicationElementValid(x, query)).OrderBy(x=>x.Name).ToList();
+            var validChildren = children?.Where(x => IsPublicationElementValid(x, query)).OrderBy(x => x.Name).ToList();
             if (valid)
             {
                 result.Add(element);
@@ -79,7 +80,8 @@ public class ElementManager : IReportElementManager
         {
             report = await _unitOfWork.CommentReportRepository.Value.GetAsync(reportId);
             if (report == null) throw new ReportNotFoundException();
-            _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
+            if (report.IsCompleted)
+                _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
         }
 
         if (report!.UserId != userId && !report.LinkedUsers.Contains(userId)) throw new ReportNotFoundException();
@@ -88,7 +90,7 @@ public class ElementManager : IReportElementManager
         var elements = report.Elements.GroupBy(x => x.Parent).ToList();
         var result = new List<CommentReportElement>();
         if (!elements.Any()) return new CommentReportElementsDto(new List<CommentElementDto>(), publications);
-        foreach (var element in elements.First(x => x.Key == null).OrderBy(x=>x.Name))
+        foreach (var element in elements.First(x => x.Key == null).OrderBy(x => x.Name))
         {
             var children = elements.FirstOrDefault(x => x.Key == element)?.ToList();
             if (query.HasChildren.HasValue)
@@ -98,7 +100,7 @@ public class ElementManager : IReportElementManager
             }
 
             var valid = IsPublicationElementValid(element, query);
-            var validChildren = children?.Where(x => IsPublicationElementValid(x, query)).OrderBy(x=>x.Name).ToList();
+            var validChildren = children?.Where(x => IsPublicationElementValid(x, query)).OrderBy(x => x.Name).ToList();
             if (valid)
             {
                 result.Add(element);
@@ -127,13 +129,17 @@ public class ElementManager : IReportElementManager
 
         if (query.Vip.HasValue && element.Vip != query.Vip.Value)
             return false;
-
-        if (!string.IsNullOrEmpty(query.NameNormalized) && !element.Name.ToUpper().Contains(query.NameNormalized))
-            return false;
-
+        
         if (!string.IsNullOrEmpty(query.LikeChatName) && !element.LikeChatName.Contains(query.LikeChatName))
             return false;
-
+        
+        if (!string.IsNullOrEmpty(query.NameNormalized))
+        {
+            var b1 = element.Name.ToUpper().Contains(query.NameNormalized);
+            var b2 = element.VkId.ToString().Contains(query.NameNormalized);
+            if (!(b1 || b2)) return false;
+        }
+        
         return true;
     }
 
@@ -149,7 +155,8 @@ public class ElementManager : IReportElementManager
         {
             var b1 = element.Name.ToUpper().Contains(query.NameNormalized);
             var b2 = element.NewName?.ToUpper().Contains(query.NameNormalized) ?? false;
-            if (!(b1 || b2)) return false;
+            var b3 = element.VkId.ToString().Contains(query.NameNormalized);
+            if (!(b1 || b2 || b3)) return false;
         }
 
         return true;
@@ -162,7 +169,8 @@ public class ElementManager : IReportElementManager
         {
             report = await _unitOfWork.ParticipantReportRepository.Value.GetAsync(reportId);
             if (report == null) throw new ReportNotFoundException();
-            _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
+            if (report.IsCompleted)
+                _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
         }
 
         if (report == null) throw new ReportNotFoundException();
@@ -170,7 +178,7 @@ public class ElementManager : IReportElementManager
         var elements = report.Participants.GroupBy(x => x.Parent).ToList();
         var result = new List<ParticipantReportElement>();
         if (!elements.Any()) return new List<ParticipantElementDto>();
-        foreach (var element in elements.First(x => x.Key == null).OrderBy(x=>x.Name))
+        foreach (var element in elements.First(x => x.Key == null).OrderBy(x => x.Name))
         {
             var children = elements.FirstOrDefault(x => x.Key == element)?.ToList();
             if (query.HasChildren.HasValue)
@@ -180,7 +188,7 @@ public class ElementManager : IReportElementManager
             }
 
             var valid = IsParticipantElementValid(element, query);
-            var validChildren = children?.Where(x => IsParticipantElementValid(x, query)).OrderBy(x=>x.Name).ToList();
+            var validChildren = children?.Where(x => IsParticipantElementValid(x, query)).OrderBy(x => x.Name).ToList();
             if (valid)
             {
                 result.Add(element);

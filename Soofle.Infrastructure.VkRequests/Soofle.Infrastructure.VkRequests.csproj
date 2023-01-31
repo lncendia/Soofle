@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="CaptchaSharp" Version="1.0.12" />
       <PackageReference Include="VkNet" Version="1.72.0" />
     </ItemGroup>
 

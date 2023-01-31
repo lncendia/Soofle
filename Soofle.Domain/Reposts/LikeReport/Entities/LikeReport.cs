@@ -14,8 +14,8 @@ namespace Soofle.Domain.Reposts.LikeReport.Entities;
 
 public class LikeReport : PublicationReport.Entities.PublicationReport
 {
-    public LikeReport(User user, string hashtag, DateTimeOffset? startDate = null,
-        IReadOnlyCollection<Link>? coAuthors = null) : base(user, hashtag, startDate, coAuthors)
+    public LikeReport(User user, string hashtag, bool allParticipants, DateTimeOffset? startDate = null,
+        IReadOnlyCollection<Link>? coAuthors = null) : base(user, hashtag, allParticipants, startDate, coAuthors)
     {
         AddDomainEvent(new ReportCreatedEvent(LinkedUsers.Concat(new[] { UserId }), Id, ReportType.Likes, CreationDate,
             Hashtag));

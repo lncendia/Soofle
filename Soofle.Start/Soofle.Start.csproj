@@ -4,19 +4,18 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>d6fccc5e-b4aa-416c-9454-ee74b33e6849</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Soofle.Application.Services\Soofle.Application.Services.csproj" />
       <ProjectReference Include="..\Soofle.Domain.Services\Soofle.Domain.Services.csproj" />
-      <ProjectReference Include="..\Soofle.Infrastructure.AntiCaptcha\Soofle.Infrastructure.AntiCaptcha.csproj" />
       <ProjectReference Include="..\Soofle.Infrastructure.ApplicationDataStorage\Soofle.Infrastructure.ApplicationDataStorage.csproj" />
       <ProjectReference Include="..\Soofle.Infrastructure.BackgroundTasks\Soofle.Infrastructure.BackgroundTasks.csproj" />
       <ProjectReference Include="..\Soofle.Infrastructure.DataStorage\Soofle.Infrastructure.DataStorage.csproj" />
       <ProjectReference Include="..\Soofle.Infrastructure.Mailing\Soofle.Infrastructure.Mailing.csproj" />
       <ProjectReference Include="..\Soofle.Infrastructure.PaymentSystem\Soofle.Infrastructure.PaymentSystem.csproj" />
       <ProjectReference Include="..\Soofle.Infrastructure.VkRequests\Soofle.Infrastructure.VkRequests.csproj" />
-      <ProjectReference Include="..\Soofle.Infrastructure.VkAuthentication\Soofle.Infrastructure.VkAuthentication.csproj" />
       <ProjectReference Include="..\Soofle.WEB\Soofle.WEB.csproj" />
     </ItemGroup>
 

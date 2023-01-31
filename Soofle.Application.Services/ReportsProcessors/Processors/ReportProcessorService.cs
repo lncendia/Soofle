@@ -1,4 +1,5 @@
-﻿using Soofle.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
+﻿using Microsoft.Extensions.Logging;
+using Soofle.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
 using Soofle.Application.Abstractions.VkRequests.ServicesInterfaces;
 using Soofle.Domain.Abstractions.UnitOfWorks;
 using Soofle.Domain.Reposts.CommentReport.Entities;
@@ -10,8 +11,7 @@ namespace Soofle.Application.Services.ReportsProcessors.Processors;
 public class ReportProcessorService : IReportProcessorService
 {
     public ReportProcessorService(IUnitOfWork unitOfWork, ILikeInfoService likeInfoService,
-        ICommentInfoService commentInfoService,
-        IParticipantsService participantsGetterService)
+        ICommentInfoService commentInfoService, IParticipantsService participantsGetterService)
     {
         LikeReportProcessor = new Lazy<IReportProcessorUnit<LikeReport>>(
             () => new LikeReportProcessor(unitOfWork, likeInfoService));

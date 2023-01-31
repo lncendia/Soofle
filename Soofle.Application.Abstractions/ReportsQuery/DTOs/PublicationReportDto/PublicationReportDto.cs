@@ -9,6 +9,7 @@ public abstract class PublicationReportDto : ReportDto.ReportDto
         if (builder.LinkedUsers != null) LinkedUsers.AddRange(builder.LinkedUsers);
         PublicationsCount = builder.PublicationsCount;
         Process = builder.Process;
+        AllParticipants = builder.AllParticipants;
     }
 
     public List<string> LinkedUsers { get; } = new();
@@ -16,4 +17,5 @@ public abstract class PublicationReportDto : ReportDto.ReportDto
     public DateTimeOffset? SearchStartDate { get; }
     public int PublicationsCount { get; }
     public int Process { get; }
+    public bool AllParticipants { get; }
 }

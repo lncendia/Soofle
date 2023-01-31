@@ -24,6 +24,7 @@ internal static class ReportModelInitializer
 
         report.Hashtag = element.Hashtag;
         report.Process = element.Process;
+        report.AllParticipants = element.AllParticipants;
         report.SearchStartDate = element.SearchStartDate;
         InitReportModel(report, element);
     }

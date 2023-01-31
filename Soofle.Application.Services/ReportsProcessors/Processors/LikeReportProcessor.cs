@@ -32,39 +32,24 @@ public class LikeReportProcessor : IReportProcessorUnit<LikeReport>
     private async Task ProcessPublicationsAsync(LikeReport report, RequestInfo info, CancellationToken token)
     {
         int count = 0, i = report.Process;
-        for (; i < report.Publications.Count; i += 3)
+        for (; i < report.Publications.Count; i++)
         {
-            var publications = report.Publications.Skip(i).Take(3).ToList();
-            var tasks = publications.Select(x => GetAsync(x, info)).ToList();
+            var publication = report.Publications.ElementAt(i);
             try
             {
-                await Task.WhenAll(tasks);
+                var result = await GetAsync(publication, info);
+                report.SetLikes(new LikesDto(publication.ItemId, publication.OwnerId, result));
                 count = 0;
             }
-            catch (Exception exception)
+            catch (VkRequestException exception)
             {
-                var exceptions = tasks.Where(x => x.IsFaulted).SelectMany(x => x.Exception!.InnerExceptions).ToList();
-                var ex = exceptions.FirstOrDefault(x => x is not VkRequestException);
-                if (ex != null) throw ex;
-                count += exceptions.Count;
+                count++;
+                report.SetLikes(new LikesDto(publication.ItemId, publication.OwnerId));
                 if (count > 5) throw new TooManyRequestErrorsException(exception.Message);
             }
-            finally
-            {
-                for (int j = 0; j < publications.Count; j++)
-                {
-                    var pub = publications[j];
-                    var result = tasks[j];
 
-                    var likeResult = result.IsFaulted
-                        ? new LikesDto(pub.ItemId, pub.OwnerId)
-                        : new LikesDto(pub.ItemId, pub.OwnerId, result.Result);
-                    report.SetLikes(likeResult);
-                }
-
-                await Task.Delay(500, token);
-                if (i % 60 == 0) await SaveAsync(report);
-            }
+            if (i % 60 == 0) await SaveAsync(report);
+            await Task.Delay(1000, token);
         }
 
         await SaveAsync(report);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Soofle.Infrastructure.DataStorage.Context;
 
@@ -11,9 +12,11 @@ using Soofle.Infrastructure.DataStorage.Context;
 namespace Soofle.Infrastructure.DataStorage.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230123201547_mig1")]
+    partial class mig1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -292,8 +295,8 @@ namespace Soofle.Infrastructure.DataStorage.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AccessToken")
-                        .HasColumnType("nvarchar(500)");
+                    b.Property<long?>("ChatId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -306,26 +309,51 @@ namespace Soofle.Infrastructure.DataStorage.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ProxyId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTimeOffset?>("SubscriptionDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<long?>("Target")
-                        .HasColumnType("bigint");
+                    b.Property<int?>("VkId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTimeOffset?>("TargetSetTime")
-                        .HasColumnType("datetimeoffset");
+                    b.HasKey("Id");
 
-                    b.Property<string>("VkName")
+                    b.HasIndex("VkId")
+                        .IsUnique()
+                        .HasFilter("[VkId] IS NOT NULL");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Soofle.Infrastructure.DataStorage.Models.VkModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccessToken")
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("ProxyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProxyId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Vks");
                 });
 
             modelBuilder.Entity("Soofle.Infrastructure.DataStorage.Models.Reports.CommentReport.CommentReportElementModel", b =>
@@ -564,6 +592,15 @@ namespace Soofle.Infrastructure.DataStorage.Migrations
 
             modelBuilder.Entity("Soofle.Infrastructure.DataStorage.Models.UserModel", b =>
                 {
+                    b.HasOne("Soofle.Infrastructure.DataStorage.Models.VkModel", "Vk")
+                        .WithOne("User")
+                        .HasForeignKey("Soofle.Infrastructure.DataStorage.Models.UserModel", "VkId");
+
+                    b.Navigation("Vk");
+                });
+
+            modelBuilder.Entity("Soofle.Infrastructure.DataStorage.Models.VkModel", b =>
+                {
                     b.HasOne("Soofle.Infrastructure.DataStorage.Models.ProxyModel", "Proxy")
                         .WithMany()
                         .HasForeignKey("ProxyId")
@@ -603,6 +640,12 @@ namespace Soofle.Infrastructure.DataStorage.Migrations
                         .IsRequired();
 
                     b.Navigation("Report");
+                });
+
+            modelBuilder.Entity("Soofle.Infrastructure.DataStorage.Models.VkModel", b =>
+                {
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Soofle.Infrastructure.DataStorage.Models.Reports.ParticipantReport.ParticipantReportModel", b =>

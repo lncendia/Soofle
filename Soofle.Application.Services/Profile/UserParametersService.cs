@@ -107,7 +107,7 @@ public class UserParametersService : IUserParametersService
     {
         var user = await _unitOfWork.UserRepository.Value.GetAsync(userId);
         if (user == null) throw new UserNotFoundException();
-        user.ChatId = target;
+        user.SetTarget(target);
         await _unitOfWork.UserRepository.Value.UpdateAsync(user);
         await _unitOfWork.SaveChangesAsync();
     }

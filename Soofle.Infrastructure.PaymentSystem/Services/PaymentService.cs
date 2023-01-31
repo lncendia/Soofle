@@ -8,7 +8,6 @@ using RestSharp;
 using Soofle.Application.Abstractions.Payments.DTOs;
 using Soofle.Application.Abstractions.Payments.Exceptions;
 using Soofle.Application.Abstractions.Payments.ServicesInterfaces;
-using Soofle.Application.Abstractions.Proxies.DTOs;
 
 namespace Soofle.Infrastructure.PaymentSystem.Services;
 
@@ -43,7 +42,7 @@ public class PaymentService : IPaymentCreatorService
                     }
                 });
 
-            return new PaymentData(response.BillId, response.PayUrl.ToString(), response.Amount.ValueDecimal);
+            return new PaymentData(response.BillId, response.PayUrl.ToString());
         }
         catch (Exception ex)
         {

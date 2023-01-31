@@ -12,26 +12,28 @@ internal class UserMapper : IAggregateMapperUnit<User, UserModel>
     private static readonly FieldInfo UserSubscription =
         typeof(User).GetField("<Subscription>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
+    private static readonly FieldInfo UserProxy =
+        typeof(User).GetField("<ProxyId>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
+
+    private static readonly FieldInfo TargetDate =
+        typeof(Target).GetField("<SetDate>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
+
     public User Map(UserModel model)
     {
         var user = new User(model.Name, model.Email);
         IdFields.AggregateId.SetValue(user, model.Id);
-        user.ChatId = model.ChatId;
+        if (model.Target.HasValue)
+        {
+            user.SetTarget(model.Target.Value);
+            TargetDate.SetValue(user.Target, model.TargetSetTime);
+        }
+        
+        UserProxy.SetValue(user, model.ProxyId);
         if (model.SubscriptionDate.HasValue)
             UserSubscription.SetValue(user, GetSubscription(model.SubscriptionDate.Value, model.ExpirationDate!.Value));
-
-        if (model.Vk == null) return user;
-        user.SetVk(model.Vk.Username, model.Vk.Password);
-        IdFields.EntityId.SetValue(user.Vk, model.Vk.EntityId);
-        VkProxy.SetValue(user.Vk, model.Vk.ProxyId);
-        if (!string.IsNullOrEmpty(model.Vk.AccessToken)) user.ActivateVk(model.Vk.AccessToken);
-
+        if (model.AccessToken != null) user.SetVk(model.VkName!, model.AccessToken);
         return user;
     }
-
-
-    private static readonly FieldInfo VkProxy =
-        typeof(Vk).GetField("<ProxyId>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
     private static readonly Type SubscriptionElementType = typeof(Subscription);
 

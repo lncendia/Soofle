@@ -1,4 +1,5 @@
-﻿using Soofle.Infrastructure.DataStorage.Models.Abstractions;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Soofle.Infrastructure.DataStorage.Models.Abstractions;
 
 namespace Soofle.Infrastructure.DataStorage.Models;
 
@@ -9,7 +10,12 @@ public class UserModel : IAggregateModel
     public string Email { get; set; } = null!;
     public DateTimeOffset? SubscriptionDate { get; set; }
     public DateTimeOffset? ExpirationDate { get; set; }
-    public VkModel? Vk { get; set; }
-    public int? VkId { get; set; }
-    public long? ChatId { get; set; }
+    [Column(TypeName = "nvarchar(100)")] public string? VkName { get; set; }
+
+    [Column(TypeName = "nvarchar(500)")] public string? AccessToken { get; set; }
+
+    public Guid? ProxyId { get; set; }
+    public ProxyModel? Proxy { get; set; }
+    public long? Target { get; set; }
+    public DateTimeOffset? TargetSetTime { get; set; }
 }

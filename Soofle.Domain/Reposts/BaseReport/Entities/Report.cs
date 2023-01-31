@@ -10,8 +10,7 @@ public abstract class Report : AggregateRoot
     private protected Report(User user)
     {
         if (!user.IsSubscribed) throw new UserSubscribeException(user.Id, user.Name);
-        if (!user.HasVk || !user.Vk!.IsActive) throw new UserVkException(user.Id);
-        if (!user.Vk.ProxyId.HasValue) throw new UserVkException(user.Id);
+        if (!user.HasVk) throw new UserVkException(user.Id);
         UserId = user.Id;
     }
 

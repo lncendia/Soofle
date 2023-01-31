@@ -2,24 +2,17 @@
 
 public class ProfileDto
 {
-    public ProfileDto(VkDto? vk, long? chatId, StatsDto stats, List<LinkDto> links, List<PaymentDto> payments,
-        DateTimeOffset? subscriptionStart, DateTimeOffset? subscriptionEnd)
+    public ProfileDto(string? vk, long? chatId, DateTimeOffset? subscriptionStart, DateTimeOffset? subscriptionEnd)
     {
-        Links = links;
-        Payments = payments;
         SubscriptionStart = subscriptionStart;
         SubscriptionEnd = subscriptionEnd;
-        Stats = stats;
-        Vk = vk;
         ChatId = chatId;
+        VkLogin = vk;
     }
 
-    public VkDto? Vk { get; }
-    public StatsDto Stats { get; }
+    public string? VkLogin { get; }
     public long? ChatId { get; }
-
-    public List<LinkDto> Links { get; }
-    public List<PaymentDto> Payments { get; }
+    
     public DateTimeOffset? SubscriptionStart { get; }
     public DateTimeOffset? SubscriptionEnd { get; }
 }

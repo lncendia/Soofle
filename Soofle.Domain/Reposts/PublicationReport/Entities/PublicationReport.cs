@@ -10,11 +10,12 @@ namespace Soofle.Domain.Reposts.PublicationReport.Entities;
 
 public abstract class PublicationReport : Report
 {
-    protected internal PublicationReport(User user, string hashtag, DateTimeOffset? searchStartDate = null,
-        IReadOnlyCollection<Link>? coAuthors = null) : base(user)
+    protected internal PublicationReport(User user, string hashtag, bool allParticipants,
+        DateTimeOffset? searchStartDate = null, IReadOnlyCollection<Link>? coAuthors = null) : base(user)
     {
         if (!hashtag.StartsWith('#')) hashtag = '#' + hashtag;
         Hashtag = hashtag;
+        AllParticipants = allParticipants;
         SearchStartDate = searchStartDate;
         if (coAuthors == null) return;
         if (coAuthors.Count > 3) throw new TooManyLinksException();
@@ -32,6 +33,7 @@ public abstract class PublicationReport : Report
     public string Hashtag { get; }
     public DateTimeOffset? SearchStartDate { get; }
     public int Process { get; protected set; }
+    public bool AllParticipants { get; }
 
     protected List<Publication> PublicationsList = new();
     public IReadOnlyCollection<Publication> Publications => PublicationsList.AsReadOnly();
@@ -39,9 +41,9 @@ public abstract class PublicationReport : Report
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     private void LoadPublications(IEnumerable<PublicationDto> publications)
     {
-        if (!publications.Any()) throw new PublicationsListEmptyException();
         var id = 1;
         PublicationsList = publications.Select(dto => new Publication(dto.ItemId, dto.OwnerId, id++)).ToList();
+        if (!publications.Any()) throw new PublicationsListEmptyException();
     }
 
     ///<exception cref="ReportAlreadyCompletedException">Report already completed</exception>
@@ -49,12 +51,13 @@ public abstract class PublicationReport : Report
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     private void LoadElements(IEnumerable<PublicationReportElement> elements)
     {
-        if (!elements.Any()) throw new ElementsListEmptyException();
         ReportElementsList.AddRange(elements);
+        if(!ReportElementsList.Any()) throw new ElementsListEmptyException();
     }
 
     protected void Start(IEnumerable<PublicationDto> publications, IEnumerable<PublicationReportElement> elements)
     {
+        if (!AllParticipants) elements = elements.Where(x => publications.Any(p => p.OwnerId == x.VkId));
         LoadPublications(publications);
         LoadElements(elements);
         base.Start();

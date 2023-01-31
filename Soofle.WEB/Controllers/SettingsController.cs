@@ -162,8 +162,9 @@ public class SettingsController : Controller
             var text = ex switch
             {
                 UserNotFoundException => "Пользователь не найден",
-                InvalidNicknameException => "Некорректные данные",
-                _ => "Произошла ошибка при изменении имени"
+                TargetChangeException exception =>
+                    $"Вы сможете изменить цель через {exception.RestTime.Hours}ч. {exception.RestTime.Minutes}м.",
+                _ => "Произошла ошибка при смене цели"
             };
 
             return BadRequest(text);

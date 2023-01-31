@@ -10,27 +10,26 @@ namespace Soofle.Start.Extensions;
 
 internal static class AuthenticationServices
 {
-    internal static void AddAuthenticationServices(this IServiceCollection services)
+    internal static void AddAuthenticationServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var configuration = services.BuildServiceProvider().GetService<IConfiguration>(); //todo
         var vkOauth = new
         {
-            Client = configuration!.GetValue<string>("OAuth:Vkontakte:Client") ??
+            Client = configuration.GetValue<string>("OAuth:Vkontakte:Client") ??
                      throw new ConfigurationException("OAuth:Vkontakte:Client"),
-            Secret = configuration!.GetValue<string>("OAuth:Vkontakte:Secret") ??
+            Secret = configuration.GetValue<string>("OAuth:Vkontakte:Secret") ??
                      throw new ConfigurationException("OAuth:Vkontakte:Secret")
         };
 
         var yandexOauth = new
         {
-            Client = configuration!.GetValue<string>("OAuth:Yandex:Client") ??
+            Client = configuration.GetValue<string>("OAuth:Yandex:Client") ??
                      throw new ConfigurationException("OAuth:Yandex:Client"),
-            Secret = configuration!.GetValue<string>("OAuth:Yandex:Secret") ??
+            Secret = configuration.GetValue<string>("OAuth:Yandex:Secret") ??
                      throw new ConfigurationException("OAuth:Yandex:Secret")
         };
 
         services.AddTransient<IUserValidator<UserData>, UserValidator>();
-        
+
         services.AddIdentity<UserData, RoleData>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
@@ -44,8 +43,15 @@ internal static class AuthenticationServices
             {
                 options.ClientId = vkOauth.Client;
                 options.ClientSecret = vkOauth.Secret;
-                options.Scope.Add("email");
-            }).AddYandex(options =>
+            }).AddVkontakte("Vk", options =>
+            {
+                options.ClientId = vkOauth.Client;
+                options.ClientSecret = vkOauth.Secret;
+                options.Scope.Add("offline");
+                options.CallbackPath = new PathString("/signin-vk");
+                options.SaveTokens = true;
+            })
+            .AddYandex(options =>
             {
                 options.ClientId = yandexOauth.Client;
                 options.ClientSecret = yandexOauth.Secret;

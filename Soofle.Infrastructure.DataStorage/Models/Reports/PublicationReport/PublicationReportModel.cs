@@ -9,4 +9,5 @@ public abstract class PublicationReportModel : ReportModel
     public DateTimeOffset? SearchStartDate { get; set; }
     public List<PublicationModel> Publications { get; set; } = new();
     public int Process { get; set; }
+    public bool AllParticipants { get; set; }
 }

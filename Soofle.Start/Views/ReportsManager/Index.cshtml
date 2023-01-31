@@ -9,29 +9,20 @@
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1">Проверка участников</button>
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Проверка лайков</button>
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample3" aria-expanded="false" aria-controls="multiCollapseExample3">Проверка комментариев</button>
-
     </p>
-    <div class="row">
-        <div class="col-12">
-            <div class="collapse multi-collapse" id="multiCollapseExample1">
-                <div class="card card-body">
-                    @await Html.PartialAsync("StartParticipantReport")
-                </div>
-            </div>
+    <div class="collapse multi-collapse" id="multiCollapseExample1">
+        <div class="card card-body">
+            @await Html.PartialAsync("StartParticipantReport")
         </div>
-        <div class="col-12">
-            <div class="collapse multi-collapse" id="multiCollapseExample2">
-                <div class="card card-body">
-                    @await Html.PartialAsync("StartLikeReport")
-                </div>
-            </div>
+    </div>
+    <div class="collapse multi-collapse" id="multiCollapseExample2">
+        <div class="card card-body">
+            @await Html.PartialAsync("StartLikeReport")
         </div>
-        <div class="col-12">
-            <div class="collapse multi-collapse" id="multiCollapseExample3">
-                <div class="card card-body">
-                    @await Html.PartialAsync("StartCommentReport")
-                </div>
-            </div>
+    </div>
+    <div class="collapse multi-collapse" id="multiCollapseExample3">
+        <div class="card card-body">
+            @await Html.PartialAsync("StartCommentReport")
         </div>
     </div>
 </div>

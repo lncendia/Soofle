@@ -14,12 +14,11 @@ namespace Soofle.Domain.Reposts.CommentReport.Entities;
 
 public class CommentReport : PublicationReport.Entities.PublicationReport
 {
-    public CommentReport(User user, string hashtag, DateTimeOffset? startDate = null,
-        IReadOnlyCollection<Link>? coAuthors = null) : base(user, hashtag, startDate, coAuthors)
+    public CommentReport(User user, string hashtag, bool allParticipants, DateTimeOffset? startDate = null,
+        IReadOnlyCollection<Link>? coAuthors = null) : base(user, hashtag, allParticipants, startDate, coAuthors)
     {
         AddDomainEvent(new ReportCreatedEvent(LinkedUsers.Concat(new[] { UserId }), Id, ReportType.Comments,
-            CreationDate,
-            Hashtag));
+            CreationDate, Hashtag));
     }
 
     public IReadOnlyCollection<CommentReportElement> Elements =>
@@ -37,8 +36,7 @@ public class CommentReport : PublicationReport.Entities.PublicationReport
         foreach (var participantsDto in participants)
         {
             ProcessCommentChat(participantsDto.Participants.DistinctBy(x => x.Id).ToList(),
-                participantsDto.LikeChatName,
-                elements);
+                participantsDto.LikeChatName, elements);
         }
 
         base.Start(publications, elements);

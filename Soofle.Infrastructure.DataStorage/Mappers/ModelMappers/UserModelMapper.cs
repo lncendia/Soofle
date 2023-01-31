@@ -14,51 +14,17 @@ internal class UserModelMapper : IModelMapperUnit<UserModel, User>
 
     public async Task<UserModel> MapAsync(User model)
     {
-        var user = await _context.Users.Include(x => x.Vk).FirstOrDefaultAsync(x => x.Id == model.Id) ??
-                   new UserModel { Id = model.Id };
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == model.Id) ?? new UserModel { Id = model.Id };
         user.Name = model.Name;
         user.Email = model.Email;
         user.SubscriptionDate = model.Subscription?.SubscriptionDate;
         user.ExpirationDate = model.Subscription?.ExpirationDate;
-        user.ChatId = model.ChatId;
-        await MapVkAsync(model, user);
-
+        user.Target = model.Target?.Id;
+        user.TargetSetTime = model.Target?.SetDate;
+        user.ProxyId = model.ProxyId;
+        if (!model.HasVk) return user;
+        user.VkName = model.Vk!.Name;
+        user.AccessToken = model.Vk.AccessToken;
         return user;
-    }
-
-    private async Task MapVkAsync(User user, UserModel model)
-    {
-        if (user.Vk == null)
-        {
-            if (model.Vk != null) _context.Remove(model.Vk);
-        }
-        else
-        {
-            if (model.Vk == null)
-            {
-                model.Vk = Create(user.Vk);
-                await _context.AddAsync(model.Vk);
-            }
-            else
-            {
-                model.Vk.EntityId = user.Vk.Id;
-                model.Vk.Username = user.Vk.Login;
-                model.Vk.Password = user.Vk.Password;
-                model.Vk.AccessToken = user.Vk.AccessToken;
-                model.Vk.ProxyId = user.Vk.ProxyId;
-            }
-        }
-    }
-
-    private static VkModel Create(Vk vk)
-    {
-        return new VkModel
-        {
-            EntityId = vk.Id,
-            AccessToken = vk.AccessToken,
-            Password = vk.Password,
-            ProxyId = vk.ProxyId,
-            Username = vk.Login
-        };
     }
 }

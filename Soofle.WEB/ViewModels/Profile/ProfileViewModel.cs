@@ -2,7 +2,7 @@
 
 public class ProfileViewModel
 {
-    public ProfileViewModel(string email, string name,  StatsViewModel stats, long? likeChat, VkViewModel? vk, IEnumerable<LinkViewModel> links, IEnumerable<PaymentViewModel> payments)
+    public ProfileViewModel(string email, string name,  StatsViewModel stats, long? likeChat, string? vk, IEnumerable<LinkViewModel> links, IEnumerable<PaymentViewModel> payments)
     {
         Email = email;
         Name = name;
@@ -20,5 +20,5 @@ public class ProfileViewModel
     public IEnumerable<LinkViewModel> Links { get; }
     public IEnumerable<PaymentViewModel> Payments { get; }
     public StatsViewModel Stats { get; }
-    public VkViewModel? Vk { get; }
+    public string? Vk { get; }
 }

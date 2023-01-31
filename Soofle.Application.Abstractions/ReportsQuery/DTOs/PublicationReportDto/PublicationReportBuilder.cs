@@ -9,6 +9,7 @@ public abstract class PublicationReportBuilder : ReportBuilder
     public DateTimeOffset? SearchStartDate { get; private set; }
     public int PublicationsCount { get; private set; }
     public int Process { get; private set; }
+    public bool AllParticipants { get; private set; }
 
     public PublicationReportBuilder WithLinkedUsers(IEnumerable<string> linkedUsers)
     {
@@ -37,6 +38,12 @@ public abstract class PublicationReportBuilder : ReportBuilder
     public PublicationReportBuilder WithProcess(int process)
     {
         Process = process;
+        return this;
+    }
+
+    public PublicationReportBuilder WithAllParticipantsOption()
+    {
+        AllParticipants = true;
         return this;
     }
 }

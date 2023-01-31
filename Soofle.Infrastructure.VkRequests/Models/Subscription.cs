@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using VkNet.Enums.SafetyEnums;
 using VkNet.Utils;
 using VkNet.Utils.JsonConverter;
@@ -18,15 +17,18 @@ public class Subscription : IVkModel
     /// <summary>Разобрать из json.</summary>
     /// <param name="response"> Ответ сервера. </param>
     /// <returns> </returns>
-    public static Subscription FromJson(VkResponse response) => new()
+    public static Subscription FromJson(VkResponse response)
     {
-        Id = (long)(response["group_id"] ?? response["gid"] ?? response["id"]),
-        Name = response["name"],
-        Type = response["type"],
-        Deactivated = response["deactivated"],
-        FirstName = response["first_name"],
-        LastName = response["last_name"]
-    };
+        return new()
+        {
+            Id = (long)(response["group_id"] ?? response["gid"] ?? response["id"]),
+            Name = response["name"],
+            Type = response["type"],
+            Deactivated = response["deactivated"],
+            FirstName = response["first_name"],
+            LastName = response["last_name"]
+        };
+    }
 
     /// <summary>Идентификатор сообщества.</summary>
     public long Id { get; set; }
@@ -44,6 +46,7 @@ public class Subscription : IVkModel
     [JsonProperty("first_name")] public string FirstName { get; set; }
 
     [JsonProperty("last_name")] public string LastName { get; set; }
+
 
     /// <summary>Тип сообщества.</summary>
     [JsonProperty("type")]

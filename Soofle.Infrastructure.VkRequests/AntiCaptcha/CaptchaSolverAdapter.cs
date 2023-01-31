@@ -1,16 +1,13 @@
 using VkNet.Utils.AntiCaptcha;
 
-namespace Soofle.Infrastructure.VkAuthentication.AntiCaptcha;
+namespace Soofle.Infrastructure.VkRequests.AntiCaptcha;
 
-public class CaptchaSolver : ICaptchaSolver
+public class CaptchaSolverAdapter : ICaptchaSolver
 {
     private long _id;
     private readonly Soofle.Application.Abstractions.VkRequests.ServicesInterfaces.ICaptchaSolver _solver;
 
-    public CaptchaSolver(Soofle.Application.Abstractions.VkRequests.ServicesInterfaces.ICaptchaSolver solver)
-    {
-        _solver = solver;
-    }
+    public CaptchaSolverAdapter(Soofle.Application.Abstractions.VkRequests.ServicesInterfaces.ICaptchaSolver solver) => _solver = solver;
 
     public string Solve(string url)
     {

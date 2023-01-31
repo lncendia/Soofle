@@ -23,7 +23,10 @@ public class ProfileController : Controller
         try
         {
             var profile = await _profileService.GetAsync(id);
-            return View(Map(profile, email));
+            var links = await _profileService.GetLinksAsync(id);
+            var payments = await _profileService.GetPaymentsAsync(id);
+            var stats = await _profileService.GetStatisticAsync(id);
+            return View(Map(profile, links, payments, stats, email));
         }
         catch (Exception e)
         {
@@ -36,22 +39,21 @@ public class ProfileController : Controller
         }
     }
 
-    private ProfileViewModel Map(ProfileDto profile, string email)
+    private ProfileViewModel Map(ProfileDto profile, IEnumerable<LinkDto> links, IEnumerable<PaymentDto> payments,
+        StatsDto stats,
+        string email)
     {
-        var links = profile.Links.Select(dto =>
+        var linkViewModels = links.Select(dto =>
             new LinkViewModel(dto.Id, dto.User1, dto.User2, dto.IsConfirmed, dto.IsSender));
 
-        var payments = profile.Payments.Select(x =>
+        var paymentViewModels = payments.Select(x =>
             new PaymentViewModel(x.Id, x.Amount, x.CreationDate, x.IsSuccessful, x.PayUrl));
-        
-        var stats = new StatsViewModel(profile.Stats.ParticipantsCount, profile.Stats.ReportsCount,
-            profile.Stats.ReportsThisMonthCount, profile.SubscriptionStart, profile.SubscriptionEnd);
-        
-        var vk = profile.Vk == null
-            ? null
-            : new VkViewModel(profile.Vk.Login, profile.Vk.Password, profile.Vk.IsActive);
-        var model = new ProfileViewModel(email, User.Identity!.Name!,stats,
-            profile.ChatId, vk, links, payments);
+
+        var statsViewModel = new StatsViewModel(stats.ParticipantsCount, stats.ReportsCount,
+            stats.ReportsThisMonthCount, profile.SubscriptionStart, profile.SubscriptionEnd);
+
+        var model = new ProfileViewModel(email, User.Identity!.Name!, statsViewModel,
+            profile.ChatId, profile.VkLogin, linkViewModels, paymentViewModels);
         return model;
     }
 }

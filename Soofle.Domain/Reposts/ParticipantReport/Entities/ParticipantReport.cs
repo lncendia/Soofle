@@ -15,7 +15,7 @@ public class ParticipantReport : Report
 {
     public ParticipantReport(User user) : base(user)
     {
-        VkId = user.ChatId ?? throw new UserChatIdException();
+        VkId = user.Target?.Id ?? throw new UserChatIdException();
         AddDomainEvent(new ReportCreatedEvent(new[] { UserId }, Id, ReportType.Participants, CreationDate, "-"));
     }
 
@@ -110,6 +110,7 @@ public class ParticipantReport : Report
                     ReportElementsList.Remove(participant);
             }
         }
+
         Succeed();
         var participants = ReportElementsList.Cast<ParticipantReportElement>().Select(x =>
             new ParticipantReportFinishedEvent.ParticipantDto(x.ParticipantId, x.NewName ?? x.Name, x.VkId,

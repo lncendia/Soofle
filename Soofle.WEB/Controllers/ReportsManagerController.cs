@@ -73,8 +73,8 @@ public class ReportsManagerController : Controller
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             await _reportCreationService.CreateLikeReportAsync(
-                new PublicationReportCreateDto(userId, model.Hashtag, model.SearchStartDate, model.CoAuthors),
-                model.Timer);
+                new PublicationReportCreateDto(userId, model.Hashtag, model.AllParticipants, model.SearchStartDate,
+                    model.CoAuthors), model.Timer);
             return Ok();
         }
         catch (Exception e)
@@ -105,8 +105,8 @@ public class ReportsManagerController : Controller
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             await _reportCreationService.CreateCommentReportAsync(
-                new PublicationReportCreateDto(userId, model.Hashtag, model.SearchStartDate, model.CoAuthors),
-                model.Timer);
+                new PublicationReportCreateDto(userId, model.Hashtag, model.AllParticipants, model.SearchStartDate,
+                    model.CoAuthors), model.Timer);
             return Ok();
         }
         catch (Exception e)

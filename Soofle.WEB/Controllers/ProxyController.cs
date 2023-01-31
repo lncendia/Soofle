@@ -30,12 +30,18 @@ public class ProxyController : Controller
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (!id.HasValue) return BadRequest("Id is null");
-        await _proxyManager.DeleteAsync(id.Value);
-        return Ok();
+        try
+        {
+            await _proxyManager.DeleteAsync(id.Value);
+            return Ok();
+        }
+        catch
+        {
+            return BadRequest("Не удалось удалить прокси");
+        }
     }
 
     [HttpPost]

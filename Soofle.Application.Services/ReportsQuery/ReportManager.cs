@@ -53,7 +53,7 @@ public class ReportManager : IReportManager
         var report = await _unitOfWork.LikeReportRepository.Value.GetAsync(reportId);
         if (report == null) throw new ReportNotFoundException();
         if (report.UserId != userId && !report.LinkedUsers.Contains(userId)) throw new ReportNotFoundException();
-        _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
+        if (report.IsCompleted) _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
         return _mapper.LikeReportMapper.Value.Map(report);
     }
 
@@ -62,7 +62,7 @@ public class ReportManager : IReportManager
         var report = await _unitOfWork.CommentReportRepository.Value.GetAsync(reportId);
         if (report == null) throw new ReportNotFoundException();
         if (report.UserId != userId && !report.LinkedUsers.Contains(userId)) throw new ReportNotFoundException();
-        _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
+        if (report.IsCompleted) _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
         return _mapper.CommentReportMapper.Value.Map(report);
     }
 
@@ -72,7 +72,7 @@ public class ReportManager : IReportManager
         var report = await _unitOfWork.ParticipantReportRepository.Value.GetAsync(reportId);
         if (report == null) throw new ReportNotFoundException();
         if (report.UserId != userId) throw new ReportNotFoundException();
-        _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
+        if (report.IsCompleted) _cache.Set(CachingConstants.GetReportKey(reportId), report, TimeSpan.FromMinutes(3));
 
         return _mapper.ParticipantReportMapper.Value.Map(report);
     }

@@ -13,17 +13,15 @@ namespace Soofle.Application.Services.Users;
 public class UserAuthenticationService : IUserAuthenticationService
 {
     private readonly UserManager<UserData> _userManager;
-    private readonly RoleManager<RoleData> _roleManager;
     private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
 
     public UserAuthenticationService(UserManager<UserData> userManager, IEmailService emailService,
-        IUnitOfWork unitOfWork, RoleManager<RoleData> roleManager)
+        IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _emailService = emailService;
         _unitOfWork = unitOfWork;
-        _roleManager = roleManager;
     }
 
     public async Task CreateAsync(UserCreateDto userDto, string confirmUrl)

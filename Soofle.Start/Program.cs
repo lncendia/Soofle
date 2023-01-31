@@ -11,11 +11,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddWebServices();
 builder.Services.AddDomainServices();
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices();
-builder.Services.AddAuthenticationServices();
-builder.Services.AddPersistenceServices();
-builder.Services.AddEventsHandlers();
-builder.Services.AddHangfireServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddAuthenticationServices(builder.Configuration);
+builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddEventsHandlers(builder.Configuration);
+builder.Services.AddHangfireServices(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
