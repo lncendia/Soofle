@@ -19,14 +19,16 @@ public class Subscription : IVkModel
     /// <returns> </returns>
     public static Subscription FromJson(VkResponse response)
     {
-        return new()
+        return new Subscription
         {
             Id = (long)(response["group_id"] ?? response["gid"] ?? response["id"]),
             Name = response["name"],
             Type = response["type"],
             Deactivated = response["deactivated"],
             FirstName = response["first_name"],
-            LastName = response["last_name"]
+            LastName = response["last_name"],
+            ScreenName = response["screen_name"],
+            Domain = response["domain"]
         };
     }
 
@@ -46,7 +48,8 @@ public class Subscription : IVkModel
     [JsonProperty("first_name")] public string FirstName { get; set; }
 
     [JsonProperty("last_name")] public string LastName { get; set; }
-
+    [JsonProperty("screen_name")] public string ScreenName { get; set; }
+    [JsonProperty("domain")] public string Domain { get; set; }
 
     /// <summary>Тип сообщества.</summary>
     [JsonProperty("type")]

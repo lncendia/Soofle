@@ -39,7 +39,7 @@ public class VkController : Controller
         {
             await _vkManager.SetAsync(userId, info);
             await HttpContext.SignOutAsync(info.AuthenticationProperties);
-            return RedirectToAction("Index", "Profile");
+            return RedirectToAction("Index", "Home", new { message = "Вк успешно установлен" });
         }
         catch (Exception ex)
         {

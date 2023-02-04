@@ -5,7 +5,6 @@ using Soofle.Application.Abstractions.Participants.DTOs;
 using Soofle.Application.Abstractions.Participants.Exceptions;
 using Soofle.Application.Abstractions.Participants.ServicesInterfaces;
 using Soofle.Application.Abstractions.Users.Exceptions;
-using Soofle.Domain.Participants.Enums;
 using Soofle.WEB.ViewModels.Participants;
 using Soofle.Domain.Participants.Exceptions;
 
@@ -57,8 +56,8 @@ public class ParticipantsController : Controller
 
 
     private static ParticipantViewModel Map(ParticipantDto participant) =>
-        new(participant.Id, participant.Name, participant.VkId, participant.Notes, participant.Vip,
-            participant.Type, participant.Children.Select(Map));
+        new(participant.Id, participant.Name, participant.Notes, participant.Vip, participant.Type,
+            participant.Children.Select(Map));
 
 
     [HttpGet]
@@ -71,14 +70,7 @@ public class ParticipantsController : Controller
             var participant = await _participantManager.GetAsync(userId, id.Value);
             var participants = await _userParticipants.GetUserParticipantsAsync(userId);
             participants.RemoveAll(x => x.id == id);
-            var link = participant.Type switch
-            {
-                ParticipantType.Group => "club",
-                ParticipantType.User => "id",
-                _ => throw new ArgumentOutOfRangeException()
-            };
             ViewBag.Participants = participants;
-            ViewBag.Link = $"https://vk.com/{link}{participant.VkId}";
             return View(new EditParticipantViewModel
             {
                 Id = participant.Id,

@@ -26,7 +26,7 @@ public class ParticipantReportElement : ReportElement
             throw new InvalidOperationException("ParticipantId is null");
 
         if (type == ElementType.Rename && string.IsNullOrEmpty(newName))
-            throw new ArgumentException("OldName is required for rename element");
+            throw new ArgumentException("New name is required for rename element");
 
         Type = type;
         NewName = newName;

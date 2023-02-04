@@ -21,7 +21,7 @@ public class GetParticipantsService : IParticipantsService
     {
         var friends = await api.Friends.GetAsync(new FriendsGetParams
         {
-            UserId = id, Count = count, Fields = ProfileFields.FirstName | ProfileFields.Uid | ProfileFields.LastName
+            UserId = id, Count = count, Fields = ProfileFields.Domain
         });
         return friends.Select(GetParticipant);
     }
@@ -43,7 +43,7 @@ public class GetParticipantsService : IParticipantsService
                 "count", count
             },
             {
-                "fields", "0"
+                "fields", ProfileFields.Domain
             }
         };
 
@@ -57,12 +57,12 @@ public class GetParticipantsService : IParticipantsService
         ParticipantType type;
         if (subscription.Type == GroupType.Page || subscription.Type == GroupType.Group || subscription.Type == GroupType.Event)
         {
-            name = subscription.Name;
+            name = subscription.ScreenName;
             type = ParticipantType.Group;
         }
         else if (subscription.Type == SafetyEnum<GroupType>.RegisterPossibleValue("profile"))
         {
-            name = subscription.FirstName + ' ' + subscription.LastName;
+            name = subscription.Domain;
             type = ParticipantType.User;
         }
         else
@@ -74,7 +74,7 @@ public class GetParticipantsService : IParticipantsService
     }
 
     private static ParticipantDto GetParticipant(User user) =>
-        new(user.Id, user.FirstName + ' ' + user.LastName, ParticipantType.User);
+        new(user.Id, user.Domain, ParticipantType.User);
 
     public async Task<List<ParticipantDto>> GetFriendsAsync(RequestInfo data, long id, int count, CancellationToken token)
     {

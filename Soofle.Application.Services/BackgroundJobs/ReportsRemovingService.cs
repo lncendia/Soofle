@@ -34,6 +34,7 @@ public class ReportsRemovingService : IReportsRemovingService
             {
                 ReportType.Likes => ProcessLikeReportAsync(report.ReportId!.Value),
                 ReportType.Participants => ProcessParticipantReportAsync(report.ReportId!.Value),
+                ReportType.Comments => ProcessCommentReportAsync(report.ReportId!.Value),
                 _ => throw new ArgumentOutOfRangeException()
             };
             await Task.WhenAll(task, _jobStorage.DeleteJobIdAsync(report.ReportId.Value));
@@ -43,6 +44,7 @@ public class ReportsRemovingService : IReportsRemovingService
     }
 
     private Task ProcessLikeReportAsync(Guid id) => _unitOfWork.LikeReportRepository.Value.DeleteAsync(id);
+    private Task ProcessCommentReportAsync(Guid id) => _unitOfWork.CommentReportRepository.Value.DeleteAsync(id);
 
     private Task ProcessParticipantReportAsync(Guid id) =>
         _unitOfWork.ParticipantReportRepository.Value.DeleteAsync(id);

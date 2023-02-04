@@ -2,13 +2,12 @@
 @{
     ViewData["Title"] = Model.Username;
     var items = ViewBag.Participants as List<(Guid Id, string Name)>;
-    var vk = (string)ViewBag.Link;
     var selectedListItems = items?.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 }
 <div id="message"></div>
 <div class="col-lg-6">
     <h3>
-        Редактирование участника <a href="@vk">@Model.Username</a>
+        Редактирование участника <a href="https://vk.com/@Model.Username">@Model.Username</a>
     </h3>
     <form id="edit" asp-action="Edit" method="post" class="form-horizontal">
         <div asp-validation-summary="ModelOnly"></div>
