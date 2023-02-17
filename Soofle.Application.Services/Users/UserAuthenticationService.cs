@@ -58,32 +58,30 @@ public class UserAuthenticationService : IUserAuthenticationService
     {
         var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
         if (user != null) return user;
+        user = new UserData(
+            info.Principal.FindFirstValue(ClaimTypes.GivenName) + ' ' +
+            info.Principal.FindFirstValue(ClaimTypes.Surname),
+            info.Principal.FindFirstValue(ClaimTypes.Email)!)
         {
-            user = new UserData(
-                info.Principal.FindFirstValue(ClaimTypes.GivenName) + ' ' +
-                info.Principal.FindFirstValue(ClaimTypes.Surname),
-                info.Principal.FindFirstValue(ClaimTypes.Email)!)
+            EmailConfirmed = true
+        };
+        var result = await _userManager.CreateAsync(user);
+        if (!result.Succeeded)
+        {
+            Exception ex = result.Errors.First().Code switch
             {
-                EmailConfirmed = true
+                "MailUsed" => new UserAlreadyExistException(),
+                "MailIncorrect" => new InvalidEmailException(user.Email!),
+                "NameIncorrect" => new InvalidNicknameException(user.UserName!),
+                _ => new UserCreationException(result.Errors.First().Description)
             };
-            var result = await _userManager.CreateAsync(user);
-            if (!result.Succeeded)
-            {
-                Exception ex = result.Errors.First().Code switch
-                {
-                    "MailUsed" => new UserAlreadyExistException(),
-                    "MailIncorrect" => new InvalidEmailException(user.Email!),
-                    "NameIncorrect" => new InvalidNicknameException(user.UserName!),
-                    _ => new UserCreationException(result.Errors.First().Description)
-                };
-                throw ex;
-            }
-
-            await _userManager.AddLoginAsync(user, info);
-            var userDomain = new User(user.UserName!, user.Email!);
-            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, userDomain.Id.ToString()));
-            await AddAsync(userDomain);
+            throw ex;
         }
+
+        await _userManager.AddLoginAsync(user, info);
+        var userDomain = new User(user.UserName!, user.Email!);
+        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, userDomain.Id.ToString()));
+        await AddAsync(userDomain);
 
         return user;
     }

@@ -45,6 +45,7 @@ internal static class VkApi
             UserDeletedOrBannedException exception => exception.ErrorCode,
             CaptchaNeededException exception => exception.ErrorCode,
             CommentsPostAccessDeniedException exception => exception.ErrorCode,
+            VkApiMethodInvokeException exception => exception.ErrorCode,
             _ => ex.ErrorCode
         };
         return new VkRequestException(code, ex);

@@ -52,7 +52,7 @@ public abstract class PublicationReport : Report
     private void LoadElements(IEnumerable<PublicationReportElement> elements)
     {
         ReportElementsList.AddRange(elements);
-        if(!ReportElementsList.Any()) throw new ElementsListEmptyException();
+        if (!ReportElementsList.Any()) throw new ElementsListEmptyException();
     }
 
     protected void Start(IEnumerable<PublicationDto> publications, IEnumerable<PublicationReportElement> elements)
