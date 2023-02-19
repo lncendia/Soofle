@@ -41,11 +41,16 @@ internal class CommentReportMapper : IAggregateMapperUnit<CommentReport, Comment
 
     private static CommentReportElement GetCommentElement(CommentReportElementModel model, CommentReportElement? owner)
     {
-        object?[] args = { model.Name, model.LikeChatName, model.VkId, model.ParticipantId, model.Vip, model.Note, owner, model.EntityId };
+        object?[] args =
+        {
+            model.Name, model.LikeChatName, model.VkId, model.ParticipantId, model.Vip, model.Note, owner,
+            model.EntityId
+        };
         var element = (CommentReportElement)CommentReportElementType.Assembly.CreateInstance(
             CommentReportElementType.FullName!, false, BindingFlags.Instance | BindingFlags.NonPublic, null, args!,
             null, null)!;
         ElementComments.SetValue(element, GetCommentsInfo(model.Comments));
+        if (model.IsAccepted) element.Accept();
         return element;
     }
 

@@ -68,6 +68,9 @@ internal class LikeReportModelMapper : IModelMapperUnit<LikeReportModel, LikeRep
     private static string GetLikesRawString(IEnumerable<LikeInfo> likes) => string.Join(';',
         likes.Select(like => $"{like.PublicationId}:{(like.IsConfirmed ? '1' : '0')}"));
 
-    private static void Map(LikeReportElement element, LikeReportElementModel model) =>
+    private static void Map(LikeReportElement element, LikeReportElementModel model)
+    {
         model.Likes = GetLikesRawString(element.Likes);
+        model.IsAccepted = element.IsAccepted;
+    }
 }

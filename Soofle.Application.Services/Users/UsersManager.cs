@@ -52,6 +52,15 @@ public class UsersManager : IUsersManager
         return new UserDto(user.Name, user.Email, user.Id, user.Subscription?.ExpirationDate);
     }
 
+    public async Task<UserData> GetAuthenticationDataAsync(Guid userId)
+    {
+        var user = await _unitOfWork.UserRepository.Value.GetAsync(userId);
+        if (user == null) throw new UserNotFoundException();
+        var userApplication = await _userManager.FindByEmailAsync(user.Email);
+        if (userApplication == null) throw new UserNotFoundException();
+        return userApplication;
+    }
+
     public async Task EditAsync(EditUserDto editData)
     {
         var user = await _unitOfWork.UserRepository.Value.GetAsync(editData.Id);

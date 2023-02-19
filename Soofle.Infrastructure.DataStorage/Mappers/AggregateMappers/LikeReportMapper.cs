@@ -46,6 +46,7 @@ internal class LikeReportMapper : IAggregateMapperUnit<LikeReport, LikeReportMod
             LikeReportElementType.FullName!, false, BindingFlags.Instance | BindingFlags.NonPublic, null, args!,
             null, null)!;
         ElementLikes.SetValue(element, GetLikesInfo(model.Likes));
+        if (model.IsAccepted) element.Accept();
         return element;
     }
 

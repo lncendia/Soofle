@@ -93,7 +93,7 @@ public class LikeReport : PublicationReport.Entities.PublicationReport
         {
             if (string.IsNullOrEmpty(error) && element.Likes.Count != PublicationsList.Count)
                 throw new ReportNotCompletedException(Id);
-            var count = element.Likes.Where(x => x.IsConfirmed).DistinctBy(x => x.PublicationId).Count();
+            var count = element.Likes.Count(x => x.IsConfirmed);
             if (count == PublicationsList.Count) element.Accept();
         }
 

@@ -69,6 +69,9 @@ internal class CommentReportModelMapper : IModelMapperUnit<CommentReportModel, C
         comments.Select(comment =>
             $"{comment.PublicationId}:{(comment.IsConfirmed ? '1' : '0')}:{comment.Text ?? string.Empty}"));
 
-    private static void Map(CommentReportElement element, CommentReportElementModel model) =>
+    private static void Map(CommentReportElement element, CommentReportElementModel model)
+    {
         model.Comments = GetCommentsRawString(element.Comments);
+        model.IsAccepted = element.IsAccepted;
+    }
 }

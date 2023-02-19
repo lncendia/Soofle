@@ -105,7 +105,7 @@ public class CommentReport : PublicationReport.Entities.PublicationReport
         {
             if (string.IsNullOrEmpty(error) && element.Comments.Count != PublicationsList.Count)
                 throw new ReportNotCompletedException(Id);
-            var count = element.Comments.Where(x => x.IsConfirmed).DistinctBy(x => x.PublicationId).Count();
+            var count = element.Comments.Count(x => x.IsConfirmed);
             if (count == PublicationsList.Count) element.Accept();
         }
 

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Soofle.Application.Abstractions.Users.DTOs;
+using Soofle.Application.Abstractions.Users.Entities;
 using Soofle.Application.Abstractions.Users.Exceptions;
 using Soofle.Application.Abstractions.Users.ServicesInterfaces;
 using Soofle.Domain.Users.Exceptions;
@@ -12,8 +14,13 @@ namespace Soofle.WEB.Controllers;
 public class UsersController : Controller
 {
     private readonly IUsersManager _usersManager;
+    private readonly SignInManager<UserData> _signInManager;
 
-    public UsersController(IUsersManager usersManager) => _usersManager = usersManager;
+    public UsersController(IUsersManager usersManager, SignInManager<UserData> signInManager)
+    {
+        _usersManager = usersManager;
+        _signInManager = signInManager;
+    }
 
     [HttpGet]
     public IActionResult Index(string? message)
@@ -72,7 +79,7 @@ public class UsersController : Controller
             var text = ex switch
             {
                 UserNotFoundException => "Пользователь не найден",
-                UserAlreadyExistException =>"Пользователь с такой почтой уже зарегистрирован",
+                UserAlreadyExistException => "Пользователь с такой почтой уже зарегистрирован",
                 InvalidEmailException => "Неверный формат почты",
                 InvalidNicknameException => "Неверный формат имени пользователя",
                 _ => "Произошла ошибка при изменении пользователя"
@@ -128,6 +135,26 @@ public class UsersController : Controller
         {
             await _usersManager.AddSubscribeAsync(model.Id, TimeSpan.FromDays(model.CountDays));
             return Ok();
+        }
+        catch (Exception ex)
+        {
+            var text = ex switch
+            {
+                UserNotFoundException => "Пользователь не найден",
+                _ => "Произошла ошибка при добавлении подписки"
+            };
+            return BadRequest(text);
+        }
+    }
+
+    public async Task<IActionResult> AuthenticateAsUser(Guid? id)
+    {
+        if (!id.HasValue) return RedirectToAction("Index", "Home", new { message = "Пользователь не найден" });
+        try
+        {
+            var user = await _usersManager.GetAuthenticationDataAsync(id.Value);
+            await _signInManager.SignInAsync(user, true);
+            return RedirectToAction("Index", "Home", new { message = $"Вы аутентифицированы как {user.UserName}" });
         }
         catch (Exception ex)
         {
