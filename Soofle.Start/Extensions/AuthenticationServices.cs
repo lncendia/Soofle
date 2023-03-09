@@ -43,6 +43,7 @@ internal static class AuthenticationServices
             {
                 options.ClientId = vkOauth.Client;
                 options.ClientSecret = vkOauth.Secret;
+                options.Scope.Add("email");
             }).AddVkontakte("Vk", options =>
             {
                 options.ClientId = vkOauth.Client;
