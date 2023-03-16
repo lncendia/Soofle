@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Soofle.Domain.Participants.Enums;
 
 namespace Soofle.WEB.ViewModels.Proxy;
 

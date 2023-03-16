@@ -1,5 +1,4 @@
 using Soofle.Domain.Ordering.Abstractions;
-using Soofle.Domain.Proxies.Entities;
 
 namespace Soofle.Domain.Ordering;
 

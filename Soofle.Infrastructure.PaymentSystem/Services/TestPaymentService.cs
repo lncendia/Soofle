@@ -1,14 +1,5 @@
-using System.Net;
-using Newtonsoft.Json;
-using Qiwi.BillPayments.Client;
-using Qiwi.BillPayments.Model;
-using Qiwi.BillPayments.Model.In;
-using Qiwi.BillPayments.Model.Out;
-using RestSharp;
 using Soofle.Application.Abstractions.Payments.DTOs;
-using Soofle.Application.Abstractions.Payments.Exceptions;
 using Soofle.Application.Abstractions.Payments.ServicesInterfaces;
-using Soofle.Application.Abstractions.Proxies.DTOs;
 
 namespace Soofle.Infrastructure.PaymentSystem.Services;
 

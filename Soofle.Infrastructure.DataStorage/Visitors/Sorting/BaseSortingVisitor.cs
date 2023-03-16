@@ -1,10 +1,8 @@
-using Soofle.Domain;
 using Soofle.Domain.Abstractions;
 using Soofle.Infrastructure.DataStorage.Models.Abstractions;
 using Soofle.Infrastructure.DataStorage.Visitors.Sorting.Models;
 using Soofle.Domain.Ordering;
 using Soofle.Domain.Ordering.Abstractions;
-using Soofle.Infrastructure.DataStorage.Models;
 
 namespace Soofle.Infrastructure.DataStorage.Visitors.Sorting;
 

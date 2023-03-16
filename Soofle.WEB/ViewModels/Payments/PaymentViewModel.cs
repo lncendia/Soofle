@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace Soofle.WEB.ViewModels.Payments;
+﻿namespace Soofle.WEB.ViewModels.Payments;
 
 public class PaymentViewModel
 {

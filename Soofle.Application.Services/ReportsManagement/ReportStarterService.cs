@@ -46,7 +46,7 @@ public class ReportStarterService : IReportStarter
         }
         catch (Exception e)
         {
-            report.Finish(HandleException(e));
+            report.Finish(HandleException(e, id));
         }
 
         await _unitOfWork.LikeReportRepository.Value.UpdateAsync(report);
@@ -67,8 +67,7 @@ public class ReportStarterService : IReportStarter
         }
         catch (Exception e)
         {
-            _logger.LogWarning(e, "The report ended with an error. Id {ReportId}", report.Id);
-            report.Finish(HandleException(e));
+            report.Finish(HandleException(e, id));
         }
 
         await _unitOfWork.CommentReportRepository.Value.UpdateAsync(report);
@@ -89,30 +88,46 @@ public class ReportStarterService : IReportStarter
         }
         catch (Exception e)
         {
-            report.Finish(HandleException(e));
+            report.Finish(HandleException(e, id));
         }
 
         await _unitOfWork.ParticipantReportRepository.Value.UpdateAsync(report);
         await _unitOfWork.SaveChangesAsync();
     }
 
-    private static string HandleException(Exception ex)
+    private string HandleException(Exception ex, Guid id)
     {
-        return ex switch
+        switch (ex)
         {
-            ReportAlreadyCompletedException => "Отчёт уже является сформированным",
-            VkRequestException => $"Ошибка VK: {ex.Message}",
-            UnableFindProxyException => "Не удалось найти подходящий прокси сервер",
-            ReportNotStartedException => "Отчёт не инициализован",
-            VkIsNotActiveException => "Ваш VK аккаунт не авторизован",
-            ProxyIsNotSetException => "У вас не установлен прокси",
-            TooManyRequestErrorsException => $"Не удается получить информацию. {ex.Message}",
-            UserNotFoundException => "Создатель отчёта не найден",
-            ElementsListEmptyException => "Участники не найдены",
-            PublicationsListEmptyException => "Публикации по хештегу не найдены",
-            HttpRequestException => "Возникла ошибка с подключением на сервере",
-            _ => throw ex
-        };
+            case VkIsNotActiveException:
+                return "Ваш VK аккаунт не авторизован";
+            case UnableFindProxyException: 
+                return "Не удалось найти подходящий прокси сервер";
+            case ProxyIsNotSetException: 
+                return "У вас не установлен прокси";
+            case ReportAlreadyCompletedException:
+                return "Отчёт уже является сформированным";
+            case VkRequestException:
+                return $"Ошибка VK: {ex.Message}";
+            case ReportNotStartedException:
+                return "Отчёт не инициализован";
+            case TooManyRequestErrorsException:
+                return $"Не удается получить информацию. {ex.Message}";
+            case UserNotFoundException:
+                return "Создатель отчёта не найден";
+            case ElementsListEmptyException:
+                return "Участники не найдены";
+            case PublicationsListEmptyException:
+                return "Публикации по хештегу не найдены";
+            case HttpRequestException httpEx:
+                if (httpEx.InnerException is OperationCanceledException) throw httpEx.InnerException;
+                _logger.LogError(ex.InnerException, "Report {Id} completed with an error", id);
+                return "Возникла ошибка с подключением на сервере";
+            default:
+                if (ex is not OperationCanceledException)
+                    _logger.LogError(ex, "Report {Id} completed with an error", id);
+                throw ex;
+        }
     }
 
     private async Task CheckProxyAsync(Guid userId)

@@ -1,5 +1,3 @@
-using Soofle.Domain.Proxies.Entities;
-
 namespace Soofle.Domain.Ordering.Abstractions;
 
 public interface IOrderBy<T, in TVisitor> where TVisitor : ISortingVisitor<TVisitor, T>

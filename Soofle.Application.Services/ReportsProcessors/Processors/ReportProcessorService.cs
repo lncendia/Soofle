@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Soofle.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
+﻿using Soofle.Application.Abstractions.ReportsProcessors.ServicesInterfaces;
 using Soofle.Application.Abstractions.VkRequests.ServicesInterfaces;
 using Soofle.Domain.Abstractions.UnitOfWorks;
 using Soofle.Domain.Reposts.CommentReport.Entities;

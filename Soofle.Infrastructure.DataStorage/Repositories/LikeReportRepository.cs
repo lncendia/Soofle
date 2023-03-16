@@ -6,7 +6,6 @@ using Soofle.Infrastructure.DataStorage.Models.Reports.LikeReport;
 using Soofle.Infrastructure.DataStorage.Visitors.Sorting;
 using Soofle.Infrastructure.DataStorage.Visitors.Specifications;
 using Soofle.Domain.Ordering.Abstractions;
-using Soofle.Domain.ReportLogs.Enums;
 using Soofle.Domain.Reposts.BaseReport.Events;
 using Soofle.Domain.Reposts.LikeReport.Entities;
 using Soofle.Domain.Reposts.LikeReport.Ordering.Visitor;

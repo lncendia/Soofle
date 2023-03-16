@@ -42,18 +42,20 @@
         <h3>Действия</h3>
         <div class="card card-body">
             <p>
-                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample" aria-expanded="false" aria-controls="multiCollapseExample">Смена имени</button>
-                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample1">Смена почты</button>
-                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Смена пароля</button>
+                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Смена имени</button>
+                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">Смена почты</button>
+                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">Смена пароля</button>
             </p>
-            <div class="collapse multi-collapse" id="multiCollapseExample">
-                @await Html.PartialAsync("ChangeName", new ChangeNameViewModel { Name = Model.Name })
-            </div>
-            <div class="collapse multi-collapse" id="multiCollapseExample1">
-                @await Html.PartialAsync("ChangeEmail", new ChangeEmailViewModel { Email = Model.Email })
-            </div>
-            <div class="collapse multi-collapse" id="multiCollapseExample2">
-                @await Html.PartialAsync("ChangePassword", new ChangePasswordViewModel())
+            <div id="target-container">
+                <div class="collapse" data-bs-parent="#target-container" id="collapseExample">
+                    @await Html.PartialAsync("ChangeName", new ChangeNameViewModel {Name = Model.Name})
+                </div>
+                <div class="collapse" data-bs-parent="#target-container" id="collapseExample1">
+                    @await Html.PartialAsync("ChangeEmail", new ChangeEmailViewModel {Email = Model.Email})
+                </div>
+                <div class="collapse" data-bs-parent="#target-container" id="collapseExample2">
+                    @await Html.PartialAsync("ChangePassword", new ChangePasswordViewModel())
+                </div>
             </div>
         </div>
     </div>
@@ -62,10 +64,10 @@
         <div class="card card-body">
             <p>
                 <a class="btn menu-button btn-primary" asp-controller="Vk" asp-action="Login">Смена Vk</a>
-                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample5" aria-expanded="false" aria-controls="multiCollapseExample5">Смена цели</button>
+                <button class="btn menu-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample5" aria-expanded="false" aria-controls="collapseExample5">Смена цели</button>
             </p>
-            <div class="collapse multi-collapse" id="multiCollapseExample5">
-                @await Html.PartialAsync("ChangeTarget", new ChangeTargetViewModel { Target = Model.LikeChat })
+            <div class="collapse" id="collapseExample5">
+                @await Html.PartialAsync("ChangeTarget", new ChangeTargetViewModel {Target = Model.LikeChat})
             </div>
         </div>
     </div>

@@ -7,6 +7,7 @@ namespace Soofle.Infrastructure.DataStorage.Mappers.AggregateMappers;
 
 internal class LinkMapper : IAggregateMapperUnit<Link, LinkModel>
 {
+    // ReSharper disable once CollectionNeverUpdated.Local
     private static readonly List<Link> MockList = new();
     public Link Map(LinkModel model)
     {

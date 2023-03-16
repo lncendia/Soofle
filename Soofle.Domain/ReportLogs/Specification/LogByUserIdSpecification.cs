@@ -1,8 +1,6 @@
 using Soofle.Domain.ReportLogs.Entities;
 using Soofle.Domain.ReportLogs.Specification.Visitor;
 using Soofle.Domain.Specifications.Abstractions;
-using Soofle.Domain.Proxies.Entities;
-using Soofle.Domain.Proxies.Specification.Visitor;
 
 namespace Soofle.Domain.ReportLogs.Specification;
 

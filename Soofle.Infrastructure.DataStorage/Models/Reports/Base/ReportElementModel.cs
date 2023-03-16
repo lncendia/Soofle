@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Soofle.Infrastructure.DataStorage.Models.Abstractions;
+﻿using Soofle.Infrastructure.DataStorage.Models.Abstractions;
 
 namespace Soofle.Infrastructure.DataStorage.Models.Reports.Base;
 

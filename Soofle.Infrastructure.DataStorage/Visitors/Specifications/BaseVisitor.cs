@@ -1,10 +1,8 @@
 using System.Linq.Expressions;
-using Soofle.Domain;
 using Soofle.Domain.Abstractions;
 using Soofle.Infrastructure.DataStorage.Models.Abstractions;
 using Soofle.Domain.Specifications;
 using Soofle.Domain.Specifications.Abstractions;
-using Soofle.Infrastructure.DataStorage.Models;
 
 namespace Soofle.Infrastructure.DataStorage.Visitors.Specifications;
 

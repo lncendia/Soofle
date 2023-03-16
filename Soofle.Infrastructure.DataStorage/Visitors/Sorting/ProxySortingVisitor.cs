@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Soofle.Infrastructure.DataStorage.Models;
 using Soofle.Infrastructure.DataStorage.Visitors.Sorting.Models;
 using Soofle.Domain.Ordering.Abstractions;
